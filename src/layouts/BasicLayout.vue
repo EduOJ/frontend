@@ -1,6 +1,6 @@
 <template>
   <pro-layout
-    title="Ant Design Pro"
+    :title="title"
     :menus="menus"
     :collapsed="collapsed"
     :mediaQuery="query"
@@ -11,7 +11,6 @@
     :i18nRender="i18nRender"
     v-bind="settings"
   >
-    <setting-drawer :settings="settings" @change="handleSettingChange" />
     <template v-slot:rightContentRender>
       <right-content :top-menu="settings.layout === 'topmenu'" :theme="settings.theme" />
     </template>
@@ -25,8 +24,8 @@
 <script>
 import { SettingDrawer } from '@ant-design-vue/pro-layout'
 import { i18nRender } from '@/locales'
-import { mapState } from 'vuex'
 import { SIDEBAR_TYPE, TOGGLE_MOBILE_TYPE } from '@/store/mutation-types'
+import config from '@/config/config'
 
 import RightContent from '@/components/GlobalHeader/RightContent'
 import GlobalFooter from '@/components/GlobalFooter'
@@ -41,6 +40,7 @@ export default {
   },
   data () {
     return {
+      title: config.title,
       // base
       menus: [],
       // 侧栏收起状态
@@ -69,14 +69,12 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      // 动态主路由
-      mainMenu: state => state.permission.addRouters
-    })
   },
   created () {
-    const routes = this.mainMenu.find(item => item.path === '/')
-    this.menus = (routes && routes.children) || []
+    const routes = this.$router.options.routes
+    console.log(routes)
+    this.menus = (routes[0] && routes[0].children) || []
+    // TODO: 动态主菜单
     // 处理侧栏收起状态
     this.$watch('collapsed', () => {
       this.$store.commit(SIDEBAR_TYPE, this.collapsed)

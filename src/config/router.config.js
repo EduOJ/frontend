@@ -7,8 +7,11 @@ const RouteView = {
   render: (h) => h('router-view')
 }
 
-export const asyncRouterMap = [
-
+/**
+ * 基础路由
+ * @type { *[] }
+ */
+export const constantRouterMap = [
   {
     path: '/',
     name: 'index',
@@ -38,9 +41,9 @@ export const asyncRouterMap = [
           },
           {
             path: '/dashboard/workplace',
-            name: 'Workplace',
-            component: () => import('@/views/dashboard/Workplace'),
-            meta: { title: 'menu.dashboard.workplace', keepAlive: true, permission: [ 'dashboard' ] }
+            name: 'dashboard.workplace',
+            component: () => import('@/views/Todo'),
+            meta: { title: 'menu.dashboard.workplace', keepAlive: true }
           }
         ]
       },
@@ -261,7 +264,6 @@ export const asyncRouterMap = [
           }
         ]
       }
-
       // other
       /*
       {
@@ -327,16 +329,6 @@ export const asyncRouterMap = [
     ]
   },
   {
-    path: '*', redirect: '/404', hidden: true
-  }
-]
-
-/**
- * 基础路由
- * @type { *[] }
- */
-export const constantRouterMap = [
-  {
     path: '/user',
     component: UserLayout,
     redirect: '/user/login',
@@ -364,10 +356,7 @@ export const constantRouterMap = [
       }
     ]
   },
-
   {
-    path: '/404',
-    component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
+    path: '*', redirect: '/404', hidden: true
   }
-
 ]

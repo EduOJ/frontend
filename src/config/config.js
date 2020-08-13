@@ -14,6 +14,7 @@
  */
 
 export default {
+  apiUrl: '/api',
   navTheme: 'realDark', // theme for nav menu
   primaryColor: '#52C41A', // primary color of ant design
   layout: 'sidemenu', // nav menu position: `sidemenu` or `topmenu`
@@ -25,9 +26,7 @@ export default {
   menu: {
     locale: true
   },
-  title: 'Ant Design Pro',
+  title: 'EduOJ',
   multiTab: false,
-  pwa: false,
-  iconfontUrl: '',
   production: process.env.NODE_ENV === 'production' && process.env.VUE_APP_PREVIEW !== 'true'
 }

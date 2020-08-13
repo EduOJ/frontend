@@ -19,7 +19,6 @@ const userApi = {
  *     username: '',
  *     password: '',
  *     remember_me: true,
- *     captcha: '12345'
  * }
  * @param parameter
  * @returns {*}
@@ -64,17 +63,5 @@ export function logout () {
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
     }
-  })
-}
-
-/**
- * get user 2step code open?
- * @param parameter {*}
- */
-export function get2step (parameter) {
-  return request({
-    url: userApi.twoStepCode,
-    method: 'post',
-    data: parameter
   })
 }

@@ -16,7 +16,7 @@
       // L80
       MultiTab,
       ```
-  2. 移除 `/src/config/defaultSettings.js` L25
+  2. 移除 `/src/config/config.js` L25
 
   3. 移除 `src/store/modules/app.js` L27, L76-L79, L118-L120
   

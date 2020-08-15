@@ -112,9 +112,8 @@ const user = {
       return new Promise((resolve) => {
         commit('SET_TOKEN', '')
         commit('SET_INFO', guest)
-        commit('SET_ROLES', [])
         storage.remove(ACCESS_TOKEN)
-        Location.reload()
+        window.location.reload()
       })
     }
 

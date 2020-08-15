@@ -182,13 +182,10 @@ export default {
       console.log(res)
       this.isLoginError = false
       this.$router.push({ path: '/' })
-      // 延迟 1 秒显示欢迎信息
-      setTimeout(() => {
-        this.$notification.success({
-          message: '欢迎',
-          description: `${timeFix()}，欢迎回来`
-        })
-      }, 1000)
+      this.$notification.success({
+        message: '欢迎',
+        description: `${timeFix()}，欢迎回来`
+      })
     },
     requestFailed (err) {
       if (err.message === 'VALIDATION_ERROR') {
@@ -200,11 +197,6 @@ export default {
           if (v.field === 'Password') {
             this.loginErrorMessage += ' 密码'
           }
-        })
-        this.$notification['error']({
-          message: '错误',
-          description: err.message || '请求出现错误，请稍后再试',
-          duration: 4
         })
         this.isLoginError = true
       } else if (err.message === 'INTERNAL_ERROR') {

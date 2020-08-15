@@ -12,7 +12,7 @@
     v-bind="settings"
   >
     <template v-slot:rightContentRender>
-      <right-content :top-menu="settings.layout === 'topmenu'" :theme="settings.theme" />
+      <right-content :top-menu="settings.layout === 'topmenu'" :theme="settings.theme" :user="user"/>
     </template>
     <template v-slot:footerRender>
       <global-footer />
@@ -30,6 +30,7 @@ import config from '@/config/config'
 import RightContent from '@/components/GlobalHeader/RightContent'
 import GlobalFooter from '@/components/GlobalFooter'
 import LogoSvg from '../assets/logo.svg?inline'
+// import { mapState } from 'vuex'
 
 export default {
   name: 'BasicLayout',
@@ -69,10 +70,12 @@ export default {
     }
   },
   computed: {
+    user () {
+      return this.$store.state.user.info
+    }
   },
   created () {
     const routes = this.$router.options.routes
-    console.log(routes)
     this.menus = (routes[0] && routes[0].children) || []
     // TODO: 动态主菜单
     // 处理侧栏收起状态

@@ -1,6 +1,6 @@
 <template>
   <div :class="wrpCls">
-    <avatar-dropdown :menu="showMenu" :current-user="currentUser" :class="prefixCls" />
+    <avatar-dropdown :menu="showMenu" :user="user" :class="prefixCls" />
     <select-lang :class="prefixCls" />
   </div>
 </template>
@@ -31,6 +31,10 @@ export default {
     theme: {
       type: String,
       required: true
+    },
+    user: {
+      type: Object,
+      required: true
     }
   },
   data () {
@@ -48,11 +52,7 @@ export default {
     }
   },
   mounted () {
-    setTimeout(() => {
-      this.currentUser = {
-        name: 'Serati Ma'
-      }
-    }, 1500)
+    console.log(JSON.parse(JSON.stringify(this.user)))
   }
 }
 </script>

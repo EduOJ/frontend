@@ -22,6 +22,9 @@ export default function Initializer () {
   store.commit(TOGGLE_COLOR, storage.get(TOGGLE_COLOR, config.primaryColor))
   store.commit(TOGGLE_MULTI_TAB, storage.get(TOGGLE_MULTI_TAB, config.multiTab))
   store.commit('SET_TOKEN', storage.get(ACCESS_TOKEN))
+  store.dispatch('GetInfo').then(data => {
+    store.commit('SET_INFO', data)
+  })
 
   store.dispatch('setLang', storage.get(APP_LANGUAGE, 'en-US'))
   // last step

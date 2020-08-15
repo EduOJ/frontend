@@ -5,11 +5,11 @@
         <div class="header">
           <a href="/">
             <img src="~@/assets/logo.svg" class="logo" alt="logo">
-            <span class="title">Ant Design</span>
+            <span class="title">duOJ</span>
           </a>
         </div>
         <div class="desc">
-          Ant Design 是西湖区最具影响力的 Web 设计规范
+          EduOJ 牛逼！
         </div>
       </div>
 
@@ -17,12 +17,11 @@
 
       <div class="footer">
         <div class="links">
-          <a href="_self">帮助</a>
-          <a href="_self">隐私</a>
-          <a href="_self">条款</a>
+          <a href="https://www.github.com/leoleoasd/EduOJBackend" target="_blank">EduOJ</a>
+          <a href="https://www.github.com/leoleoasd/" target="_blank">@leoleoasd</a>
         </div>
         <div class="copyright">
-          Copyright &copy; 2018 vueComponent
+          <a href="https://github.com/leoleoasd" target="_blank">&copy;leoleoasd</a>
         </div>
       </div>
     </div>

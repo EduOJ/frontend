@@ -9,7 +9,7 @@ const userApi = {
   SendSms: '/account/sms',
   SendSmsErr: '/account/sms_err',
   // get my info
-  UserInfo: '/user/info',
+  UserMe: '/user/me',
   UserMenu: '/user/nav'
 }
 
@@ -24,10 +24,22 @@ const userApi = {
  * @returns {*}
  */
 export function login (parameter) {
-  return request({
-    url: userApi.Login,
-    method: 'post',
-    data: parameter
+  return new Promise((resolve, reject) => {
+    request({
+      url: userApi.Login,
+      method: 'post',
+      data: parameter
+    }).then(resp => {
+      if (resp.message === 'SUCCESS') {
+        resolve(resp.data)
+      } else {
+        const err = new Error(resp.message)
+        err.response = resp
+        reject(err)
+      }
+    }).catch(err => {
+      reject(err)
+    })
   })
 }
 
@@ -40,12 +52,21 @@ export function getSmsCaptcha (parameter) {
 }
 
 export function getInfo () {
-  return request({
-    url: userApi.UserInfo,
-    method: 'get',
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
+  return new Promise((resolve, reject) => {
+    request({
+      url: userApi.UserMe,
+      method: 'get'
+    }).then(resp => {
+      if (resp.message === 'SUCCESS') {
+        resolve(resp.data)
+      } else {
+        const err = new Error(resp.message)
+        err.response = resp
+        reject(err)
+      }
+    }).catch(err => {
+      reject(err)
+    })
   })
 }
 

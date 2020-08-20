@@ -1,5 +1,6 @@
 import storage from 'store'
-import { login, getInfo } from '@/api/login'
+import { login } from '@/api/auth'
+import { getMe } from '@/api/user'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 
 const guest = {
@@ -60,8 +61,8 @@ const user = {
         if (state.info && state.info.username) {
           resolve(state.info)
         }
-        if (state.token !== '') {
-          getInfo().then(result => {
+        if (state.token) {
+          getMe().then(result => {
             console.log(result)
             commit('SET_INFO', result.user)
             resolve(state.info)

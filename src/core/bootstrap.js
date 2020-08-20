@@ -26,6 +26,6 @@ export default function Initializer () {
     store.commit('SET_INFO', data)
   })
 
-  store.dispatch('setLang', storage.get(APP_LANGUAGE, 'en-US'))
+  store.dispatch('setLang', storage.get(APP_LANGUAGE, 'zh-CN'))
   // last step
 }

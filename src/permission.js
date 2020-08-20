@@ -11,7 +11,7 @@ import { i18nRender } from '@/locales'
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['login', 'register', 'registerResult', 'dashboard.workplace'] // no redirect whitelist
-const loginRoutePath = '/user/login'
+const loginRoutePath = '/user/auth'
 const defaultRoutePath = '/dashboard/workplace'
 
 router.beforeEach((to, from, next) => {
@@ -25,9 +25,9 @@ router.beforeEach((to, from, next) => {
     } else {
       // TODO: check permission for route.
       next()
-      // // check login user.roles is null
+      // // check auth user.roles is null
       // if (store.getters.roles.length === 0) {
-      //   // request login userInfo
+      //   // request auth userInfo
       //   store
       //     .dispatch('GetInfo')
       //     .then(res => {
@@ -68,7 +68,7 @@ router.beforeEach((to, from, next) => {
     } else {
       next()
       // next({ path: loginRoutePath, query: { redirect: to.fullPath } })
-      NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
+      NProgress.done() // if current page is auth will not trigger afterEach hook, so manually handle it
     }
   }
 })

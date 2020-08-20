@@ -20,9 +20,6 @@
           <a href="https://www.github.com/leoleoasd/EduOJBackend" target="_blank">EduOJ</a>
           <a href="https://www.github.com/leoleoasd/" target="_blank">@leoleoasd</a>
         </div>
-        <div class="copyright">
-          <a href="https://github.com/leoleoasd" target="_blank">&copy;leoleoasd</a>
-        </div>
       </div>
     </div>
   </div>
@@ -88,7 +85,6 @@ export default {
           .logo {
             height: 44px;
             vertical-align: top;
-            margin-right: 16px;
             border-style: none;
           }
 

@@ -58,6 +58,8 @@
           type="primary"
           @click="onSubmit"
           class="register-button"
+          :loading="registerBtn"
+          :disabled="registerBtn"
           size="large">
           提交
         </a-button>
@@ -88,6 +90,7 @@ export default {
   data () {
     const that = this
     return {
+      registerBtn: false,
       form: {
         username: '',
         nickname: '',
@@ -169,6 +172,7 @@ export default {
   },
   methods: {
     onSubmit () {
+      this.registerBtn = true
       this.$refs.registerForm.validate(valid => {
         if (valid) {
           register({
@@ -177,6 +181,7 @@ export default {
             email: this.form.email,
             password: this.form.password
           }).then(resp => {
+            this.registerBtn = false
             storage.set(ACCESS_TOKEN, resp.token, 7 * 24 * 60 * 60 * 1000)
             this.$store.commit('SET_TOKEN', resp.token)
             this.$store.commit('SET_INFO', resp.user)
@@ -186,6 +191,7 @@ export default {
               description: `注册成功`
             })
           }).catch(err => {
+            this.registerBtn = false
             if (err.message === 'VALIDATION_ERROR') {
               err.response.error.forEach(v => {
                 switch (v.field) {
@@ -213,10 +219,10 @@ export default {
                 description: '服务器内部错误，请稍后再试',
                 duration: 4
               })
-            } else if (err.message === 'DUPLICATE_EMAIL') {
+            } else if (err.message === 'CONFLICT_EMAIL') {
               this.$refs.email.validateMessage = '邮箱已经注册'
               this.$refs.email.validateState = 'error'
-            } else if (err.message === 'DUPLICATE_USERNAME') {
+            } else if (err.message === 'CONFLICT_USERNAME') {
               this.$refs.username.validateMessage = '用户名已被占用'
               this.$refs.username.validateState = 'error'
             } else {
@@ -228,13 +234,11 @@ export default {
             }
           })
         } else {
-          console.log('error submit!!')
+          this.registerBtn = false
           return false
         }
       })
     }
-  },
-  watch: {
   }
 }
 </script>

@@ -1,146 +1,99 @@
 <template xmlns="">
   <a-card class="main">
-    <a-form
-      id="formLogin"
-      class="user-layout-login"
-      ref="formLogin"
-      :form="form"
-      @submit="handleSubmit"
+    <h3><span>登录</span></h3>
+    <a-form-model
+      ref="loginForm"
+      :model="form"
+      :rules="rules"
     >
-      <a-alert v-if="isLoginError" type="error" showIcon style="margin-bottom: 24px;" :message="loginErrorMessage" />
-      <a-form-item>
+      <a-form-model-item ref="username" prop="username">
         <a-input
           size="large"
-          type="text"
+          v-model="form.username"
           placeholder="用户名或邮箱"
-          v-decorator="[
-            'username',
-            {rules: [{ required: true, message: '请输入帐户名或邮箱地址' }, { validator: handleUsernameOrEmail }], validateTrigger: 'change'}
-          ]"
         >
-          <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }"/>
+          <a-icon slot="prefix" type="user"/>
         </a-input>
-      </a-form-item>
-
-      <a-form-item>
+      </a-form-model-item>
+      <a-form-model-item ref="password" prop="password">
         <a-input
           size="large"
+          v-model="form.password"
           type="password"
-          autocomplete="false"
           placeholder="密码"
-          v-decorator="[
-            'password',
-            {rules: [{ required: true, message: '请输入密码' }], validateTrigger: 'blur'}
-          ]"
         >
-          <a-icon slot="prefix" type="lock" :style="{ color: 'rgba(0,0,0,.25)' }"/>
+          <a-icon slot="prefix" type="lock"/>
         </a-input>
-      </a-form-item>
-      <a-form-item>
-        <a-checkbox v-decorator="['remember_me', { valuePropName: 'checked' }]">记住我</a-checkbox>
-        <router-link
-          :to="{ name: 'recover' }"
-          class="text-link"
-          style="float: right;"
-        >忘记密码</router-link>
-      </a-form-item>
-
-      <a-form-item style="margin-top:24px">
+      </a-form-model-item>
+      <a-form-model-item>
         <a-button
-          size="large"
           type="primary"
-          htmlType="submit"
+          @click="onSubmit"
           class="login-button"
-          :loading="loadingState.loginBtn"
-          :disabled="loadingState.loginBtn"
-        >确定</a-button>
-      </a-form-item>
+          :loading="loginBtn"
+          :disabled="loginBtn"
+          size="large">
+          登录
+        </a-button>
+      </a-form-model-item>
       <span style="float: right;">
-        没有用户? 点击前往
+        还没有用户? 点击前往
         <router-link
           :to="{ name: 'register' }"
           class="text-link"
-
         >注册</router-link>
       </span>
-    </a-form>
+    </a-form-model>
   </a-card>
 </template>
 
 <script>
-import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
 import { mapActions } from 'vuex'
 import { timeFix } from '@/utils/util'
 
 export default {
-  components: {
-    TwoStepCaptcha
-  },
   data () {
     return {
-      loginErrorMessage: '',
-      loginBtn: true,
-      // auth type: 0 email, 1 username, 2 telephone
-      loginType: 0,
-      isLoginError: false,
-      requiredTwoStepCaptcha: true,
-      form: this.$form.createForm(this),
-      loadingState: {
-        time: 60,
-        loginBtn: false,
-        loginType: 0,
-        smsSendBtn: false
+      loginBtn: false,
+      form: {
+        username: '',
+        password: ''
+      },
+      rules: {
+        username: [
+          { required: true, message: '请输入用户名或邮箱', trigger: 'blur' },
+          { max: 30, message: '用户名/邮箱最长为30个字符', trigger: 'blur' },
+          { min: 5, message: '用户名/邮箱最短为5个字符', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { max: 30, message: '密码最长为30个字符', trigger: 'blur' },
+          { min: 5, message: '密码最短为5个字符', trigger: 'blur' }
+        ]
       }
     }
   },
   methods: {
-    ...mapActions(['Login', 'Logout']),
-    // handler
-    handleUsernameOrEmail (rule, value, callback) {
-      const { loadingState } = this
-      const regex = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/
-      if (regex.test(value)) {
-        loadingState.loginType = 0
-      } else {
-        loadingState.loginType = 1
-      }
-      callback()
-    },
-    handleTabClick (key) {
-      this.customActiveKey = key
-      // this.form.resetFields()
-    },
-    handleSubmit (e) {
-      e.preventDefault()
-      const {
-        form: { validateFields },
-        loadingState,
-        Login
-      } = this
-
-      loadingState.loginBtn = true
-
-      const validateFieldsKey = ['username', 'password', 'remember_me']
-
-      validateFields(validateFieldsKey, { force: true }, (err, values) => {
-        if (!err) {
-          console.log('auth form', values)
-          const loginParams = { ...values }
-          Login(loginParams)
-            .then((res) => this.loginSuccess(res))
+    ...mapActions(['Login']),
+    onSubmit () {
+      this.loginBtn = true
+      this.$refs.loginForm.validate(valid => {
+        if (valid) {
+          this.Login({
+            username: this.form.username,
+            password: this.form.password
+          }).then((res) => this.loginSuccess(res))
             .catch(err => this.requestFailed(err))
             .finally(() => {
-              loadingState.loginBtn = false
+              this.loginBtn = false
             })
         } else {
-          setTimeout(() => {
-            loadingState.loginBtn = false
-          }, 600)
+          this.loginBtn = false
+          return false
         }
       })
     },
-    loginSuccess (res) {
-      this.isLoginError = false
+    loginSuccess (resp) {
       this.$router.push({ path: '/' })
       this.$notification.success({
         message: '欢迎',
@@ -151,28 +104,31 @@ export default {
       if (err.message === 'VALIDATION_ERROR') {
         this.loginErrorMessage = '您输入的以下信息有误：'
         err.validation.forEach(v => {
-          if (v.field === 'UsernameOrEmail') {
-            this.loginErrorMessage += ' 用户名'
-          }
-          if (v.field === 'Password') {
-            this.loginErrorMessage += ' 密码'
+          switch (v.field) {
+            case 'UsernameOrEmail':
+              this.$refs.username.validateMessage = v.translation
+              this.$refs.username.validateState = 'error'
+              break
+            case 'Password':
+              this.$refs.password.validateMessage = v.translation
+              this.$refs.password.validateState = 'error'
+              break
           }
         })
-        this.isLoginError = true
       } else if (err.message === 'INTERNAL_ERROR') {
-        this.$notification['error']({
-          message: '错误',
-          description: '服务器内部错误，请稍后再试',
-          duration: 4
+        this.$error({
+          title: '错误',
+          content: '服务器内部错误，请稍后再试'
         })
       } else if (err.message === 'WRONG_USERNAME' || err.message === 'WRONG_PASSWORD') {
-        this.loginErrorMessage = '错误的用户名或密码'
-        this.isLoginError = true
+        this.$error({
+          title: '用户名或密码错误',
+          content: '用户名或密码错误!'
+        })
       } else {
-        this.$notification['error']({
-          message: '错误',
-          description: err.message || '请求出现错误，请稍后再试',
-          duration: 4
+        this.$error({
+          title: '错误',
+          content: err.message || '请求出现错误，请稍后再试'
         })
       }
     }

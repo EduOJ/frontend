@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 
 const api = {
-  user: '/user',
-  role: '/role',
-  service: '/service',
+  user: '/api/user',
+  role: '/api/role',
+  service: '/api/service',
   permission: '/permission',
   permissionNoPager: '/permission/no-pager',
   orgTree: '/org/tree'

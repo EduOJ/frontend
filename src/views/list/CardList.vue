@@ -41,7 +41,6 @@
 </template>
 
 <script>
-
 const dataSource = []
 dataSource.push({})
 for (let i = 0; i < 11; i++) {

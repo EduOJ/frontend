@@ -74,33 +74,6 @@ const rootRouter = {
 }
 
 /**
- * 动态生成菜单
- * @param token
- * @returns {Promise<Router>}
- */
-export const generatorDynamicRouter = (token) => {
-  return new Promise((resolve, reject) => {
-    loginService.getCurrentUserNav(token).then(res => {
-      console.log('res', res)
-      const { result } = res
-      const menuNav = []
-      const childrenNav = []
-      //      后端数据, 根级树数组,  根级 PID
-      listToTree(result, childrenNav, 0)
-      rootRouter.children = childrenNav
-      menuNav.push(rootRouter)
-      console.log('menuNav', menuNav)
-      const routers = generator(menuNav)
-      routers.push(notFoundRouter)
-      console.log('routers', routers)
-      resolve(routers)
-    }).catch(err => {
-      reject(err)
-    })
-  })
-}
-
-/**
  * 格式化树形结构数据 生成 vue-router 层级路由表
  *
  * @param routerMap
@@ -158,6 +131,7 @@ export const generator = (routerMap, parent) => {
  * @param tree 树
  * @param parentId 父ID
  */
+// eslint-disable-next-line no-unused-vars
 const listToTree = (list, tree, parentId) => {
   list.forEach(item => {
     // 判断是否为父级菜单

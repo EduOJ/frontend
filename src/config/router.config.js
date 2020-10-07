@@ -251,6 +251,12 @@ export const constantRouterMap = [
         meta: { title: '系统管理', icon: 'user', permission: 'all' },
         children: [
           {
+            path: '/admin/logs/',
+            name: 'admin.logs',
+            component: () => import('@/views/admin/Logs'),
+            meta: { title: '日志查看', permission: 'read_logs' }
+          },
+          {
             path: '/admin/users/',
             name: 'admin.users',
             component: () => import('@/views/admin/user/Users'),

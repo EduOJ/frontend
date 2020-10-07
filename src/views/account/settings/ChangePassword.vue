@@ -112,11 +112,11 @@ export default {
               err.response.error.forEach(v => {
                 switch (v.field) {
                   case 'OldPassword':
-                    this.$refs.old_password.validateMessage = v.translation
+                    this.$refs.old_password.help = v.translation
                     this.$refs.old_password.validateState = 'error'
                     break
                   case 'NewPassword':
-                    this.$refs.password.validateMessage = v.translation
+                    this.$refs.password.help = v.translation
                     this.$refs.password.validateState = 'error'
                     break
                 }
@@ -128,13 +128,13 @@ export default {
                 duration: 4
               })
             } else if (err.message === 'CONFLICT_EMAIL') {
-              this.$refs.email.validateMessage = '邮箱已经注册'
+              this.$refs.email.help = '邮箱已经注册'
               this.$refs.email.validateState = 'error'
             } else if (err.message === 'CONFLICT_USERNAME') {
-              this.$refs.username.validateMessage = '用户名已被占用'
+              this.$refs.username.help = '用户名已被占用'
               this.$refs.username.validateState = 'error'
             } else if (err.message === 'WRONG_PASSWORD') {
-              this.$refs.old_password.validateMessage = '密码错误'
+              this.$refs.old_password.help = '密码错误'
               this.$refs.old_password.validateState = 'error'
             } else {
               this.$notification['error']({

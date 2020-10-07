@@ -113,11 +113,11 @@ export default {
         err.validation.forEach(v => {
           switch (v.field) {
             case 'UsernameOrEmail':
-              this.$refs.username.validateMessage = v.translation
+              this.$refs.username.help = v.translation
               this.$refs.username.validateState = 'error'
               break
             case 'Password':
-              this.$refs.password.validateMessage = v.translation
+              this.$refs.password.help = v.translation
               this.$refs.password.validateState = 'error'
               break
           }

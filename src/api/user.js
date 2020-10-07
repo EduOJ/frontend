@@ -2,7 +2,8 @@ import request from '@/utils/request'
 import api from '@/api/api'
 const userApi = {
   GetUser: '/api/user/',
-  UserMe: '/api/user/me'
+  UserMe: '/api/user/me',
+  ChangePassword: '/api/user/change_password'
 }
 
 export function getUser (id) {
@@ -10,19 +11,6 @@ export function getUser (id) {
     url: userApi.GetUser + id,
     method: 'get'
   })
-  // return new Promise((resolve, reject) => {
-  //   request().then(resp => {
-  //     if (resp.message === 'SUCCESS') {
-  //       resolve(resp.data)
-  //     } else {
-  //       const err = new Error(resp.message)
-  //       err.response = resp
-  //       reject(err)
-  //     }
-  //   }).catch(err => {
-  //     reject(err)
-  //   })
-  // })
 }
 
 export function getMe () {
@@ -43,5 +31,21 @@ export function getMe () {
     }).catch(err => {
       reject(err)
     })
+  })
+}
+
+export function changePassword (parameter) {
+  return api({
+    url: userApi.ChangePassword,
+    method: 'post',
+    data: parameter
+  })
+}
+
+export function updateMe (parameter) {
+  return api({
+    url: userApi.UserMe,
+    method: 'put',
+    data: parameter
   })
 }

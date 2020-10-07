@@ -1163,6 +1163,14 @@
   resolved "https://registry.yarnpkg.com/@ragg/inline-attachment/-/inline-attachment-5.0.2.tgz#b7d0f2f68854283620d9f966e71b393172ba714a"
   integrity sha1-t9Dy9ohUKDYg2flm5xs5MXK6cUo=
 
+"@simonwep/pickr@~1.7.0":
+  version "1.7.4"
+  resolved "https://registry.yarnpkg.com/@simonwep/pickr/-/pickr-1.7.4.tgz#b14fcd945890388b870cd6db4d6c78d531f25141"
+  integrity sha512-fq7jgKJT21uWGC1mARBHvvd1JYlEf93o7SuVOB4Lr0x/2UPuNC9Oe9n/GzVeg4oVtqMDfh1wIEJpsdOJEZb+3g==
+  dependencies:
+    core-js "^3.6.5"
+    nanopop "^2.1.0"
+
 "@soda/friendly-errors-webpack-plugin@^1.7.1":
   version "1.7.1"
   resolved "https://registry.npm.taobao.org/@soda/friendly-errors-webpack-plugin/download/@soda/friendly-errors-webpack-plugin-1.7.1.tgz#706f64bcb4a8b9642b48ae3ace444c70334d615d"
@@ -1986,13 +1994,14 @@ ansi-styles@^4.0.0, ansi-styles@^4.1.0:
     "@types/color-name" "^1.1.1"
     color-convert "^2.0.1"
 
-ant-design-vue@1.6.0:
-  version "1.6.0"
-  resolved "https://registry.npm.taobao.org/ant-design-vue/download/ant-design-vue-1.6.0.tgz?cache=0&sync_timestamp=1589552419910&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fant-design-vue%2Fdownload%2Fant-design-vue-1.6.0.tgz#673e09e3ac56feb14154a711e52357fb7518cc32"
-  integrity sha1-Zz4J46xW/rFBVKcR5SNX+3UYzDI=
+ant-design-vue@1.6.5:
+  version "1.6.5"
+  resolved "https://registry.yarnpkg.com/ant-design-vue/-/ant-design-vue-1.6.5.tgz#82f69846d921c220d04bb9ef9a6c40605e146e6c"
+  integrity sha512-FzLrK+JuJUq+g4vd+UjFFi13ZdSsb11EZFapisFXilJxpc1LxqyunZu5AP4nr9vFLs3J4UX2A6q+Rp/Fi6JrLg==
   dependencies:
     "@ant-design/icons" "^2.1.1"
     "@ant-design/icons-vue" "^2.0.0"
+    "@simonwep/pickr" "~1.7.0"
     add-dom-event-listener "^1.0.2"
     array-tree-filter "^2.1.0"
     async-validator "^3.0.3"
@@ -3416,7 +3425,7 @@ core-js@^2.4.0:
   resolved "https://registry.npm.taobao.org/core-js/download/core-js-2.6.11.tgz#38831469f9922bded8ee21c9dc46985e0399308c"
   integrity sha1-OIMUafmSK97Y7iHJ3EaYXgOZMIw=
 
-core-js@^3.1.2, core-js@^3.6.4:
+core-js@^3.1.2, core-js@^3.6.4, core-js@^3.6.5:
   version "3.6.5"
   resolved "https://registry.npm.taobao.org/core-js/download/core-js-3.6.5.tgz#7395dc273af37fb2e50e9bd3d9fe841285231d1a"
   integrity sha1-c5XcJzrzf7LlDpvT2f6EEoUjHRo=
@@ -7596,6 +7605,11 @@ nanomatch@^1.2.9:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
+nanopop@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/nanopop/-/nanopop-2.1.0.tgz#23476513cee2405888afd2e8a4b54066b70b9e60"
+  integrity sha512-jGTwpFRexSH+fxappnGQtN9dspgE2ipa1aOjtR24igG0pv6JCxImIAmrLRHX+zUF5+1wtsFVbKyfP51kIGAVNw==
+
 natural-compare@^1.4.0:
   version "1.4.0"
   resolved "https://registry.npm.taobao.org/natural-compare/download/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
@@ -10933,6 +10947,11 @@ vue-cropper@0.4.9:
   version "0.4.9"
   resolved "https://registry.npm.taobao.org/vue-cropper/download/vue-cropper-0.4.9.tgz#fe650f32516ecf29014bbd4a9079191c8dc5a5ae"
   integrity sha1-/mUPMlFuzykBS71KkHkZHI3Fpa4=
+
+vue-draggable-resizable@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/vue-draggable-resizable/-/vue-draggable-resizable-2.2.0.tgz#eb4581b6ddd6a20c5f54f99993c8646382523296"
+  integrity sha512-KjVyzg0OtLsyVhnwD/6NozJkLMD3li41QB/aJIJUr3VS75Gn32UPOWidLvhwsbkwNQcKajXW9QCV1aTrN6MY8w==
 
 vue-eslint-parser@^5.0.0:
   version "5.0.0"

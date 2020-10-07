@@ -26,6 +26,11 @@
         </a-input>
       </a-form-model-item>
       <a-form-model-item>
+        <a-checkbox value="1" name="type" v-model="form.remember_me">
+          记住我
+        </a-checkbox>
+      </a-form-model-item>
+      <a-form-model-item>
         <a-button
           type="primary"
           @click="onSubmit"
@@ -57,7 +62,8 @@ export default {
       loginBtn: false,
       form: {
         username: '',
-        password: ''
+        password: '',
+        remember_me: true
       },
       rules: {
         username: [
@@ -81,7 +87,8 @@ export default {
         if (valid) {
           this.Login({
             username: this.form.username,
-            password: this.form.password
+            password: this.form.password,
+            remember_me: this.form.remember_me
           }).then((res) => this.loginSuccess(res))
             .catch(err => this.requestFailed(err))
             .finally(() => {

@@ -1,5 +1,5 @@
 import router from './router'
-// import store from './store'
+import store from '@/store'
 import storage from 'store'
 import NProgress from 'nprogress' // progress bar
 import '@/components/NProgress/nprogress.less' // progress bar custom style
@@ -18,13 +18,41 @@ router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
   to.meta && (typeof to.meta.title !== 'undefined' && setDocumentTitle(`${i18nRender(to.meta.title)} - ${domTitle}`))
   /* has token */
+  console.log(to)
   if (storage.get(ACCESS_TOKEN)) {
     if (to.path === loginRoutePath) {
       next({ path: defaultRoutePath })
       NProgress.done()
     } else {
-      // TODO: check permission for route.
-      next()
+      if (to.meta && to.meta.permission) {
+        if (store.state.user && store.state.user.info && store.state.user.info.roles) {
+          if (store.getters.can(to.meta.permission, to.meta.target, to.params.id)) {
+            next()
+          } else {
+            next({ name: 'Exception403' })
+          }
+        } else {
+          store.dispatch('GetInfo').then(data => {
+            store.commit('SET_INFO', data)
+            if (store.state.user && store.state.user.info && store.state.user.info.roles) {
+              if (store.getters.can(to.meta.permission, to.meta.target, to.params.id)) {
+                next()
+                NProgress.done()
+              } else {
+                next({ name: 'Exception403' })
+                NProgress.done()
+              }
+            } else {
+              next({ name: 'login' })
+              NProgress.done()
+            }
+          })
+        }
+      } else {
+        next()
+        NProgress.done()
+      }
+
       // // check auth user.roles is null
       // if (store.getters.roles.length === 0) {
       //   // request auth userInfo
@@ -65,9 +93,10 @@ router.beforeEach((to, from, next) => {
   } else {
     if (whiteList.includes(to.name)) {
       next()
+      NProgress.done()
     } else {
       next()
-      // next({ path: loginRoutePath, query: { redirect: to.fullPath } })
+      // next({ path: loginRoutePath, query: { redirect: to.fullPath } })s
       NProgress.done() // if current page is auth will not trigger afterEach hook, so manually handle it
     }
   }

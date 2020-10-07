@@ -65,11 +65,10 @@ const user = {
         }
         if (state.token) {
           getMe().then(result => {
-            console.log(result)
             commit('SET_INFO', result.user)
             resolve(state.info)
           }).catch(err => {
-            if (err.response && err.response.message === 'AUTH_NEED_TOKEN' || err.response.message === 'AUTH_TOKEN_NOT_FOUND') {
+            if (err.response && err.response.message && (err.response.message === 'AUTH_NEED_TOKEN' || err.response.message === 'AUTH_TOKEN_NOT_FOUND')) {
               commit('SET_INFO', guest)
               resolve(guest)
             } else {

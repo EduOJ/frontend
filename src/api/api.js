@@ -20,7 +20,7 @@ const api = req => {
             message: '错误',
             description: resp.message === 'AUTH_NEED_TOKEN' ? '本页面需要登录才能访问' : '你的登录状态已经过期'
           })
-          router.push('/user/login')
+          router.push({ name: 'login' })
         } else if (resp.message === 'PERMISSION_DENIED') {
           router.push({ path: '/' })
           notification.error({

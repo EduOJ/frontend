@@ -79,7 +79,6 @@ export default {
           const text = this.editor.getValue().replace(this.lastValue, newValue)
           this.editor.setValue(text)
           this.settings.onFileUploaded.call(this, filename)
-          console.log(this.editor.instance.doc.getCursor(), newValue, newValue.search('CHANGE THIS'), newValue.search('CHANGE THIS') + 11)
           this.editor.instance.doc.setSelection({
             line: this.editor.instance.doc.getCursor().line,
             ch: this.editor.instance.doc.getCursor().ch - 20
@@ -101,7 +100,7 @@ export default {
             message: '错误',
             description: resp.message === 'AUTH_NEED_TOKEN' ? '本页面需要登录才能访问' : '你的登录状态已经过期'
           })
-          that.$router.push('/user/login')
+          that.$router.push({ name: 'login' })
           return false
         }
       }

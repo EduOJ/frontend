@@ -7,12 +7,16 @@
     <template v-slot:overlay>
       <a-menu v-if="!user.isGuest" class="ant-pro-drop-down menu" :selected-keys="[]">
         <a-menu-item key="center">
-          <a-icon type="user" />
-          个人中心
+          <router-link :to="{name:'' }">
+            <a-icon type="user" />
+            个人中心
+          </router-link>
         </a-menu-item>
         <a-menu-item key="settings">
-          <a-icon type="setting" />
-          个人设置
+          <router-link :to="{name:'settings' }">
+            <a-icon type="setting" />
+            个人设置
+          </router-link>
         </a-menu-item>
         <a-menu-divider />
         <a-menu-item key="logout" @click="handleLogout">
@@ -22,13 +26,13 @@
       </a-menu>
       <a-menu v-else class="ant-pro-drop-down menu" :selected-keys="[]">
         <a-menu-item key="login">
-          <router-link to="/user/login">
+          <router-link :to="{name: 'login'}">
             <a-icon type="login" />
             登录
           </router-link>
         </a-menu-item>
         <a-menu-item key="register">
-          <router-link to="/user/register">
+          <router-link :to="{name: 'register'}">
             <a-icon type="user-add" />
             注册
           </router-link>

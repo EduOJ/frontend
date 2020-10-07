@@ -1,70 +1,89 @@
 <template>
-  <div class="account-settings-info-view">
-    <a-spin :spinning="loading">
-      <a-form-model
-        ref="form"
-        :model="form"
-        :rules="rules"
-        :label-col="{span: 3}"
-        :wrapper-col="{span: 6}"
-      >
-        <a-form-model-item ref="username" prop="username" label="用户名">
-          <a-input
-            size="large"
-            v-model="form.username"
-            placeholder="用户名"
+  <a-row>
+    <a-col span="12" offset="6">
+      <a-card title="编辑用户">
+        <a-spin :spinning="loading">
+          <a-form-model
+            ref="form"
+            :model="form"
+            :rules="rules"
+            :label-col="{span: 6}"
+            :wrapper-col="{span: 18}"
           >
-            <a-icon slot="prefix" type="user"/>
-          </a-input>
-        </a-form-model-item>
-        <a-form-model-item ref="email" prop="email" label="邮箱">
-          <a-input
-            size="large"
-            v-model="form.email"
-            placeholder="邮箱"
-          >
-            <a-icon slot="prefix" type="mail"/>
-          </a-input>
-        </a-form-model-item>
-        <a-form-model-item ref="nickname" prop="nickname" label="昵称">
-          <a-input
-            size="large"
-            v-model="form.nickname"
-            placeholder="昵称"
-          >
-            <a-icon slot="prefix" type="idcard"/>
-          </a-input>
-        </a-form-model-item>
-        <a-form-model-item label="">
-          <a-button
-            type="primary"
-            @click="onSubmit"
-            class="register-button"
-            :loading="submitBtn"
-            :disabled="submitBtn"
-            size="large">
-            提交
-          </a-button>
-        </a-form-model-item>
-      </a-form-model>
-    </a-spin>
-  </div>
+            <a-form-model-item ref="username" prop="username" label="用户名">
+              <a-input
+                size="large"
+                v-model="form.username"
+                placeholder="用户名"
+              >
+                <a-icon slot="prefix" type="user"/>
+              </a-input>
+            </a-form-model-item>
+            <a-form-model-item ref="email" prop="email" label="邮箱">
+              <a-input
+                size="large"
+                v-model="form.email"
+                placeholder="邮箱"
+              >
+                <a-icon slot="prefix" type="mail"/>
+              </a-input>
+            </a-form-model-item>
+            <a-form-model-item ref="nickname" prop="nickname" label="昵称">
+              <a-input
+                size="large"
+                v-model="form.nickname"
+                placeholder="昵称"
+              >
+                <a-icon slot="prefix" type="idcard"/>
+              </a-input>
+            </a-form-model-item>
+            <a-form-model-item ref="password" prop="password" label="密码">
+              <a-input
+                size="large"
+                v-model="form.password"
+                type="password"
+                placeholder="密码, 留空既不修改."
+              >
+                <a-icon slot="prefix" type="key"/>
+              </a-input>
+            </a-form-model-item>
+            <a-form-model-item :wrapper-col="{ span: 18, offset: 6 }">
+              <a-space>
+                <a-button
+                  type="primary"
+                  @click="onSubmit"
+                  class="register-button"
+                  :loading="submitBtn"
+                  :disabled="submitBtn"
+                  size="large">
+                  提交
+                </a-button>
+                <a-button
+                  type="secondary"
+                  @click="$router.go(-1)"
+                  size="large">
+                  返回
+                </a-button>
+              </a-space>
+            </a-form-model-item>
+          </a-form-model>
+        </a-spin>
+      </a-card>
+    </a-col>
+  </a-row>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
-import { updateMe } from '@/api/user'
-import store from '@/store'
+import { getUser, updateUser } from '@/api/admin_manage_user'
 
 export default {
   components: {
   },
   data () {
-    const info = this.$store.state.user.info
     return {
       loading: true,
       submitBtn: false,
-      form: info,
+      form: {},
       rules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
@@ -82,36 +101,42 @@ export default {
           { required: true, message: '请输入昵称', trigger: 'blur' },
           { max: 30, message: '昵称最长为30个字符', trigger: 'blur' },
           { min: 1, message: '昵称最短为1个字符', trigger: 'blur' }
+        ],
+        password: [
+          { min: 5, message: '密码最短为5个字符', trigger: 'blur' },
+          { max: 30, message: '密码最长为30个字符', trigger: 'blur' }
         ]
       }
     }
   },
   mounted () {
-    this.GetInfo().then(data => {
-      store.commit('SET_INFO', data)
-      this.form = data
+    getUser(this.$route.params.id).then(data => {
+      this.form = data.user
       this.loading = false
     })
   },
   methods: {
-    ...mapActions(['GetInfo']),
     onSubmit () {
       this.submitBtn = true
       this.$refs.form.validate(valid => {
         if (valid) {
-          updateMe({
+          updateUser(this.$route.params.id, {
             username: this.form.username,
             nickname: this.form.nickname,
-            email: this.form.email
+            email: this.form.email,
+            password: this.form.password
           }).then(resp => {
-            this.$success({
+            this.$confirm({
               title: '成功',
-              content: '修改成功'
+              content: '编辑成功',
+              cancelText: '返回',
+              okText: '继续编辑',
+              icon: () => <a-icon type="check-circle" style="color: #52c41a !important;"/>,
+              onCancel: () => {
+                this.$router.go(-1)
+              }
             })
             this.submitBtn = false
-            store.dispatch('GetInfo').then(data => {
-              store.commit('SET_INFO', data)
-            })
           }).catch(err => {
             this.submitBtn = false
             if (err.message === 'VALIDATION_ERROR') {
@@ -128,6 +153,10 @@ export default {
                   case 'Nickname':
                     this.$refs.nickname.validateMessage = v.translation
                     this.$refs.nickname.validateState = 'error'
+                    break
+                  case 'Password':
+                    this.$refs.password.validateMessage = v.translation
+                    this.$refs.password.validateState = 'error'
                     break
                 }
               })
@@ -163,57 +192,4 @@ export default {
 
 <style lang="less" scoped>
 
-  .avatar-upload-wrapper {
-    height: 200px;
-    width: 100%;
-  }
-
-  .ant-upload-preview {
-    position: relative;
-    margin: 0 auto;
-    width: 100%;
-    max-width: 180px;
-    border-radius: 50%;
-    box-shadow: 0 0 4px #ccc;
-
-    .upload-icon {
-      position: absolute;
-      top: 0;
-      right: 10px;
-      font-size: 1.4rem;
-      padding: 0.5rem;
-      background: rgba(222, 221, 221, 0.7);
-      border-radius: 50%;
-      border: 1px solid rgba(0, 0, 0, 0.2);
-    }
-    .mask {
-      opacity: 0;
-      position: absolute;
-      background: rgba(0,0,0,0.4);
-      cursor: pointer;
-      transition: opacity 0.4s;
-
-      &:hover {
-        opacity: 1;
-      }
-
-      i {
-        font-size: 2rem;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        margin-left: -1rem;
-        margin-top: -1rem;
-        color: #d6d6d6;
-      }
-    }
-
-    img, .mask {
-      width: 100%;
-      max-width: 180px;
-      height: 100%;
-      border-radius: 50%;
-      overflow: hidden;
-    }
-  }
 </style>

@@ -52,7 +52,6 @@ export default {
     }
   },
   mounted () {
-    console.log(JSON.parse(JSON.stringify(this.user)))
   }
 }
 </script>

@@ -11,28 +11,13 @@
             @openChange="onOpenChange"
           >
             <a-menu-item key="/account/settings/base">
-              <router-link :to="{ name: 'BaseSettings' }">
+              <router-link :to="{ name: 'settings.base' }">
                 基本设置
               </router-link>
             </a-menu-item>
-            <a-menu-item key="/account/settings/security">
-              <router-link :to="{ name: 'SecuritySettings' }">
-                安全设置
-              </router-link>
-            </a-menu-item>
-            <a-menu-item key="/account/settings/custom">
-              <router-link :to="{ name: 'CustomSettings' }">
-                个性化
-              </router-link>
-            </a-menu-item>
-            <a-menu-item key="/account/settings/binding">
-              <router-link :to="{ name: 'BindingSettings' }">
-                账户绑定
-              </router-link>
-            </a-menu-item>
-            <a-menu-item key="/account/settings/notification">
-              <router-link :to="{ name: 'NotificationSettings' }">
-                新消息通知
+            <a-menu-item key="/account/settings/change_password">
+              <router-link :to="{ name: 'settings.change_password' }">
+                修改密码
               </router-link>
             </a-menu-item>
           </a-menu>
@@ -61,29 +46,8 @@ export default {
     return {
       // horizontal  inline
       mode: 'inline',
-
       openKeys: [],
-      selectedKeys: [],
-
-      // cropper
-      preview: {},
-      option: {
-        img: '/avatar2.jpg',
-        info: true,
-        size: 1,
-        outputType: 'jpeg',
-        canScale: false,
-        autoCrop: true,
-        // 只有自动截图开启 宽度高度才生效
-        autoCropWidth: 180,
-        autoCropHeight: 180,
-        fixedBox: true,
-        // 开启宽度和高度比例
-        fixed: true,
-        fixedNumber: [1, 1]
-      },
-
-      pageTitle: ''
+      selectedKeys: []
     }
   },
   mounted () {

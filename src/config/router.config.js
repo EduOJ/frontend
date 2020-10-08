@@ -1,5 +1,4 @@
-// eslint-disable-next-line
-import { UserLayout, BasicLayout, BlankLayout } from '@/layouts'
+import { UserLayout, BasicLayout } from '@/layouts'
 import { bxAnaalyse } from '@/core/icons'
 
 const RouteView = {
@@ -162,7 +161,7 @@ export const constantRouterMap = [
             name: 'result',
             component: RouteView,
             redirect: '/result/success',
-            meta: { title: '结果页', icon: 'check-circle-o', permission: [ 'result' ] },
+            meta: { title: '结果页', icon: 'check-circle-o', permission: 'result' },
             children: [
               {
                 path: '/result/success',
@@ -248,7 +247,7 @@ export const constantRouterMap = [
         path: '/admin',
         component: RouteView,
         name: 'admin',
-        meta: { title: '系统管理', icon: 'user', permission: 'all' },
+        meta: { title: '系统管理', icon: 'user' },
         children: [
           {
             path: '/admin/logs/',
@@ -260,7 +259,7 @@ export const constantRouterMap = [
             path: '/admin/users/',
             name: 'admin.users',
             component: () => import('@/views/admin/user/Users'),
-            meta: { title: '用户管理', permission: 'manage_users' }
+            meta: { title: '用户管理', permission: 'read_user' }
           },
           {
             path: '/admin/user/add',
@@ -274,13 +273,13 @@ export const constantRouterMap = [
             name: 'admin.user',
             component: RouteView,
             hidden: true,
-            meta: { title: '用户管理', permission: 'manage_users' },
+            meta: { title: '用户管理', permission: 'read_user' },
             children: [
               {
                 path: '/admin/user/:id/edit',
                 name: 'admin.user.edit',
                 component: () => import('@/views/admin/user/EditUser'),
-                meta: { title: '编辑用户', permission: 'update_user' }
+                meta: { title: '编辑用户', permission: 'manage_user' }
               }
             ]
           }

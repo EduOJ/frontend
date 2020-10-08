@@ -30,6 +30,7 @@ import config from '@/config/config'
 import RightContent from '@/components/GlobalHeader/RightContent'
 import GlobalFooter from '@/components/GlobalFooter'
 import LogoSvg from '../assets/logo.svg?inline'
+import store from '@/store'
 // import { mapState } from 'vuex'
 
 export default {
@@ -75,15 +76,45 @@ export default {
     }
   },
   created () {
-    const routes = this.$router.options.routes
-    this.menus = (routes[0] && routes[0].children) || []
-    // TODO: 动态主菜单
-    // 处理侧栏收起状态
-    this.$watch('collapsed', () => {
-      this.$store.commit(SIDEBAR_TYPE, this.collapsed)
-    })
-    this.$watch('isMobile', () => {
-      this.$store.commit(TOGGLE_MOBILE_TYPE, this.isMobile)
+    store.dispatch('GetInfo').then(data => {
+      store.commit('SET_INFO', data)
+      const routes = this.$router.options.routes
+      const menus = (routes[0] && routes[0].children) || []
+      const filter = (menu) => {
+        if (menu.meta && menu.meta.permission) {
+          if (!this.$store.getters.can(menu.meta.permission, menu.meta.target, -1)) {
+            return null
+          }
+        }
+        const copy = Object.assign({}, menu)
+        if (menu.children) {
+          copy.children = []
+          menu.children.forEach((menu) => {
+            const t = filter(menu)
+            if (t) {
+              copy.children.push(t)
+            }
+          })
+          if (copy.children.length === 0 && (copy.component.name || copy.component.name === 'RouteView')) {
+            return null
+          }
+        }
+        return copy
+      }
+      this.menus = []
+      menus.forEach((menu) => {
+        const filtered = filter(menu)
+        if (filtered) {
+          this.menus.push(filtered)
+        }
+      })
+
+      this.$watch('collapsed', () => {
+        this.$store.commit(SIDEBAR_TYPE, this.collapsed)
+      })
+      this.$watch('isMobile', () => {
+        this.$store.commit(TOGGLE_MOBILE_TYPE, this.isMobile)
+      })
     })
   },
   mounted () {

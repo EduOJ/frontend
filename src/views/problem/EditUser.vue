@@ -110,20 +110,18 @@ export default {
     }
   },
   mounted () {
-    getUser(this.$route.params.id).then(data => {
+    console.log(getUser(this.$route.params.id).then(data => {
       this.form = data.user
       this.loading = false
     }).catch(err => {
+      console.log(err)
       this.$error({
         'title': '获取用户失败',
-        content: {
-        'NOT_FOUND': '用户不存在'
-      }[err],
-        onOk: () => {
-          this.$router.go(-1)
-        }
+        'content': {
+          'NOT_FOUND': '用户不存在'
+        }[err]
       })
-    })
+    }))
   },
   methods: {
     onSubmit () {

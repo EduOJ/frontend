@@ -7,7 +7,8 @@ const guest = {
   email: 'guest@example.com',
   username: 'guest',
   nickname: 'Guest',
-  isGuest: 'true'
+  isGuest: 'true',
+  roles: []
 }
 
 const user = {

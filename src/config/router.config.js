@@ -47,6 +47,39 @@ export const constantRouterMap = [
         ]
       },
       {
+        path: '/problems/',
+        component: RouteView,
+        meta: { title: '题目管理' },
+        children: [
+          {
+            path: '/problems/',
+            name: 'problems',
+            component: () => import('@/views/problem/Problems'),
+            meta: { title: '题目列表' }
+          },
+          {
+            path: '/problem/add',
+            name: 'problem.add',
+            component: () => import('@/views/problem/CreateProblem'),
+            meta: { title: '创建题目', permission: 'create_problem' }
+          },
+          {
+            path: '/problem/:id',
+            name: 'problem',
+            component: () => import('@/views/problem/Problem'),
+            hidden: true,
+            meta: { title: '查看题目' }
+          },
+          {
+            path: '/problem/:id/edit',
+            name: 'problem.edit',
+            component: () => import('@/views/problem/EditUser'),
+            hidden: true,
+            meta: { title: '编辑题目', permission: 'update_problem' }
+          }
+        ]
+      },
+      {
         path: '/dummy1',
         component: RouteView,
         redirect: '/form/base-form',

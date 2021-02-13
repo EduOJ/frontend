@@ -11,6 +11,9 @@ import { VueAxios } from './utils/request'
 import ProLayout, { PageHeaderWrapper } from '@ant-design-vue/pro-layout'
 import themePluginConfig from '../config/themePluginConfig'
 import { FormModel, Space } from 'ant-design-vue'
+import PerfectScrollbar from 'vue2-perfect-scrollbar'
+import VueClipboard from 'vue-clipboard2'
+import 'vue2-perfect-scrollbar/dist/vue2-perfect-scrollbar.css'
 
 import bootstrap from './core/bootstrap'
 import './core/lazy_use'
@@ -24,7 +27,9 @@ Vue.config.productionTip = false
 Vue.use(VueAxios)
 Vue.use(FormModel)
 Vue.use(Space)
+Vue.use(VueClipboard)
 
+Vue.use(PerfectScrollbar)
 Vue.component('pro-layout', ProLayout)
 Vue.component('page-header-wrapper', PageHeaderWrapper)
 

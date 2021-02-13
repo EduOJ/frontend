@@ -2,23 +2,25 @@
   <a-spin :spinning="load" @mouseover="show_actions = true" @mouseout="show_actions = false">
     <perfect-scrollbar>
       <highlightjs :autodetect="language === ''" :language="language === '' ? undefined : language" :code="content" class="eduoj-code"/>
-      <div class="action" v-show="show_actions">
-        <a-space>
-          <a-button
-            size="small"
-            v-clipboard:copy="content"
-            v-clipboard:success="copySuccess"
-            v-clipboard:error="copyError"
-            ghost
-          >
-            复制
-          </a-button>
-          <a-button size="small" @click="handleSave()" v-if="filename !== ''" ghost>
-            下载
-          </a-button>
-        </a-space>
-      </div>
     </perfect-scrollbar>
+    <div class="action" v-show="show_actions">
+      <a-space>
+        <a-button
+          size="small"
+          v-clipboard:copy="content"
+          v-clipboard:success="copySuccess"
+          v-clipboard:error="copyError"
+          ghost
+        >
+          <a-icon type="copy" />
+          复制
+        </a-button>
+        <a-button size="small" @click="handleSave()" v-if="filename !== ''" ghost>
+          <a-icon type="download" />
+          下载
+        </a-button>
+      </a-space>
+    </div>
   </a-spin>
 </template>
 
@@ -87,10 +89,6 @@ export default {
     },
     handleSave () {
       download(this.content, this.filename)
-    },
-    handleHover () {
-      console.log('hover')
-      this.show_actions = true
     }
   }
 }

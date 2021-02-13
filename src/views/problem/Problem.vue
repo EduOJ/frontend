@@ -108,7 +108,8 @@ export default {
       getProblem(this.id).then(data => {
         this.loading = false
         data.problem.test_cases.sort((a, b) => {
-          return a.id - b.id
+          if (a.sample === b.sample) { return a.id - b.id }
+          return !a.sample ? 1 : -1 // make sample testcase top.
         })
         this.problem = data.problem
       })

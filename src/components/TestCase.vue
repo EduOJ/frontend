@@ -1,5 +1,14 @@
 <template>
-  <a-card :title="title" size="small" class="card">
+  <a-card size="small" class="card">
+    <span slot="title">
+      {{ title }}
+      <a-tag v-if="t.sample" color="orange">
+        样例
+      </a-tag>
+      <a-tag v-else color="red">
+        私密
+      </a-tag>
+    </span>
     <a-row :gutter="10" v-if="detailed">
       <a-col span="12">
         Input:

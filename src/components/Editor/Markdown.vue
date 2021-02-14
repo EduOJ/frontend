@@ -29,7 +29,8 @@ export default {
         math: {
           inlineDigit: true,
           engine: 'MathJax'
-        }
+        },
+        cdn: '/assets/vditor'
       })
     }
   },

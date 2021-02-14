@@ -54,9 +54,9 @@
             </a-descriptions-item>
             <a-descriptions-item label="附件" :span="3">
               {{ problem.attachment_file_name == "" ? "无" : "" }}
-              <a :href="config.apiUrl + '/api/problem/' + problem.id + '/attachment_file'" v-if="problem.attachment_file_name != ''">
+              <a-button :loading="downloading" @click="downloadAttachment()" v-if="problem.attachment_file_name != ''">
                 <a-icon type="download" />
-                {{ problem.attachment_file_name }}</a>
+                {{ download_message }}</a-button>
             </a-descriptions-item>
           </a-descriptions>
         </a-card>
@@ -70,6 +70,9 @@ import { getProblem } from '@/api/problem'
 import Markdown from '@/components/Editor/Markdown'
 import TestCase from '@/components/TestCase'
 import config from '@/config/config'
+import request from '@/utils/request'
+import download from 'js-file-download'
+
 export default {
   name: 'Problem',
   components: {
@@ -81,6 +84,8 @@ export default {
       config: config,
       id: this.$route.params.id,
       loading: true,
+      downloading: false,
+      download_message: '',
       can_read_problem: this.$store.getters.can('read_problem', 'problem', this.$route.params.id) || this.$store.getters.can('read_problem'),
       can_read_secret: this.$store.getters.can('read_problem_secret', 'problem', this.$route.params.id) || this.$store.getters.can('read_problem_secret'),
       problem: {
@@ -112,6 +117,34 @@ export default {
           return !a.sample ? 1 : -1 // make sample testcase top.
         })
         this.problem = data.problem
+        this.download_message = data.problem.attachment_file_name
+      })
+    },
+    downloadAttachment () {
+      const url = config.apiUrl + '/api/problem/' + this.problem.id + '/attachment_file'
+      this.downloading = true
+      this.download_message = '下载中'
+      request({
+        timeout: 0,
+        url: url,
+        method: 'get',
+        onDownloadProgress: (progressEvent) => {
+          console.log(progressEvent)
+          const percentCompleted = Math.floor(progressEvent.loaded / progressEvent.total * 100)
+          console.log('completed: ', percentCompleted)
+          this.download_message = `已下载 ${percentCompleted} %`
+        }
+      }).then(resp => {
+        this.download_message = this.problem.attachment_file_name
+        this.downloading = false
+        download(resp.data, this.problem.attachment_file_name)
+      }).catch(err => {
+        this.download_message = this.problem.attachment_file_name
+        this.downloading = false
+        console.log(err)
+        this.$error({
+          content: '下载失败！' + err.message
+        })
       })
     }
   }

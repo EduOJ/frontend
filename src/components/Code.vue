@@ -13,7 +13,7 @@
           ghost
         >
           <a-icon type="copy" />
-          复制
+          {{ copy_tooltip ? '复制成功！':'复制' }}
         </a-button>
         <a-button size="small" @click="handleSave()" v-if="filename !== ''" ghost>
           <a-icon type="download" />
@@ -57,14 +57,14 @@ export default {
         load: false,
         content: this.text,
         show_actions: false,
-        copy_tooltip_visible: false
+        copy_tooltip: false
       }
     }
     return {
       load: true,
       content: '',
       show_actions: false,
-      copy_tooltip_visible: false
+      copy_tooltip: false
     }
   },
   mounted () {
@@ -82,7 +82,10 @@ export default {
   },
   methods: {
     copySuccess () {
-      this.$message.success('复制成功')
+      this.copy_tooltip = true
+      setTimeout(_ => {
+        this.copy_tooltip = false
+      }, 2000)
     },
     copyError () {
       this.$message.error('复制失败')

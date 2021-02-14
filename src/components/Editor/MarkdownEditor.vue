@@ -50,6 +50,7 @@ export default {
       resize: {
         enable: true
       },
+      cdn: '/assets/vditor',
       preview: {
         hljs: {
           enable: true,

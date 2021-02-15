@@ -1,5 +1,7 @@
 <template>
-  <div :id="uniqueId">
+  <div class="heti" style="max-width: 100%!important;">
+    <div ref="render">
+    </div>
   </div>
 </template>
 
@@ -10,14 +12,12 @@ import store from '@/store'
 import storage from 'store'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { notification } from 'ant-design-vue'
+import Heti from 'heti/js/heti-addon.js'
 
+const h = new Heti()
 export default {
   name: 'MarkDownEditor',
   props: {
-    uniqueId: {
-      type: String,
-      required: true
-    },
     value: {
       type: String,
       default: ''
@@ -36,16 +36,14 @@ export default {
   },
   mounted () {
     const that = this
-    this.contentEditor = new Vditor(this.uniqueId, {
+    this.contentEditor = new Vditor(this.$refs.render, {
       height: 360,
       toolbarConfig: {
         pin: true
       },
+      classes: 'heti',
       cache: {
         enable: false
-      },
-      after: () => {
-        this.contentEditor.setValue(this.value)
       },
       resize: {
         enable: true
@@ -60,6 +58,10 @@ export default {
         math: {
           inlineDigit: true,
           engine: 'MathJax'
+        },
+        parse: (elem) => {
+          console.log(elem)
+          h.spacingElement(elem)
         }
       },
       tab: '    ',

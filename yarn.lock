@@ -5557,6 +5557,17 @@ he@1.2.x, he@^1.1.0:
   resolved "https://registry.npm.taobao.org/he/download/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
   integrity sha1-hK5l+n6vsWX922FWauFLrwVmTw8=
 
+heti-findandreplacedomtext@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/heti-findandreplacedomtext/-/heti-findandreplacedomtext-0.5.0.tgz#a69dd028ac3d37c73a33173e376f2c3366cdd46f"
+  integrity sha512-GFZjqU8LAdu1uR72GqrReI+lzNLMlcWtvdz1TKNJiofyo1mfTecFYSZEoEbcLcRMl+KwEldnNQoS4BwO8wtg0A==
+
+heti@leoleoasd/heti:
+  version "0.8.1"
+  resolved "https://codeload.github.com/leoleoasd/heti/tar.gz/e59e04f654cd80e5250e68a5c84f563b1c76716a"
+  dependencies:
+    heti-findandreplacedomtext "^0.5.0"
+
 hex-color-regex@^1.1.0:
   version "1.1.0"
   resolved "https://registry.npm.taobao.org/hex-color-regex/download/hex-color-regex-1.1.0.tgz#4c06fccb4602fe2602b3c93df82d7e7dbf1a8a8e"

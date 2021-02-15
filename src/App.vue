@@ -26,3 +26,8 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+$format_pre_code: false;
+@import '~heti/lib/heti.scss';
+</style>

@@ -1,7 +1,7 @@
 <template>
   <a-spin :spinning="loading" style="height: 100%">
     <a-row :gutter="16" style="height: 100%">
-      <a-col span="18" style="height: 100%">
+      <a-col offset="2" span="14" style="height: 100%">
         <a-card :title="problem.name" style="height: 100%">
           <perfect-scrollbar>
             <a-skeleton active :loading="loading">

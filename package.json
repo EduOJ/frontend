@@ -18,6 +18,7 @@
     "axios": "^0.19.0",
     "core-js": "^3.1.2",
     "enquire.js": "^2.1.6",
+    "heti": "leoleoasd/heti",
     "highlight.js": "^10.6.0",
     "js-file-download": "^0.4.12",
     "js-md5": "^0.7.3",

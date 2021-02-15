@@ -1,11 +1,15 @@
 <template>
-  <div ref="render">
+  <div class="heti">
+    <div ref="render">
 
+    </div>
   </div>
 </template>
 
 <script>
 import Vditor from 'vditor'
+import Heti from 'heti/js/heti-addon.js'
+const h = new Heti()
 
 export default {
   name: 'Markdown',
@@ -30,7 +34,10 @@ export default {
           inlineDigit: true,
           engine: 'MathJax'
         },
-        cdn: '/assets/vditor'
+        cdn: '/assets/vditor',
+        after: () => {
+          h.spacingElement(this.$refs.render)
+        }
       })
     }
   },

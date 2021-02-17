@@ -1,7 +1,7 @@
 <template>
   <a-spin :spinning="loading" style="height: 100%">
-    <a-row :gutter="16" style="height: 100%">
-      <a-col offset="2" span="14" style="height: 100%">
+    <a-row :gutter="[16,16]" style="height: 100%">
+      <a-col :xl="{span:14, offset:2}" :lg="{span:16}" style="height: 100%">
         <a-card :title="problem.name" style="height: 100%">
           <perfect-scrollbar>
             <a-skeleton active :loading="loading">
@@ -10,9 +10,14 @@
               <test-case v-for="t in problem.test_cases" :t="t" :key="t.id" :can-read-secret="can_read_secret"/>
             </a-skeleton>
           </perfect-scrollbar>
+          <router-link :to="{name: 'problem.edit', id:problem.id}" slot="extra">
+            <a-button>
+              <a-icon type="edit"/> 编辑题目
+            </a-button>
+          </router-link>
         </a-card>
       </a-col>
-      <a-col span="6">
+      <a-col :xl="{span:6}" :lg="{span:8}" >
         <a-card>
           <a-descriptions title="题目信息" :column="3">
             <a-descriptions-item label="时间限制">
@@ -50,7 +55,7 @@
               }[problem.compare_script_name] }}
             </a-descriptions-item>
             <a-descriptions-item label="编译环境" :span="3" v-if="can_read_problem">
-              {{ problem.compile_environment == "" ? "无" :problem.compile_environment }}
+              {{ problem.build_arg == "" ? "无" :problem.build_arg }}
             </a-descriptions-item>
             <a-descriptions-item label="附件" :span="3">
               {{ problem.attachment_file_name == "" ? "无" : "" }}
@@ -97,7 +102,7 @@ export default {
         memory_limit: 0,
         privacy: true,
         public: true,
-        compile_environment: '',
+        build_arg: '',
         compare_script_name: '',
         attachment_file_name: '',
         test_cases: []

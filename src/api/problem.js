@@ -4,7 +4,9 @@ const problemApi = {
   GetProblems: '/api/problems',
   Problem: '/api/problem/',
   AdminProblem: '/api/admin/problem/',
-  CreateProblem: '/api/admin/problem'
+  CreateProblem: '/api/admin/problem',
+  CreateTestCase: '/api/admin/problem/:id/test_case',
+  TestCase: '/api/admin/problem/:pid/test_case/:tid'
 }
 
 export function getProblem (id) {
@@ -22,27 +24,63 @@ export function deleteProblem (id) {
 }
 
 export function updateProblem (id, param) {
+  const formData = new FormData()
+  for (const prop in param) {
+    formData.append(prop, param[prop])
+  }
   return api({
     url: problemApi.AdminProblem + id,
     method: 'put',
-    data: {
-      ...param
-    }
+    data: formData
   })
 }
 
 export function createProblem (param) {
   const formData = new FormData()
-  console.log(param)
   for (const prop in param) {
-    console.log(prop, param[prop])
     formData.append(prop, param[prop])
   }
-  console.log(formData)
   return api({
     url: problemApi.CreateProblem,
     method: 'post',
     data: formData
+  })
+}
+
+export function createTestCase (testCase) {
+  const formData = new FormData()
+  for (const prop in testCase) {
+    formData.append(prop, testCase[prop])
+  }
+  return api({
+    url: problemApi.CreateTestCase.replace(':id', testCase.problem_id),
+    method: 'post',
+    data: formData
+  })
+}
+
+export function updateTestCase (testCase) {
+  const formData = new FormData()
+  for (const prop in testCase) {
+    formData.append(prop, testCase[prop])
+  }
+  return api({
+    url: problemApi.TestCase.replace(':pid', testCase.problem_id).replace(':tid', testCase.id),
+    method: 'put',
+    data: formData
+  })
+}
+
+export function deleteTestCase (testCase) {
+  return api({
+    url: problemApi.TestCase.replace(':pid', testCase.problem_id).replace(':tid', testCase.id),
+    method: 'delete'
+  })
+}
+export function deleteAllTestCase (problemId) {
+  return api({
+    url: problemApi.TestCase.replace(':pid', problemId).replace(':tid', 'all'),
+    method: 'delete'
   })
 }
 

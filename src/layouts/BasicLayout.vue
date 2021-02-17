@@ -15,7 +15,7 @@
       <right-content :top-menu="settings.layout === 'topmenu'" :theme="settings.theme" :user="user"/>
     </template>
     <template v-slot:footerRender>
-      <global-footer />
+      <!--          <global-footer />-->
     </template>
     <router-view />
   </pro-layout>

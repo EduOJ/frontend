@@ -63,8 +63,8 @@
             <a-input size="large" v-model="form.time_limit" style="width: 300px" suffix="ms"/>
           </a-form-model-item>
 
-          <a-form-model-item ref="compile_environment" prop="compile_environment" label="编译环境变量">
-            <a-input size="large" v-model="form.compile_environment" style="width: 300px" placeholder="一般不需要填写"/>
+          <a-form-model-item ref="build_arg" prop="build_arg" label="编译环境变量">
+            <a-input size="large" v-model="form.build_arg" style="width: 300px" placeholder="一般不需要填写"/>
           </a-form-model-item>
 
           <a-form-model-item ref="compare_script_name" prop="compare_script_name" label="评测脚本">
@@ -136,7 +136,7 @@ export default {
         memory_limit_unit: 'MiB',
         time_limit: 1000,
         language_allowed: ['c', 'cpp'],
-        compile_environment: '',
+        build_arg: '',
         compare_script_name: 'compare_soft_match',
         attachment_file: []
       },
@@ -163,7 +163,7 @@ export default {
         time_limit: [
           { required: true, message: '请输入时间限制', trigger: 'blur' }
         ],
-        compile_environment: [
+        build_arg: [
           { max: 255, message: '编译环境最长为255个字符', trigger: 'blur' }
         ],
         compare_script_name: [
@@ -176,9 +176,8 @@ export default {
   },
   methods: {
     beforeUpload (file) {
-      console.log(file)
       this.form.attachment_file = [ file ]
-      // this.form.attachment_file = [...this.form.attachment_file, file]
+      console.log(this.form.attachment_file)
       return false
     },
     onSubmit () {
@@ -197,7 +196,7 @@ export default {
             }[this.form.memory_limit_unit],
             time_limit: this.form.time_limit,
             language_allowed: this.form.language_allowed.join(','),
-            compile_environment: this.form.compile_environment,
+            build_arg: this.form.build_arg,
             compare_script_name: this.form.compare_script_name,
             attachment_file: this.form.attachment_file[0]
           }).then(resp => {
@@ -205,12 +204,12 @@ export default {
               title: '成功',
               content: '创建成功',
               cancelText: '返回',
-              okText: '继续编辑',
+              okText: '前往查看',
               icon: () => <a-icon type="check-circle" style="color: #52c41a !important;"/>,
               onOk: () => {
                 console.log(resp)
                 this.$router.push({
-                  'name': 'problem.edit',
+                  'name': 'problem',
                   params: {
                     id: resp.problem.id
                   }
@@ -226,21 +225,41 @@ export default {
             if (err.message === 'VALIDATION_ERROR') {
               err.response.error.forEach(v => {
                 switch (v.field) {
-                  case 'name':
+                  case 'Name':
                     this.$refs.name.help = v.translation
                     this.$refs.name.validateState = 'error'
                     break
-                  case 'Email':
-                    this.$refs.email.help = v.translation
-                    this.$refs.email.validateState = 'error'
+                  case 'Description':
+                    this.$refs.description.help = v.translation
+                    this.$refs.description.validateState = 'error'
                     break
-                  case 'Nickname':
-                    this.$refs.nickname.help = v.translation
-                    this.$refs.nickname.validateState = 'error'
+                  case 'Public':
+                    this.$refs.public.help = v.translation
+                    this.$refs.public.validateState = 'error'
                     break
-                  case 'Password':
-                    this.$refs.password.help = v.translation
-                    this.$refs.password.validateState = 'error'
+                  case 'Privacy':
+                    this.$refs.privacy.help = v.translation
+                    this.$refs.privacy.validateState = 'error'
+                    break
+                  case 'MemoryLimit':
+                    this.$refs.memory_limit.help = v.translation
+                    this.$refs.memory_limit.validateState = 'error'
+                    break
+                  case 'TimeLimit':
+                    this.$refs.time_limit.help = v.translation
+                    this.$refs.time_limit.validateState = 'error'
+                    break
+                  case 'LanguageAllowed':
+                    this.$refs.language_allowed.help = v.translation
+                    this.$refs.language_allowed.validateState = 'error'
+                    break
+                  case 'BuildArg':
+                    this.$refs.compile_envirionment.help = v.translation
+                    this.$refs.compile_envirionment.validateState = 'error'
+                    break
+                  case 'CompareScriptName':
+                    this.$refs.compare_script_name.help = v.translation
+                    this.$refs.compare_script_name.validateState = 'error'
                     break
                 }
               })

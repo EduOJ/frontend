@@ -1,9 +1,12 @@
 <template>
-  <a-spin :spinning="load" @mouseover="show_actions = true" @mouseout="show_actions = false">
+  <a-spin :spinning="(!lazyLoad) && loading" @mouseover="show_actions = true" @mouseout="show_actions = false">
     <perfect-scrollbar>
       <highlightjs :autodetect="language === ''" :language="language === '' ? undefined : language" :code="content" class="eduoj-code"/>
     </perfect-scrollbar>
-    <div class="action" v-show="show_actions">
+    <div class="load" v-if="lazyLoad">
+      <a-button size="small" @click="load()" ghost>点击加载</a-button>
+    </div>
+    <div class="action" v-show="show_actions" v-else>
       <a-space>
         <a-button
           size="small"
@@ -49,36 +52,32 @@ export default {
     filename: {
       type: String,
       default: ''
+    },
+    lazyLoad: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     if (this.text !== '') {
       return {
-        load: false,
+        loading: false,
         content: this.text,
         show_actions: false,
         copy_tooltip: false
       }
     }
     return {
-      load: true,
+      loading: true,
       content: '',
       show_actions: false,
       copy_tooltip: false
     }
   },
   mounted () {
-    request({
-      url: this.url,
-      method: 'get'
-    }).then(resp => {
-      this.load = false
-      this.content = resp
-    }).catch(err => {
-      console.log(err)
-      this.content = '发生了错误'
-      this.load = false
-    })
+    if (!this.lazyLoad) {
+      this.load()
+    }
   },
   methods: {
     copySuccess () {
@@ -92,6 +91,20 @@ export default {
     },
     handleSave () {
       download(this.content, this.filename)
+    },
+    load () {
+      this.lazyLoad = false
+      request({
+        url: this.url,
+        method: 'get'
+      }).then(resp => {
+        this.loading = false
+        this.content = resp
+      }).catch(err => {
+        console.log(err)
+        this.content = '发生了错误'
+        this.loading = false
+      })
     }
   }
 }
@@ -105,7 +118,19 @@ export default {
   position: absolute
   right: 10px
   top: 10px
-
+.load
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+  display: flex
+  align-items: center
+  height: 100px
+  justify-content: center
+  i
+    font-size: 40px
+  font-size: 20px
 </style>
 
 <style lang="sass">

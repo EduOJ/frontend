@@ -31,12 +31,13 @@ export default {
   },
   data () {
     return {
-      editor: ''
+      contentEditor: null,
+      loaded: false
     }
   },
   mounted () {
     const that = this
-    this.contentEditor = new Vditor(this.$refs.render, {
+    this.editor = new Vditor(this.$refs.render, {
       height: 360,
       toolbarConfig: {
         pin: true
@@ -65,6 +66,11 @@ export default {
         }
       },
       tab: '    ',
+      value: '',
+      after: () => {
+        that.loaded = true
+        that.editor.setValue(that.value)
+      },
       toolbar: [
         'emoji',
         'headings',
@@ -109,7 +115,7 @@ export default {
       ],
       input: that.handleInput,
       blur () {
-        that.handleBlur(that.contentEditor.getValue())
+        that.handleBlur(that.editor.getValue())
       },
       upload: {
         multiple: false,
@@ -167,24 +173,27 @@ export default {
     })
   },
   methods: {
+    ignoreNextUpdate () {
+      this.ignoreNext = true
+    },
     handleInput (val) {
-      this.isValueUpdateFromInner = true
+      this.ignoreNext = true
       this.$emit('input', val)
     },
     handleBlur (val) {
-      this.isValueUpdateFromInner = true
+      this.ignoreNext = true
       this.$emit('blur', val)
     }
   },
   destroyed () {
-    this.contentEditor = null
+    this.editor = null
   },
   watch: {
     value (val) {
-      if (this.isValueUpdateFromInner) {
-        this.isValueUpdateFromInner = false
+      if (this.ignoreNext) {
+        this.ignoreNext = false
       } else {
-        this.contentEditor.setValue(val)
+        if (this.loaded) { this.editor.setValue(val) }
       }
     }
   }

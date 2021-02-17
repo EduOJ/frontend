@@ -1,5 +1,5 @@
 <template>
-  <div class="heti">
+  <div class="heti" style="max-width: 100%!important;">
     <div ref="render">
 
     </div>

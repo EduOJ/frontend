@@ -73,7 +73,7 @@ export const constantRouterMap = [
           {
             path: '/problem/:id/edit',
             name: 'problem.edit',
-            component: () => import('@/views/problem/EditUser'),
+            component: () => import('@/views/problem/EditProblem'),
             hidden: true,
             meta: { title: '编辑题目', permission: 'update_problem' }
           }

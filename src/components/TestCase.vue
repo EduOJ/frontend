@@ -12,11 +12,11 @@
     <a-row :gutter="10" v-if="detailed">
       <a-col span="12">
         Input:
-        <Code language="text" :filename="t.input_file_name" :url="config.apiUrl + '/api/problem/' + t.problem_id + '/test_case/' + t.id + '/input_file'"/>
+        <Code :lazy-load="!t.sample" language="text" :filename="t.input_file_name" :url="config.apiUrl + '/api/problem/' + t.problem_id + '/test_case/' + t.id + '/input_file'"/>
       </a-col>
       <a-col span="12">
         Output:
-        <Code language="text" :filename="t.output_file_name" :url="config.apiUrl + '/api/problem/' + t.problem_id + '/test_case/' + t.id + '/output_file'"/>
+        <Code :lazy-load="!t.sample" language="text" :filename="t.output_file_name" :url="config.apiUrl + '/api/problem/' + t.problem_id + '/test_case/' + t.id + '/output_file'"/>
       </a-col>
     </a-row>
     <div v-else class="locked">

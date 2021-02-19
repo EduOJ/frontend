@@ -133,16 +133,19 @@ export default {
         timeout: 0,
         url: url,
         method: 'get',
+        responseType: 'arraybuffer',
         onDownloadProgress: (progressEvent) => {
           console.log(progressEvent)
           const percentCompleted = Math.floor(progressEvent.loaded / progressEvent.total * 100)
           console.log('completed: ', percentCompleted)
           this.download_message = `已下载 ${percentCompleted} %`
         }
+
       }).then(resp => {
         this.download_message = this.problem.attachment_file_name
         this.downloading = false
-        download(resp.data, this.problem.attachment_file_name)
+        console.log(resp)
+        download(resp, this.problem.attachment_file_name)
       }).catch(err => {
         this.download_message = this.problem.attachment_file_name
         this.downloading = false

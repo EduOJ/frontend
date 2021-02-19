@@ -487,8 +487,17 @@ export default {
           }
         })
       } else {
+        message = message.split('\n').map(m => {
+          return (<p style="margin-block-end: 0;"> {m} </p>)
+        })
         this.$error({
-          content: message
+          content: (h) => {
+            return (
+              <div>
+                {message}
+              </div>
+            )
+          }
         })
       }
       console.log(files)

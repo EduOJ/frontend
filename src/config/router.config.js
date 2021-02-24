@@ -271,6 +271,12 @@ export const constantRouterMap = [
                 name: 'settings.change_password',
                 component: () => import('@/views/account/settings/ChangePassword'),
                 meta: { title: '安全设置', hidden: true }
+              },
+              {
+                path: '/account/settings/webauthn',
+                name: 'settings.webauthn',
+                component: () => import('@/views/account/settings/Webauthn'),
+                meta: { title: '使用安全秘钥登录', hidden: true }
               }
             ]
           }

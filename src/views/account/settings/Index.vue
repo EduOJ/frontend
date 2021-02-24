@@ -20,6 +20,11 @@
                 修改密码
               </router-link>
             </a-menu-item>
+            <a-menu-item key="/account/settings/webauthn">
+              <router-link :to="{ name: 'settings.webauthn' }">
+                使用安全秘钥登录
+              </router-link>
+            </a-menu-item>
           </a-menu>
         </div>
         <div class="account-settings-info-right">

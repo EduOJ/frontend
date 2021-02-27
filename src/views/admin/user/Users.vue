@@ -66,25 +66,23 @@ const columns = [
   {
     title: '用户名',
     dataIndex: 'username',
-    sorter: true,
-    width: 200
+    sorter: true
   },
   {
     title: 'Email',
     dataIndex: 'email',
-    sorter: true,
-    width: 200
+    sorter: true
   },
   {
     title: '姓名',
     dataIndex: 'nickname',
-    sorter: true,
-    width: 200
+    sorter: true
   },
   {
     title: '操作',
     dataIndex: 'action',
-    scopedSlots: { customRender: 'action' }
+    scopedSlots: { customRender: 'action' },
+    last: true
   }
 ]
 
@@ -133,7 +131,17 @@ export default {
     }
   },
   mounted () {
-    this.fetch()
+    this.fetch({
+      callback: () => {
+      this.$nextTick(() => {
+        for (const col of this.columns) {
+          if (col.thDom) {
+            col.width = col.thDom.getBoundingClientRect().width
+          }
+        }
+      })
+    }
+    })
   },
   methods: {
     handleDeleteBtnClick (record) {
@@ -193,6 +201,9 @@ export default {
         this.loading = false
         this.data = data.users
         this.pagination = pagination
+        if (params.callback) {
+          params.callback()
+        }
       }).catch(err => {
         if (err.response || err.response.message) {
           this.loading = false

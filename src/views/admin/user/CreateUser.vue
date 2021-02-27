@@ -41,7 +41,7 @@
               size="large"
               v-model="form.password"
               type="password"
-              placeholder="密码, 留空既不修改."
+              placeholder="密码"
             >
               <a-icon slot="prefix" type="key"/>
             </a-input>
@@ -106,7 +106,8 @@ export default {
         ],
         password: [
           { min: 5, message: '密码最短为5个字符', trigger: 'blur' },
-          { max: 30, message: '密码最长为30个字符', trigger: 'blur' }
+          { max: 30, message: '密码最长为30个字符', trigger: 'blur' },
+          { required: true, message: '请输入密码', trigger: 'blur' }
         ]
       }
     }

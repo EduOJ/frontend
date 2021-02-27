@@ -3,25 +3,32 @@ import Vue from 'vue'
 Vue.component('vue-draggable-resizable', VueDraggableResizable)
 
 export default function (h, props, children, columns, draggingState) {
-  let thDom = null
   const { key, ...restProps } = props
   const col = columns.find(col => {
     const k = col.dataIndex
     return k === key
   })
-  if (!col.width) {
+  if (col.last) {
     return <th {...restProps} class={props.class}>{children}</th>
+  }
+  if (!col.width) {
+    Vue.set(col, 'width', -1)
   }
   const onDrag = (x) => {
     draggingState[key] = 0
     col.width = Math.max(x, 1)
   }
   const onDragStop = () => {
-    draggingState[key] = thDom.getBoundingClientRect().width
-    col.width = thDom.getBoundingClientRect().width
+    for (const c of columns) {
+      console.log(c)
+      if (c && c.thDom) {
+        draggingState[key] = c.thDom.getBoundingClientRect().width
+        Vue.set(c, 'width', c.thDom.getBoundingClientRect().width)
+      }
+    }
   }
   return (
-    <th class={props.class} {...restProps} v-ant-ref={r => (thDom = r)} width={col.width} style={{ position: 'relative' }}>
+    <th class={props.class} {...restProps} v-ant-ref={r => { col.thDom = r }} width={col.width !== -1 ? col.width : undefined} style={{ position: 'relative' }}>
       {children}
       <div
         onClick={(e) => e.stopPropagation()}

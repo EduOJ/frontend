@@ -172,4 +172,11 @@ export default {
 
 <style lang="less">
 @import "./BasicLayout.less";
+.ant-layout-content{
+  display: flex;
+  align-items: stretch;
+}
+.ant-pro-basicLayout-children-content-wrap{
+  width: 100%;
+}
 </style>

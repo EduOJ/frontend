@@ -12,20 +12,17 @@ const getters = {
   multiTab: state => state.app.multiTab,
   can: state => (permission, target, id) => {
     id = +id // convert id to integer.
-    console.log(permission, target, id)
     for (const role of state.user.info.roles) {
       if (target !== undefined && id !== undefined) {
         if (role.target && role.target === target && role.target_id === id) {
           for (const p of role.permissions) {
             if (p.name === 'all' || p.name === permission) {
-              console.log(true)
               return true
             }
           }
         } else if (!role.target && !target) {
           for (const permission of role.permissions) {
             if (permission.name === 'all' || permission.name === permission) {
-              console.log(true)
               return true
             }
           }
@@ -34,14 +31,12 @@ const getters = {
         if (role.target === null) {
           for (const p of role.permissions) {
             if (p.name === 'all' || p.name === permission) {
-              console.log(true)
               return true
             }
           }
         }
       }
     }
-    console.log(false)
     return false
   }
 }

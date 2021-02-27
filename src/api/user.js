@@ -3,6 +3,7 @@ import api from '@/api/api'
 const userApi = {
   GetUser: '/api/user/',
   UserMe: '/api/user/me',
+  GetUsers: '/api/users',
   ChangePassword: '/api/user/change_password'
 }
 
@@ -47,5 +48,15 @@ export function updateMe (parameter) {
     url: userApi.UserMe,
     method: 'put',
     data: parameter
+  })
+}
+
+export function getUsers (param) {
+  return api({
+    url: userApi.GetUsers,
+    method: 'get',
+    params: {
+      ...param
+    }
   })
 }

@@ -14,7 +14,11 @@ export default {
   props: {
     text: {
       type: String,
-      required: true
+      default: ''
+    },
+    url: {
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -51,6 +55,7 @@ export default {
   },
   computed: {
     prettyHtml () {
+      console.log(this.content)
       if (!this.content) {
         return ''
       }

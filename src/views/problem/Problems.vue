@@ -82,22 +82,23 @@ export default {
       {
         title: '名称',
         dataIndex: 'name',
-        scopedSlots: { customRender: 'name' },
-        width: 800
+        scopedSlots: { customRender: 'name' }
       },
       {
         title: '语言',
         dataIndex: 'language_allowed',
-        scopedSlots: { customRender: 'language_allowed' }
+        scopedSlots: { customRender: 'language_allowed' },
+        last: true
       }
     ]
 
     if (store.getters.can('manage_problem')) {
-      columns[columns.length - 1].width = 200
+      delete columns[columns.length - 1].last
       columns.push({
         title: '操作',
         dataIndex: 'action',
-        scopedSlots: { customRender: 'action' }
+        scopedSlots: { customRender: 'action' },
+        last: true
       })
     }
 
@@ -147,7 +148,19 @@ export default {
     ...mapGetters(['can'])
   },
   mounted () {
-    this.fetch()
+    this.fetch({
+      pageSize: this.$refs.table.pagination.pageSize,
+      page: this.$refs.table.pagination.current,
+      callback: () => {
+        this.$nextTick(() => {
+          for (const col of this.columns) {
+            if (col.thDom) {
+              col.width = col.thDom.getBoundingClientRect().width
+            }
+          }
+        })
+      }
+    })
   },
   methods: {
     handleDeleteBtnClick (record) {
@@ -166,9 +179,7 @@ export default {
         this.deleting = {}
         this.fetch({
           pageSize: this.$refs.table.pagination.pageSize,
-          page: this.$refs.table.pagination.current,
-          sortField: this.sorter.field,
-          sortOrder: this.sorter.order
+          page: this.$refs.table.pagination.current
         })
         setTimeout(_ => {
           this.visible = false
@@ -178,9 +189,7 @@ export default {
     handleSearchChange () {
       this.fetch({
         pageSize: this.$refs.table.pagination.pageSize,
-        page: this.$refs.table.pagination.current,
-        sortField: this.sorter.field,
-        sortOrder: this.sorter.order
+        page: this.$refs.table.pagination.current
       })
     },
     handleTableChange (pagination, filters, sorter) {
@@ -189,9 +198,7 @@ export default {
       this.sorter = sorter
       this.fetch({
         pageSize: pagination.pageSize,
-        page: pagination.current,
-        sortField: sorter.field,
-        sortOrder: sorter.order
+        page: pagination.current
       })
     },
     fetch (params = {}) {
@@ -206,7 +213,11 @@ export default {
         this.loading = false
         this.data = data.problems
         this.pagination = pagination
+        if (params.callback) {
+          params.callback()
+        }
       }).catch(err => {
+        console.log(err)
         if (err.response || err.response.message) {
           this.loading = false
           this.data = []

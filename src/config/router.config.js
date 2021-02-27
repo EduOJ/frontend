@@ -80,6 +80,26 @@ export const constantRouterMap = [
         ]
       },
       {
+        path: '/submissions',
+        component: RouteView,
+        meta: { title: '提交管理' },
+        children: [
+          {
+            path: '/submissions',
+            name: 'submissions',
+            component: () => import('@/views/submission/Submissions'),
+            meta: { title: '提交列表' }
+          },
+          {
+            path: '/submission/:id',
+            name: 'submission',
+            component: () => import('@/views/submission/Submission'),
+            hidden: true,
+            meta: { title: '查看提交' }
+          }
+        ]
+      },
+      {
         path: '/dummy1',
         component: RouteView,
         redirect: '/form/base-form',

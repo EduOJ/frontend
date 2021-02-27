@@ -75,26 +75,24 @@ const columns = [
         text: '致命',
         value: '4'
       }
-    ],
-    width: 80
+    ]
   },
   {
     title: '位置',
     dataIndex: 'caller',
-    scopedSlots: { customRender: 'caller' },
-    width: 280
+    scopedSlots: { customRender: 'caller' }
   },
   {
     title: '信息',
-    dataIndex: 'message',
-    width: 600
+    dataIndex: 'message'
   },
   {
     title: '时间',
     dataIndex: 'created_at',
     scopedSlots: {
       customRender: 'created_at'
-    }
+    },
+    last: true
   }
 ]
 
@@ -146,7 +144,16 @@ export default {
         page: pagination.current,
         sortField: sorter.field,
         sortOrder: sorter.order,
-        levels: filters.level
+        levels: filters.level,
+        callback: () => {
+          this.$nextTick(() => {
+            for (const col of this.columns) {
+              if (col.thDom) {
+                col.width = col.thDom.getBoundingClientRect().width
+              }
+            }
+          })
+        }
       })
     },
     fetch (params = {}) {
@@ -161,6 +168,9 @@ export default {
         this.loading = false
         this.data = data.logs
         this.pagination = pagination
+        if (params.callback) {
+          params.callback()
+        }
       }).catch(err => {
         if (err.response || err.response.message) {
           this.loading = false

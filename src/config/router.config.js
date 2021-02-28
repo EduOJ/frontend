@@ -71,6 +71,13 @@ export const constantRouterMap = [
             meta: { title: '查看题目' }
           },
           {
+            path: '/problem/:id/submit',
+            name: 'problem.submit',
+            component: () => import('@/views/problem/Submit'),
+            hidden: true,
+            meta: { title: '提交' }
+          },
+          {
             path: '/problem/:id/edit',
             name: 'problem.edit',
             component: () => import('@/views/problem/EditProblem'),

@@ -308,50 +308,53 @@ export default {
     }
   },
   mounted () {
-    getProblem(this.$route.params.id).then(data => {
-      this.form = Object.assign({}, this.form, data.problem)
-      if (data.problem.memory_limit > 1024 * 1024 * 1024) {
-        this.form.memory_limit = data.problem.memory_limit / (1024 * 1024 * 1024)
-        this.form.memory_limit_unit = 'GiB'
-      } else if (data.problem.memory_limit > 1024 * 1024) {
-        this.form.memory_limit = data.problem.memory_limit / (1024 * 1024)
-        this.form.memory_limit_unit = 'MiB'
-      } else {
-        this.form.memory_limit = data.problem.memory_limit / (1024)
-        this.form.memory_limit_unit = 'KiB'
-      }
-      if (data.problem.attachment_file_name) {
-        console.log('FILE!')
-        this.$set(this.form.attachment_file, 0, {
-            uid: '1',
-            name: data.problem.attachment_file_name,
-            status: 'done'
-          }
-        )
-      }
-      this.form.test_cases.forEach((v) => {
-        this.$set(v, 'newly_created', false)
-        this.$set(v, 'deleted', false)
-        this.$set(v, 'changed', false)
-        this.$set(v, 'input_file', [
-          { 'uid': '1', 'name': v.input_file_name, 'status': 'done' }
-        ])
-        this.$set(v, 'output_file', [
-          { 'uid': '1', 'name': v.output_file_name, 'status': 'done' }
-        ])
-      })
-      this.loading = false
-    }).catch(err => {
-      console.log(err)
-      this.$error({
-        'title': '获取题目信息失败',
-        'content': {
-          'NOT_FOUND': '题目不存在'
-        }[err]
-      })
-    })
+    this.fetch()
   },
   methods: {
+    fetch () {
+      getProblem(this.$route.params.id).then(data => {
+        this.form = Object.assign({}, this.form, data.problem)
+        if (data.problem.memory_limit > 1024 * 1024 * 1024) {
+          this.form.memory_limit = data.problem.memory_limit / (1024 * 1024 * 1024)
+          this.form.memory_limit_unit = 'GiB'
+        } else if (data.problem.memory_limit > 1024 * 1024) {
+          this.form.memory_limit = data.problem.memory_limit / (1024 * 1024)
+          this.form.memory_limit_unit = 'MiB'
+        } else {
+          this.form.memory_limit = data.problem.memory_limit / (1024)
+          this.form.memory_limit_unit = 'KiB'
+        }
+        if (data.problem.attachment_file_name) {
+          console.log('FILE!')
+          this.$set(this.form.attachment_file, 0, {
+              uid: '1',
+              name: data.problem.attachment_file_name,
+              status: 'done'
+            }
+          )
+        }
+        this.form.test_cases.forEach((v) => {
+          this.$set(v, 'newly_created', false)
+          this.$set(v, 'deleted', false)
+          this.$set(v, 'changed', false)
+          this.$set(v, 'input_file', [
+            { 'uid': '1', 'name': v.input_file_name, 'status': 'done' }
+          ])
+          this.$set(v, 'output_file', [
+            { 'uid': '1', 'name': v.output_file_name, 'status': 'done' }
+          ])
+        })
+        this.loading = false
+      }).catch(err => {
+        console.log(err)
+        this.$error({
+          'title': '获取题目信息失败',
+          'content': {
+            'NOT_FOUND': '题目不存在'
+          }[err]
+        })
+      })
+    },
     changed (t) {
       t.changed = true
     },
@@ -602,6 +605,7 @@ export default {
               }
             }
             if (!rejected) {
+              this.fetch()
               this.$confirm({
                 title: '成功',
                 content: '编辑成功',

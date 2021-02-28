@@ -63,6 +63,11 @@
                   {{ download_message }}</a-button>
               </a-descriptions-item>
             </a-descriptions>
+            <router-link :to="{name: 'problem.submit', id: problem.id}">
+              <a-button type="primary">
+                提交
+              </a-button>
+            </router-link>
           </a-card>
           <a-card class="submission_card">
             <template slot="title">最近提交</template>

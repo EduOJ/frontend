@@ -17,15 +17,11 @@
         </router-link>
       </template>
       <template slot="problem_name" slot-scope="text, record">
-        <router-link :to="{name: 'problem', params: {id: record.problem_id}}">
-          {{ text }}
+        <router-link :to="{name: 'problem', params: {id: record.problem_id}}" v-if="can('read_')">
+          {{ `#${record.problem_id} ${record.problem_name}` }}
         </router-link>
       </template>
-      <template slot="user_name" slot-scope="text, record">
-        <router-link :to="{name: 'user', params: {id: record.user.username}}">
-          {{ record.user.username }}
-        </router-link>
-      </template>
+      <user-name slot="user_name" slot-scope="user" :user="user" />
       <template slot="status" slot-scope="text, record">
         <run-status :status="text" :score="record.score" />
       </template>
@@ -45,9 +41,9 @@
           :default-active-first-option="false"
           :show-arrow="false"
           :filter-option="false"
-          :not-found-content="null"
           :allowClear="true"
           @search="handleSearch(column.dataIndex)($event)"
+          @focus="handleSearch(column.dataIndex)()"
           @change="handleChange(column.dataIndex)($event)"
         >
           <a-select-option v-for="d in search_result" :key="d.value">
@@ -71,6 +67,7 @@ import { mapGetters } from 'vuex'
 import { getSubmissions } from '@/api/submission'
 import ResizableTableHeader from '@/components/Table/ResizableTableHeader.js'
 import RunStatus from '@/components/RunStatus'
+import UserName from '@/components/UserName'
 import { getProblems } from '@/api/problem'
 import { getUsers } from '@/api/user'
 
@@ -97,7 +94,7 @@ export default {
       },
       {
         title: '提交者',
-        dataIndex: 'user.name',
+        dataIndex: 'user',
         scopedSlots: {
           customRender: 'user_name',
           filterDropdown: 'filterDropdown',
@@ -167,7 +164,8 @@ export default {
     ...mapGetters(['can'])
   },
   components: {
-    RunStatus
+    RunStatus,
+    UserName
   },
   mounted () {
     this.fetch({
@@ -202,7 +200,7 @@ export default {
             })
           })
         }
-      } else if (dataIndex === 'user.name') {
+      } else if (dataIndex === 'user') {
         return (text) => {
           getUsers({
             offset: 0,
@@ -232,15 +230,15 @@ export default {
     },
     handleChange (dataIndex) {
       if (dataIndex === 'problem_name') {
-        return (id) => {
+        return (id, text) => {
           this.search_problem_id = id
           const col = this.columns.filter((v) => v.dataIndex === dataIndex)[0]
-          col.searching = id
           if (id) {
-            console.log(this.search_result)
             const title = this.search_result.filter((v) => v.value === id)[0].text
+            col.searching = title
             col.title = `题目名称：${title}`
           } else {
+            col.searching = ''
             col.title = '题目名称'
           }
           this.fetch({
@@ -251,7 +249,7 @@ export default {
           })
           this.search_result = []
         }
-      } else if (dataIndex === 'user.name') {
+      } else if (dataIndex === 'user') {
         return (id) => {
           this.search_user_id = id
           const col = this.columns.filter((v) => v.dataIndex === dataIndex)[0]

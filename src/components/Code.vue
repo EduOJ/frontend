@@ -1,6 +1,6 @@
 <template>
   <a-spin :spinning="(!lazyLoad) && loading" @mouseover="show_actions = true" @mouseout="show_actions = false">
-    <perfect-scrollbar>
+    <perfect-scrollbar :style="{'max-height': height}">
       <highlightjs :autodetect="language === ''" :language="language === '' ? undefined : language" :code="content" class="eduoj-code"/>
     </perfect-scrollbar>
     <div class="load" v-if="lazyLoad">
@@ -56,6 +56,10 @@ export default {
     lazyLoad: {
       type: Boolean,
       default: false
+    },
+    height: {
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -100,6 +104,9 @@ export default {
       }).then(resp => {
         this.loading = false
         this.content = resp
+        if (this.content === '\n') {
+          this.content = '内容为空'
+        }
       }).catch(err => {
         console.log(err)
         this.content = '发生了错误'
@@ -111,9 +118,6 @@ export default {
 </script>
 
 <style scoped lang="sass">
-.ps
-  max-height: 100px
-
 .action
   position: absolute
   right: 10px
@@ -140,4 +144,8 @@ export default {
   border-radius: 5px
   code
     min-height: 100px
+</style>
+
+<style lang="scss">
+@import '~highlight.js/scss/darcula.scss';
 </style>

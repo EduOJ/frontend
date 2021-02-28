@@ -44,7 +44,8 @@ import {
   Statistic,
   Descriptions,
   message,
-  notification
+  notification,
+  Collapse
 } from 'ant-design-vue'
 import Viser from 'viser-vue'
 
@@ -56,6 +57,7 @@ import PageLoading from '@/components/PageLoading'
 import PermissionHelper from '@/utils/helper/permission'
 import './directives/action'
 
+Vue.use(Collapse)
 Vue.use(ConfigProvider)
 Vue.use(Layout)
 Vue.use(Input)

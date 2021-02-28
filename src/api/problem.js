@@ -6,6 +6,7 @@ const problemApi = {
   AdminProblem: '/api/admin/problem/',
   CreateProblem: '/api/admin/problem',
   CreateTestCase: '/api/admin/problem/:id/test_case',
+  CreateSubmission: '/api/problem/:id/submission',
   TestCase: '/api/admin/problem/:pid/test_case/:tid'
 }
 
@@ -42,6 +43,18 @@ export function createProblem (param) {
   }
   return api({
     url: problemApi.CreateProblem,
+    method: 'post',
+    data: formData
+  })
+}
+
+export function createSubmission (param) {
+  const formData = new FormData()
+  for (const prop in param) {
+    formData.append(prop, param[prop])
+  }
+  return api({
+    url: problemApi.CreateSubmission.replace(':id', param.problem_id),
     method: 'post',
     data: formData
   })

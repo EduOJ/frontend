@@ -69,6 +69,7 @@ import Vue from 'vue'
 import { mapGetters } from 'vuex'
 import store from '@/store'
 import { getProblems, deleteProblem } from '@/api/problem'
+import Language from '@/components/Language'
 import ResizableTableHeader from '@/components/Table/ResizableTableHeader.js'
 
 export default {
@@ -146,6 +147,9 @@ export default {
   },
   computed: {
     ...mapGetters(['can'])
+  },
+  components: {
+    Language
   },
   mounted () {
     this.fetch({

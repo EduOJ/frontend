@@ -22,15 +22,16 @@ const api = req => {
           })
           router.push({ name: 'login' })
         } else if (resp.message === 'PERMISSION_DENIED') {
-          router.push({ path: '/' })
+          router.push({ path: '/403' })
           notification.error({
             message: '错误',
             description: `你没有这么做的权限`
           })
+        } else {
+          const err = new Error(resp.message)
+          err.response = resp
+          reject(err)
         }
-        const err = new Error(resp.message)
-        err.response = resp
-        reject(err)
       }
     }).catch(err => {
       alert('这不应该发生! 只应该是网络错误!')

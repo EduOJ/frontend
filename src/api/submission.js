@@ -17,9 +17,25 @@ export function getSubmissions (req) {
     params: req
   })
 }
-export function getSubmission (id) {
+
+export function ISODateString (d) {
+  function pad (n) { return n < 10 ? '0' + n : n }
+  return d.getUTCFullYear() + '-' +
+    pad(d.getUTCMonth() + 1) + '-' +
+    pad(d.getUTCDate()) + 'T' +
+    pad(d.getUTCHours()) + ':' +
+    pad(d.getUTCMinutes()) + ':' +
+    pad(d.getUTCSeconds()) + 'Z'
+}
+
+export function getSubmission (id, poll = false, before = null) {
   return api({
     url: submissionApi.GetSubmission.replace(':id', id),
-    method: 'get'
+    method: 'get',
+    params: {
+      poll: poll ? 1 : 0,
+      before: before
+    },
+    timeout: poll ? -1 : 6000
   })
 }

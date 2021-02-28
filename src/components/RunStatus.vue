@@ -1,6 +1,6 @@
 <template>
   <span :class="[status, 'status']">
-    <span class="score">
+    <span class="score" v-if="score !== -1">
       {{ score }}
     </span>
     {{ localized }}
@@ -17,7 +17,7 @@ export default {
     },
     score: {
       type: Number,
-      required: true
+      default: -1
     }
   },
   computed: {
@@ -27,7 +27,8 @@ export default {
         JUDGING: '评测中',
         JUDGEMENT_FAILED: '评测错误',
         ACCEPTED: '通过',
-        WRONG_ANWSER: '答案错误',
+        WRONG_ANSWER: '答案错误',
+        COMPILE_ERROR: '编译错误',
         RUNTIME_ERROR: '运行时错误',
         DANGEROUS_SYSTEM_CALLS: '非法程序',
         MEMORY_LIMIT_EXCEEDED: '内存超过限制',
@@ -62,4 +63,6 @@ export default {
   color: saddlebrown
 .DANGEROUS_SYSTEM_CALLS
   color: black
+.COMPILE_ERROR
+  color: #6f1c00
 </style>

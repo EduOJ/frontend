@@ -17,7 +17,7 @@
         </router-link>
       </template>
       <template slot="problem_name" slot-scope="text, record">
-        <router-link :to="{name: 'problem', params: {id: record.problem_id}}" v-if="can('read_')">
+        <router-link :to="{name: 'problem', params: {id: record.problem_id}}">
           {{ `#${record.problem_id} ${record.problem_name}` }}
         </router-link>
       </template>

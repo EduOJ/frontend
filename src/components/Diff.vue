@@ -56,6 +56,9 @@ export default {
   computed: {
     prettyHtml () {
       console.log(this.content)
+      if (this.content === '') {
+        return '程序输出与标准答案完全一致'
+      }
       if (!this.content) {
         return ''
       }

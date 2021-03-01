@@ -104,7 +104,7 @@ export default {
       }).then(resp => {
         this.loading = false
         this.content = resp
-        if (this.content === '\n') {
+        if (this.content === '') {
           this.content = '内容为空'
         }
       }).catch(err => {

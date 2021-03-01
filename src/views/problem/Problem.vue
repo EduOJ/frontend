@@ -8,7 +8,7 @@
             </markdown>
             <test-case v-for="t in problem.test_cases" :t="t" :key="t.id" :can-read-secret="can_read_secret"/>
           </a-skeleton>
-          <router-link :to="{name: 'problem.edit', id:problem.id}" slot="extra">
+          <router-link :to="{name: 'problem.edit', params: {id :problem.id}}" slot="extra">
             <a-button>
               <a-icon type="edit"/> 编辑题目
             </a-button>
@@ -63,7 +63,7 @@
                   {{ download_message }}</a-button>
               </a-descriptions-item>
             </a-descriptions>
-            <router-link :to="{name: 'problem.submit', id: problem.id}">
+            <router-link :to="{name: 'problem.submit', params: {id: problem.id}}">
               <a-button type="primary">
                 提交
               </a-button>
@@ -73,7 +73,7 @@
             <template slot="title">最近提交</template>
             <a-list size="small" bordered :data-source="submissions">
               <a-list-item slot="renderItem" slot-scope="s">
-                <router-link :to="{name:''}" style="color: black;width: 100%;">
+                <router-link :to="{name:'submission', params: {id:s.id}}" style="color: black;width: 100%;">
                   <a-row>
                     <a-col :span="4">
                       {{ s.id }}

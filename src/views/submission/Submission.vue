@@ -63,16 +63,16 @@
                         </a-row>
                       </a-spin>
                     </template>
-                    <p> 编译器输出 </p>
+                    <h3> 编译器输出 </h3>
                     <Code :url="config.apiUrl + `/api/submission/${submission.id}/run/${run.id}/compiler_output`"></Code>
-                    <div v-if="can_read_secret || run.sample">
-                      <p> 输入 </p>
+                    <a-space direction="vertical" v-if="can_read_secret || run.sample">
+                      <h3> 输入： </h3>
                       <Code language="text" height="200px" :url="config.apiUrl + `/api/submission/${submission.id}/run/${run.id}/input`"></Code>
-                      <p> 输出 </p>
+                      <h3> 输出： </h3>
                       <Code language="text" height="200px" :url="config.apiUrl + `/api/submission/${submission.id}/run/${run.id}/output`"></Code>
-                      <p> 区别 </p>
-                      <Diff language="text" height="200px" :url="config.apiUrl + `/api/submission/${submission.id}/run/${run.id}/output`"></Diff>
-                    </div>
+                      <h3> 程序输出与标准答案的区别： </h3>
+                      <Diff language="text" height="200px" :url="config.apiUrl + `/api/submission/${submission.id}/run/${run.id}/comparer_output`"></Diff>
+                    </a-space>
                   </a-collapse-panel>
                 </a-collapse>
               </a-card>

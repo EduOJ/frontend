@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 
 import app from './modules/app'
 import user from './modules/user'
+import clazz from './modules/class'
 
 // dynamic router permission control (Experimental)
 // import permission from './modules/async-router'
@@ -13,7 +14,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   modules: {
     app,
-    user
+    user,
+    class: clazz
   },
   state: {
 

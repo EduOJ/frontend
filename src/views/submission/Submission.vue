@@ -41,7 +41,7 @@
               </a-descriptions>
               <a-card title="详细信息">
                 <a-collapse>
-                  <a-collapse-panel v-for="run in submission.runs" :key="run.id">
+                  <a-collapse-panel :disabled="!run.judged" v-for="run in submission.runs" :key="run.id">
                     <template slot="header">
                       <a-spin
                         tip="评测中"

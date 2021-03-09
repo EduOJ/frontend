@@ -176,7 +176,11 @@ export default {
     },
     loginSuccess () {
       storage.set('username', this.form.username, 7 * 24 * 60 * 60 * 1000)
-      this.$router.push({ path: '/' })
+      if (this.$route.query.redirect) {
+        this.$router.push({ path: this.$route.query.redirect })
+      } else {
+        this.$router.push({ path: '/' })
+      }
       this.$notification.success({
         message: '欢迎',
         description: `${timeFix()}，欢迎回来`

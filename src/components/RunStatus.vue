@@ -28,6 +28,7 @@ export default {
         JUDGEMENT_FAILED: '评测错误',
         ACCEPTED: '通过',
         WRONG_ANSWER: '答案错误',
+        PRESENTATION_ERROR: '输出格式错误',
         COMPILE_ERROR: '编译错误',
         RUNTIME_ERROR: '运行时错误',
         DANGEROUS_SYSTEM_CALLS: '非法程序',
@@ -47,6 +48,8 @@ export default {
   text-align: center
 .status
   font-weight: bold
+.PRESENTATION_ERROR
+  color: #8b080b
 .PENDING
   color: lightslategrey
 .JUDGEMENT_FAILED

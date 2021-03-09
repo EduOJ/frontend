@@ -51,7 +51,7 @@ export default {
         // 布局类型
         layout: 'topmenu', // 'sidemenu', 'topmenu'
         // 定宽: true / 流式: false
-        contentWidth: false,
+        contentWidth: 'Fixed',
         // 主题 'dark' | 'light'
         theme: 'light',
         // 主色调
@@ -172,11 +172,18 @@ export default {
 
 <style lang="less">
 @import "./BasicLayout.less";
+//.ant-pro-basicLayout-content{
+//  margin:0
+//}
 .ant-layout-content{
   display: flex;
   align-items: stretch;
 }
 .ant-pro-basicLayout-children-content-wrap{
   width: 100%;
+}
+.ant-pro-grid-content.wide{
+  margin: 0;
+  max-width: 100%;
 }
 </style>

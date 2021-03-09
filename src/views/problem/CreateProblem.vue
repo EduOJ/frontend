@@ -33,11 +33,8 @@
               v-model="form.language_allowed"
               style="width: 300px"
             >
-              <a-select-option key="cpp" value="cpp">
-                C++
-              </a-select-option>
-              <a-select-option key="c" value="c">
-                C
+              <a-select-option v-for="(language, key) of languageConf" :key="key">
+                {{ language.displayName }}
               </a-select-option>
             </a-select>
           </a-form-model-item>
@@ -119,6 +116,7 @@
 <script>
 import { createProblem } from '@/api/problem'
 import MarkDownEditor from '@/components/Editor/MarkdownEditor'
+import languageConf from '@/config/languageConf'
 
 export default {
   components: {
@@ -126,6 +124,7 @@ export default {
   },
   data () {
     return {
+      languageConf,
       submitBtn: false,
       form: {
         name: '',

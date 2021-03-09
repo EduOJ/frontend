@@ -29,15 +29,11 @@
         </router-link>
       </template>
       <template slot="language_allowed" slot-scope="text">
-        <a-tag
-          :color="{
-            'c': 'green',
-            'cpp': 'cyan'
-          }[language]"
+        <Language
           v-for="language in text"
-          :key="language">
-          {{ language }}
-        </a-tag>
+          :key="language"
+          :language="language">
+        </Language>
       </template>
       <template slot="action" slot-scope="text, record" >
         <a-space>
@@ -71,6 +67,7 @@ import store from '@/store'
 import { getProblems, deleteProblem } from '@/api/problem'
 import Language from '@/components/Language'
 import ResizableTableHeader from '@/components/Table/ResizableTableHeader.js'
+import languageConf from '@/config/languageConf'
 
 export default {
   data () {
@@ -113,7 +110,8 @@ export default {
     }
 
     return {
-      columns: columns,
+      languageConf,
+      columns,
       components: {
         header: {
           cell: ResizableTableHeaderWithColumns

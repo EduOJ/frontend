@@ -32,11 +32,15 @@
 
               </a-descriptions-item>
               <a-descriptions-item label="允许的语言" :span="3">
-                <Language
+                <a-tag
+                  :color="{
+                    'c': 'green',
+                    'cpp': 'cyan'
+                  }[language]"
                   v-for="language in problem.language_allowed"
-                  :key="language"
-                  :language="language">
-                </Language>
+                  :key="language">
+                  {{ language }}
+                </a-tag>
               </a-descriptions-item>
               <a-descriptions-item label="编译脚本" :span="3">
                 {{ {
@@ -101,21 +105,17 @@ import TestCase from '@/components/TestCase'
 import config from '@/config/config'
 import request from '@/utils/request'
 import download from 'js-file-download'
-import languageConf from '@/config/languageConf'
-import Language from '@/components/Language'
 
 export default {
   name: 'Problem',
   components: {
     Markdown,
     TestCase,
-    RunStatus,
-    Language
+    RunStatus
   },
   data () {
     return {
-      languageConf,
-      config,
+      config: config,
       id: this.$route.params.id,
       problem_loading: true,
       submission_loading: true,

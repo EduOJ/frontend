@@ -103,7 +103,7 @@ export default {
         method: 'get'
       }).then(resp => {
         this.loading = false
-        this.content = resp
+        this.content = String(resp)
         if (this.content === '') {
           this.content = '内容为空'
         }
@@ -138,10 +138,11 @@ export default {
 </style>
 
 <style lang="sass">
+.ps
+  border-radius: 5px
 .eduoj-code
   min-height: 100px
   margin: 0
-  border-radius: 5px
   code
     min-height: 100px
 </style>

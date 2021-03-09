@@ -15,41 +15,20 @@ export const constantRouterMap = [
     path: '/',
     name: 'index',
     component: BasicLayout,
-    meta: { title: 'menu.home' },
-    redirect: '/dashboard/workplace',
+    meta: { title: '主页' },
+    redirect: '/home',
     children: [
       // dashboard
       {
-        path: '/dashboard',
-        name: 'dashboard',
-        redirect: '/dashboard/workplace',
-        component: RouteView,
-        meta: { title: 'menu.dashboard', icon: bxAnaalyse },
-        children: [
-          {
-            path: '/dashboard/analysis/:pageNo([1-9]\\d*)?',
-            name: 'Analysis',
-            component: () => import('@/views/dashboard/Analysis'),
-            meta: { title: 'menu.dashboard.analysis', keepAlive: false }
-          },
-          // 外部链接
-          {
-            path: 'https://www.baidu.com/',
-            name: 'Monitor',
-            meta: { title: 'menu.dashboard.monitor', target: '_blank' }
-          },
-          {
-            path: '/dashboard/workplace',
-            name: 'dashboard.workplace',
-            component: () => import('@/views/Todo'),
-            meta: { title: 'menu.dashboard.workplace' }
-          }
-        ]
+        path: '/home',
+        name: 'home',
+        component: () => import('@/views/Home'),
+        meta: { title: '主页', icon: bxAnaalyse }
       },
       {
         path: '/problems/',
         component: RouteView,
-        meta: { title: '题目管理' },
+        meta: { title: '题目管理', icon: 'calculator' },
         children: [
           {
             path: '/problems/',
@@ -89,7 +68,7 @@ export const constantRouterMap = [
       {
         path: '/submissions',
         component: RouteView,
-        meta: { title: '提交管理' },
+        meta: { title: '提交管理', icon: 'database' },
         children: [
           {
             path: '/submissions',
@@ -103,6 +82,70 @@ export const constantRouterMap = [
             component: () => import('@/views/submission/Submission'),
             hidden: true,
             meta: { title: '查看提交' }
+          }
+        ]
+      },
+      {
+        path: '/dummy2',
+        component: RouteView,
+        meta: { title: '班级', icon: 'cluster' },
+        children: [
+          {
+            path: '/class/add',
+            name: 'class.add',
+            component: () => import('@/views/class/CreateClass'),
+            meta: { title: '创建班级' }
+          },
+          {
+            path: '/class/:classId',
+            component: () => import('@/views/class/ClassView'),
+            hidden: true,
+            name: 'class',
+            redirect: { name: 'class.dashboard' },
+            children: [
+              {
+                path: '/class/:classId/dashboard',
+                name: 'class.dashboard',
+                component: () => import('@/views/class/Dashboard'),
+                meta: { title: '查看班级' }
+              },
+              {
+                path: '/class/:classId/edit',
+                name: 'class.edit',
+                component: () => import('@/views/class/EditClass'),
+                meta: { title: '编辑班级' }
+              },
+              {
+                path: '/class/:classId/edit_student',
+                name: 'class.editStudent',
+                component: () => import('@/views/class/EditStudent'),
+                meta: { title: '学生管理' }
+              },
+              {
+                path: '/class/:classId/edit_problem_set',
+                name: 'class.editProblemSets',
+                component: () => import('@/views/class/EditProblemSets'),
+                meta: { title: '作业管理' }
+              },
+              {
+                path: '/class/:classId/edit_problem_set/add',
+                name: 'class.addProblemSet',
+                component: () => import('@/views/class/CreateProblemSet'),
+                meta: { title: '创建作业' }
+              },
+              {
+                path: '/class/:classId/problem_set/:id/edit',
+                name: 'class.editProblemSet',
+                component: () => import('@/views/class/EditProblemSet'),
+                meta: { title: '编辑作业' }
+              },
+              {
+                path: '/class/:classId/problem_set/:id/edit_problem',
+                name: 'class.editProblemSetProblems',
+                component: () => import('@/views/class/EditProblemSetProblems'),
+                meta: { title: '编辑作业' }
+              }
+            ]
           }
         ]
       },

@@ -155,8 +155,8 @@ export default {
         sortField: 'id',
         sortOrder: 'ascend'
       },
-      search_problem_id: null,
-      search_user_id: null,
+      search_problem_id: this.$route.query && +this.$route.query.problem_id || null,
+      search_user_id: this.$route.query && +this.$route.query.user_id || null,
       search_result: []
     }
   },
@@ -171,6 +171,8 @@ export default {
     this.fetch({
       pageSize: this.$refs.table.pagination.pageSize,
       page: this.$refs.table.pagination.current,
+      user_id: this.search_user_id,
+      problem_id: this.search_problem_id,
       callback: () => {
         this.$nextTick(() => {
           for (const col of this.columns) {

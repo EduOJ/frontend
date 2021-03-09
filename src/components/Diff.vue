@@ -57,7 +57,7 @@ export default {
     prettyHtml () {
       console.log(this.content)
       if (this.content === '') {
-        return '程序输出与标准答案完全一致'
+        return '程序输出与标准答案完全一致或程序执行失败'
       }
       if (!this.content) {
         return ''

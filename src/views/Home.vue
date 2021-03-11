@@ -3,7 +3,7 @@
     <template v-slot:content>
       <div class="page-header-content">
         <div class="avatar">
-          <a-avatar size="large" :src="avatar"/>
+          <avatar size="large" :user="user"/>
         </div>
         <div class="content">
           <div class="content-title">
@@ -84,7 +84,7 @@
             style="margin-bottom: 24px;">
             <a-list item-layout="horizontal" :data-source="class_taking">
               <a-list-item slot="renderItem" slot-scope="klass">
-                <router-link :to="{'name':'class.dashboard', params: {classId: klass.id}}" style="color: rgba(0, 0, 0, 0.65)">
+                <router-link :to="{'name':'class.dashboard', params: {classID: klass.id}}" style="color: rgba(0, 0, 0, 0.65)">
                   <a-list-item-meta>
                     <span slot="title">
                       {{ klass.course_name }}
@@ -102,7 +102,7 @@
             v-if="class_managing.length !== 0">
             <a-list item-layout="horizontal" :data-source="class_managing">
               <a-list-item slot="renderItem" slot-scope="klass">
-                <router-link :to="{'name':'class.dashboard', params: {classId: klass.id}}" style="color: rgba(0, 0, 0, 0.65)">
+                <router-link :to="{'name':'class.dashboard', params: {classID: klass.id}}" style="color: rgba(0, 0, 0, 0.65)">
                   <a-list-item-meta>
                     <span slot="title">
                       {{ klass.course_name }}
@@ -123,19 +123,18 @@
 import { timeFix } from '@/utils/util'
 import { mapState } from 'vuex'
 import { PageHeaderWrapper } from '@ant-design-vue/pro-layout'
-import request from '@/utils/request'
-import md5 from 'js-md5'
+import Avatar from '@/components/Avatar'
 import { getClassManaging, getClassTaking } from '@/api/class'
 
 export default {
   name: 'Home',
   components: {
-    PageHeaderWrapper
+    PageHeaderWrapper,
+    Avatar
   },
   data () {
     return {
       timeFix: timeFix(),
-      avatar: '',
       class_managing: [],
       class_taking: []
     }
@@ -146,20 +145,6 @@ export default {
     })
   },
   mounted () {
-    if (window.localStorage.getItem(`users.${this.user.email}.avatar`)) {
-      this.avatar = window.localStorage.getItem(`users.${this.user.email}.avatar`)
-    } else {
-      request({
-        url: 'https://en.gravatar.com/' + md5(this.user.email.trim().toLowerCase()) + '.json',
-        method: 'get',
-        validateStatus: () => true
-      }).then(resp => {
-        window.localStorage.setItem(`users.${this.user.email}.avatar`, 'https://www.gravatar.com/avatar/' + md5(this.user.email.trim().toLowerCase()) + '?d=mp')
-        this.avatar = 'https://www.gravatar.com/avatar/' + md5(this.user.email.trim().toLowerCase()) + '?d=mp'
-      }).catch(err => {
-        console.log(err)
-      })
-    }
     const p = [getClassManaging(), getClassTaking()]
     Promise.all(p).then(data => {
       console.log(data)

@@ -1,17 +1,7 @@
 <template>
   <a-row>
     <a-col span="18" offset="3">
-      <a-card title="作业" :loading="loading" class="tool-card">
-        <div class="toolbar-row">
-          <router-link :to="{name: 'class.addProblemSet', param: {classID: this.klass.id}}">
-            <a-button type="primary">
-              <a-icon type="file-add" />
-              创建
-            </a-button>
-          </router-link>
-          <div class="space"></div>
-          <a-button>4</a-button>
-        </div>
+      <a-card title="作业" :loading="loading">
         <a-list :data-source="klass.problem_sets" bordered style="margin-top: 20px">
           <a-list-item slot="renderItem" slot-scope="problem_set">
             <a-list-item-meta>
@@ -22,24 +12,21 @@
             {{ problem_set.end_time.format('lll') }}
             <div class="toolbar-row">
               <div class="space"></div>
-              <router-link :to="{name: 'class.editProblemSetProblems', params: {classID: klass.id, problemSetID: problem_set.id}}">
+              <router-link :to="{name: 'class.problemSet.problems', params: {classID: klass.id, problemSetID: problem_set.id}}" v-if="started(problem_set)">
                 <a-button type="link">
-                  编辑题目
+                  查看题目
                 </a-button>
               </router-link>
-              <router-link :to="{name: 'class.editProblemSet', params: {classID: klass.id, problemSetID: problem_set.id}}">
-                <a-button type="link">
-                  编辑信息
+              <a-tooltip v-else>
+                <template slot="title">
+                  作业还未开放！
+                </template>
+                <a-button type="link" disabled>
+                  查看题目
                 </a-button>
-              </router-link>
+              </a-tooltip>
               <a-button type="link">
                 查看分数（功能开发中）
-              </a-button>
-              <a-button type="link">
-                查看分数（功能开发中）
-              </a-button>
-              <a-button type="link" style="color: #E23c39;" @click="deleteProblemSet([problem_set])">
-                删除
               </a-button>
             </div>
           </a-list-item>
@@ -56,6 +43,12 @@ import moment from 'moment'
 
 export default {
   methods: {
+    started (p) {
+      return p.start_time.isBefore(moment())
+    },
+    available (p) {
+      return p.end_time.isAfter(moment()) && p.start_time.isBefore(moment())
+    },
     selectProblemSet (stu, e) {
       if (e.target.checked) {
         this.selected.push(stu)
@@ -125,14 +118,11 @@ export default {
 .ant-space-horizontal
   width: 100%
   justify-content: center
-.tool-card
-  ::v-deep
-    .toolbar-row
-      display: flex
-      justify-content: center
-      width: 100%
-      :not(:last-child)
-        margin-right: 10px
-      .space
-        flex: 1
+.toolbar-row
+  display: flex
+  width: 100%
+  :not(:last-child)
+    margin-right: 5px
+  .space
+    flex: 1
 </style>

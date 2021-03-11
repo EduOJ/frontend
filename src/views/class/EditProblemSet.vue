@@ -116,7 +116,7 @@ export default {
         if (valid) {
           editProblemSet({
             id: this.id,
-            class_id: this.storeClass.id,
+            classID: this.storeClass.id,
             name: this.form.name,
             description: this.form.description,
             start_time: this.form.time[0].format(),

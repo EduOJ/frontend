@@ -12,9 +12,9 @@ const classApi = {
   ClassManaging: '/api/user/me/managing_classes'
 }
 
-export function addProblems (classId, problemSetId, problems) {
+export function addProblems (classID, problemSetId, problems) {
   return api({
-    url: classApi.ProblemSetProblem.replace(':id', classId).replace(':pid', problemSetId),
+    url: classApi.ProblemSetProblem.replace(':id', classID).replace(':pid', problemSetId),
     method: 'post',
     data: {
       problem_ids: problems
@@ -22,32 +22,32 @@ export function addProblems (classId, problemSetId, problems) {
   })
 }
 
-export function deleteProblems (classId, problemSetId, problems) {
+export function deleteProblems (classID, problemSetId, problems) {
   return api({
-    url: classApi.ProblemSetProblem.replace(':id', classId).replace(':pid', problemSetId),
+    url: classApi.ProblemSetProblem.replace(':id', classID).replace(':pid', problemSetId),
     method: 'delete',
     data: {
       problem_ids: problems
     }
   })
 }
-export function getProblemSet (classId, pid) {
+export function getProblemSet (classID, pid) {
   return api({
-    url: classApi.ProblemSet.replace(':id', classId).replace(':pid', pid),
+    url: classApi.ProblemSet.replace(':id', classID).replace(':pid', pid),
     method: 'get'
   })
 }
 
 export function createProblemSet (data) {
   return api({
-    url: classApi.CreateProblemSet.replace(':id', data.class_id),
+    url: classApi.CreateProblemSet.replace(':id', data.classID),
     method: 'post',
     data
   })
 }
 export function editProblemSet (data) {
   return api({
-    url: classApi.ProblemSet.replace(':id', data.class_id).replace(':pid', data.id),
+    url: classApi.ProblemSet.replace(':id', data.classID).replace(':pid', data.id),
     method: 'put',
     data
   })
@@ -80,9 +80,9 @@ export function getClass (id) {
   })
 }
 
-export function addStudents (classId, students) {
+export function addStudents (classID, students) {
   return api({
-    url: classApi.Students.replace(':id', classId),
+    url: classApi.Students.replace(':id', classID),
     method: 'post',
     data: {
       user_ids: students
@@ -90,9 +90,9 @@ export function addStudents (classId, students) {
   })
 }
 
-export function deleteStudents (classId, students) {
+export function deleteStudents (classID, students) {
   return api({
-    url: classApi.Students.replace(':id', classId),
+    url: classApi.Students.replace(':id', classID),
     method: 'delete',
     data: {
       user_ids: students

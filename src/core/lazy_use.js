@@ -45,7 +45,8 @@ import {
   Descriptions,
   message,
   notification,
-  Collapse
+  Collapse,
+  Timeline
 } from 'ant-design-vue'
 import Viser from 'viser-vue'
 
@@ -99,6 +100,7 @@ Vue.use(PageHeader)
 Vue.use(Result)
 Vue.use(Statistic)
 Vue.use(Descriptions)
+Vue.use(Timeline)
 
 Vue.prototype.$confirm = Modal.confirm
 Vue.prototype.$message = message

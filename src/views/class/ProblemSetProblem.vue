@@ -8,11 +8,6 @@
             </markdown>
             <test-case v-for="t in problem.test_cases" :t="t" :key="t.id" :can-read-secret="can_read_secret"/>
           </a-skeleton>
-          <router-link :to="{name: 'problem.edit', params: {id :problem.id}}" slot="extra">
-            <a-button>
-              <a-icon type="edit"/> 编辑题目
-            </a-button>
-          </router-link>
         </a-card>
       </a-col>
       <a-col :xl="{span:6}" :lg="{span:8}" >
@@ -63,7 +58,7 @@
                   {{ download_message }}</a-button>
               </a-descriptions-item>
             </a-descriptions>
-            <router-link :to="{name: 'problem.submit', params: {id: problem.id}}">
+            <router-link :to="{name:'class.problemSet.submit', params: {id: problem.id, classID: classID, pid: problem.id}}">
               <a-button type="primary">
                 提交
               </a-button>
@@ -73,7 +68,7 @@
             <template slot="title">最近提交</template>
             <a-list size="small" bordered :data-source="submissions">
               <a-list-item slot="renderItem" slot-scope="s">
-                <router-link :to="{name:'submission', params: {id:s.id}}" style="color: black;width: 100%;">
+                <router-link :to="{name:'class.problemSet.submit', params: {id, classID: classID, pid: problem.id}}" style="color: black;width: 100%;">
                   <a-row>
                     <a-col :span="4">
                       {{ s.id }}
@@ -96,15 +91,15 @@
 </template>
 
 <script>
-import { getProblem } from '@/api/problem'
-import { getSubmissions } from '@/api/submission'
-import { format } from 'timeago.js'
+import { getProblemSetProblem, getSubmissions } from '@/api/problem_set'
+import { getProblemSet } from '@/api/class'
 import Markdown from '@/components/Editor/Markdown'
 import RunStatus from '@/components/RunStatus'
 import TestCase from '@/components/TestCase'
 import config from '@/config/config'
 import request from '@/utils/request'
 import download from 'js-file-download'
+import moment from 'moment'
 
 export default {
   name: 'Problem',
@@ -116,7 +111,9 @@ export default {
   data () {
     return {
       config: config,
-      id: this.$route.params.id,
+      problemSetID: this.$route.params.problemSetID,
+      classID: this.$route.params.classID,
+      id: this.$route.params.problemID,
       problem_loading: true,
       submission_loading: true,
       downloading: false,
@@ -124,7 +121,7 @@ export default {
       can_read_problem: this.$store.getters.can('read_problem', 'problem', this.$route.params.id) || this.$store.getters.can('read_problem'),
       can_read_secret: this.$store.getters.can('read_problem_secret', 'problem', this.$route.params.id) || this.$store.getters.can('read_problem_secret'),
       problem: {
-        id: this.$route.params.id,
+        id: this.$route.params.problemID,
         name: '',
         description: '',
         language_allowed: [],
@@ -137,6 +134,7 @@ export default {
         attachment_file_name: '',
         test_cases: []
       },
+      problem_set: {},
       submissions: []
     }
   },
@@ -145,11 +143,24 @@ export default {
   },
   methods: {
     format (time) {
-      return format(time, 'zh_CN')
+      return moment(time).fromNow()
     },
     fetch () {
       this.problem_loading = true
-      getProblem(this.id).then(data => {
+      getProblemSet(this.classID, this.problemSetID).then(data => {
+        this.problem_set = data.problem_set
+        if (moment(data.problem_set.end_time).isAfter(moment())) {
+          this.$info({
+            content: '本次作业已经截止，还可以继续提交做题，但是不会更新作业成绩！'
+          })
+        }
+      }).catch(err => {
+        this.$error({
+          content: '遇到错误：' + err.message
+        })
+        console.error(err)
+      })
+      getProblemSetProblem(this.classID, this.problemSetID, this.id).then(data => {
         this.problem_loading = false
         data.problem.test_cases.sort((a, b) => {
           if (a.sample === b.sample) { return a.id - b.id }
@@ -163,7 +174,7 @@ export default {
         })
         console.error(err)
       })
-      getSubmissions({
+      getSubmissions(this.classID, this.problemSetID, {
         problem_id: this.id,
         user_id: this.$store.state.user.id,
         limit: 5

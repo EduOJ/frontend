@@ -94,7 +94,6 @@
 <script>
 import { getProblem } from '@/api/problem'
 import { getSubmissions } from '@/api/submission'
-import { format } from 'timeago.js'
 import Markdown from '@/components/Editor/Markdown'
 import RunStatus from '@/components/RunStatus'
 import TestCase from '@/components/TestCase'
@@ -103,6 +102,7 @@ import request from '@/utils/request'
 import download from 'js-file-download'
 import languageConf from '@/config/languageConf'
 import Language from '@/components/Language'
+import moment from 'moment'
 
 export default {
   name: 'Problem',
@@ -145,7 +145,7 @@ export default {
   },
   methods: {
     format (time) {
-      return format(time, 'zh_CN')
+      return moment(time).fromNow()
     },
     fetch () {
       this.problem_loading = true

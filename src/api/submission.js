@@ -18,16 +18,6 @@ export function getSubmissions (req) {
   })
 }
 
-export function ISODateString (d) {
-  function pad (n) { return n < 10 ? '0' + n : n }
-  return d.getUTCFullYear() + '-' +
-    pad(d.getUTCMonth() + 1) + '-' +
-    pad(d.getUTCDate()) + 'T' +
-    pad(d.getUTCHours()) + ':' +
-    pad(d.getUTCMinutes()) + ':' +
-    pad(d.getUTCSeconds()) + 'Z'
-}
-
 export function getSubmission (id, poll = false, before = null) {
   return api({
     url: submissionApi.GetSubmission.replace(':id', id),

@@ -101,19 +101,6 @@ export default {
     ...mapGetters({
       storeClass: 'class'
     })
-    // storeClass () {
-    //   console.log(JSON.stringify(this.$store.getters.class))
-    //   return  || {
-    //     id: '',
-    //     name: '',
-    //     course_name: '',
-    //     description: '',
-    //     invite_code: '',
-    //     managers: [],
-    //     students: [],
-    //     problem_sets: []
-    //   }
-    // }
   },
   mounted () {
   },

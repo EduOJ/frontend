@@ -97,53 +97,89 @@ export const constantRouterMap = [
             meta: { title: '创建班级' }
           },
           {
-            path: '/class/:classId',
+            path: '/class/:classID',
             component: () => import('@/views/class/ClassView'),
             hidden: true,
             name: 'class',
             redirect: { name: 'class.dashboard' },
             children: [
               {
-                path: '/class/:classId/dashboard',
+                path: '/class/:classID/dashboard',
                 name: 'class.dashboard',
                 component: () => import('@/views/class/Dashboard'),
                 meta: { title: '查看班级' }
               },
               {
-                path: '/class/:classId/edit',
+                path: '/class/:classID/edit',
                 name: 'class.edit',
                 component: () => import('@/views/class/EditClass'),
                 meta: { title: '编辑班级' }
               },
               {
-                path: '/class/:classId/edit_student',
+                path: '/class/:classID/edit_student',
                 name: 'class.editStudent',
                 component: () => import('@/views/class/EditStudent'),
                 meta: { title: '学生管理' }
               },
               {
-                path: '/class/:classId/edit_problem_set',
+                path: '/class/:classID/edit_problem_set',
                 name: 'class.editProblemSets',
                 component: () => import('@/views/class/EditProblemSets'),
                 meta: { title: '作业管理' }
               },
               {
-                path: '/class/:classId/edit_problem_set/add',
+                path: '/class/:classID/edit_problem_set/add',
                 name: 'class.addProblemSet',
                 component: () => import('@/views/class/CreateProblemSet'),
                 meta: { title: '创建作业' }
               },
               {
-                path: '/class/:classId/problem_set/:id/edit',
+                path: '/class/:classID/problem_set/:problemSetID/edit',
                 name: 'class.editProblemSet',
                 component: () => import('@/views/class/EditProblemSet'),
                 meta: { title: '编辑作业' }
               },
               {
-                path: '/class/:classId/problem_set/:id/edit_problem',
+                path: '/class/:classID/problem_set/:problemSetID/edit_problem',
                 name: 'class.editProblemSetProblems',
                 component: () => import('@/views/class/EditProblemSetProblems'),
                 meta: { title: '编辑作业' }
+              },
+              {
+                path: '/class/:classID/problem_set',
+                name: 'class.problemSets',
+                component: () => import('@/views/class/ProblemSets'),
+                meta: { title: '查看作业' }
+              },
+              {
+                path: '/class/:classID/problem_set/:problemSetID/problems',
+                name: 'class.problemSet.problems',
+                component: () => import('@/views/class/ProblemSetProblems'),
+                meta: { title: '查看作业' }
+              },
+              {
+                path: '/class/:classID/problem_set/:problemSetID/problem/:problemID',
+                name: 'class.problemSet.problem',
+                component: () => import('@/views/class/ProblemSetProblem'),
+                meta: { title: '做题' }
+              },
+              {
+                path: '/class/:classID/problem_set/:problemSetID/problem/:problemID/submit',
+                name: 'class.problemSet.submit',
+                component: () => import('@/views/class/ProblemSetSubmit'),
+                meta: { title: '做题' }
+              },
+              {
+                path: '/class/:classID/problem_set/:problemSetID/submission/:submissionID',
+                name: 'class.problemSet.submission',
+                component: () => import('@/views/class/ProblemSetSubmission'),
+                meta: { title: '查看提交' }
+              },
+              {
+                path: '/class/:classID/problem_set/:problemSetID/submissions',
+                name: 'class.problemSet.submissions',
+                component: () => import('@/views/class/ProblemSetSubmissions'),
+                meta: { title: '查看提交' }
               }
             ]
           }

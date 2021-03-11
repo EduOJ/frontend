@@ -19,7 +19,7 @@
                   {{ submission.id }}
                 </a-descriptions-item>
                 <a-descriptions-item label="题目名称">
-                  <router-link :to="{name: 'problem', params: {id: submission.problem_id}}">
+                  <router-link :to="{name: 'class.problemSet.problem', params: {problemSetID: problemSetID, classID: classID, problemID: submission.problem_id}}">
                     {{ `#${submission.problem_id} ${submission.problem_name}` }}
                   </router-link>
                 </a-descriptions-item>
@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import { getSubmission } from '@/api/submission'
+import { getSubmission } from '@/api/problem_set'
 import Markdown from '@/components/Editor/Markdown'
 import RunStatus from '@/components/RunStatus'
 import TestCase from '@/components/TestCase'
@@ -116,7 +116,9 @@ export default {
   data () {
     return {
       config: config,
-      id: this.$route.params.id,
+      problemSetID: this.$route.params.problemSetID,
+      classID: this.$route.params.classID,
+      id: this.$route.params.submissionID,
       loading: true,
       can_read_problem: false, // this.$store.getters.can('read_problem', 'problem', this.$route.params.id) || this.$store.getters.can('read_problem'),
       can_read_secret: false, // this.$store.getters.can('read_problem_secret', 'problem', this.$route.params.id) || this.$store.getters.can('read_problem_secret'),
@@ -146,15 +148,15 @@ export default {
     },
     fetch (poll) {
       this.loading = !poll
-      getSubmission(this.id, poll, poll ? this.submission.updated_at : null).then(data => {
+      getSubmission(this.classID, this.problemSetID, this.id, poll, poll ? this.submission.updated_at : null).then(data => {
         this.loading = false
         data.submission.runs.sort((a, b) => {
           if (a.sample === b.sample) { return a.test_case_id - b.test_case_id }
           return !a.sample ? 1 : -1 // make sample testcase top.
         })
         this.submission = data.submission
-        this.can_read_problem = this.$store.getters.can('read_problem', 'problem', data.submission.problem_id) || this.$store.getters.can('read_problem')
-        this.can_read_secret = this.$store.getters.can('read_problem_secret', 'problem', data.submission.problem_id) || this.$store.getters.can('read_problem_secret')
+        this.can_read_problem = this.$store.getters.can()('read_answers', 'problem_set', data.submission.problem_set_id) || this.$store.getters.can()('read_answers')
+        this.can_read_secret = this.$store.getters.can()('read_answers', 'problem_set', data.submission.problem_set_id) || this.$store.getters.can()('read_answers')
         if (!data.submission.judged) {
           this.fetch(true)
         }

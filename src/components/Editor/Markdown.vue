@@ -1,7 +1,6 @@
 <template>
   <div class="heti" style="max-width: 100%!important;">
     <div ref="render">
-
     </div>
   </div>
 </template>
@@ -24,21 +23,23 @@ export default {
   },
   methods: {
     render () {
-      Vditor.preview(this.$refs.render, this.value, {
-        hljs: {
-          enable: true,
-          style: 'dracula',
-          lineNumber: true
-        },
-        math: {
-          inlineDigit: true,
-          engine: 'MathJax'
-        },
-        cdn: '/assets/vditor',
-        after: () => {
-          h.spacingElement(this.$refs.render)
-        }
-      })
+      if (this.value) {
+        Vditor.preview(this.$refs.render, this.value, {
+          hljs: {
+            enable: true,
+            style: 'dracula',
+            lineNumber: true
+          },
+          math: {
+            inlineDigit: true,
+            engine: 'MathJax'
+          },
+          cdn: '/assets/vditor',
+          after: () => {
+            h.spacingElement(this.$refs.render)
+          }
+        })
+      }
     }
   },
   watch: {

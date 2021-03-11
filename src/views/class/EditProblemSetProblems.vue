@@ -1,12 +1,8 @@
 <template>
   <a-row>
     <a-col span="18" offset="3">
-      <a-card title="作业" :loading="loading">
-        <!-- magic don't touch ⬇️ -->
-        <!-- remove this will make scoped css don't work -->
-        <div>
-        </div>
-        <div class="flex-row">
+      <a-card title="作业" :loading="loading" class="tool-card">
+        <div class="toolbar-row">
           <a-button type="primary" @click="addProblem">
             <a-icon type="file-add" />
             添加
@@ -23,7 +19,7 @@
               <a-checkbox @change="selectProblem(problem, $event)" :checked="selected.includes(problem)" style="margin-right: 10px"/>
               {{ problem.name }}
             </div>
-            <div class="flex-row">
+            <div class="toolbar-row">
               <div class="space"></div>
               <a-button type="link">
                 查看分数（功能开发中）
@@ -37,7 +33,7 @@
             </div>
           </a-list-item>
         </a-list>
-        <div class="flex-row" style="margin-top: 20px">
+        <div class="toolbar-row" style="margin-top: 20px">
           <a-button @click="selected = problem_set.problems">
             全选
           </a-button>
@@ -106,9 +102,9 @@ export default {
       this.$confirm({
         content: '确定删除吗？',
         onOk: () => {
-          deleteProblems(this.class_id, this.id, problems.map(p => p.id)).then(data => {
+          deleteProblems(this.classID, this.id, problems.map(p => p.id)).then(data => {
             this.fetch()
-            this.addStudentLoading = false
+            this.addProblemSetLoading = false
             this.$success({
               content: '题目删除成功！',
               onOk: () => {
@@ -150,14 +146,14 @@ export default {
     confirmAddProblemSet () {
       this.addProblemSetLoading = true
       console.log(this.search_value)
-      addProblems(this.class_id, this.id, this.search_value).then(data => {
+      addProblems(this.classID, this.id, this.search_value).then(data => {
         this.fetch()
-        this.addStudentLoading = false
+        this.addProblemSetLoading = false
         this.$success({
           content: '题目添加成功！',
           onOk: () => {
             this.search_value = []
-            this.addStudentModal = false
+            this.addProblemSetModal = false
           }
         })
       }).catch(err => {
@@ -167,7 +163,7 @@ export default {
       })
     },
     fetch () {
-      getProblemSet(this.class_id, this.id).then(data => {
+      getProblemSet(this.classID, this.id).then(data => {
         data.problem_set.time = [moment(data.problem_set.start_time), moment(data.problem_set.end_time)]
         this.problem_set = data.problem_set
         this.loading = false
@@ -184,8 +180,8 @@ export default {
   inject: ['refreshClass'],
   data () {
     return {
-      id: this.$route.params.id,
-      class_id: this.$route.params.classId,
+      id: this.$route.params.problemSetID,
+      classID: this.$route.params.classID,
       loading: true,
       selected: [],
       search_value: [],
@@ -224,12 +220,14 @@ export default {
   justify-content: center
 .ant-list-item
   flex-wrap: wrap
-.flex-row
-  display: flex
-  justify-content: center
-  width: 100%
-  :not(:last-child)
-    margin-right: 10px
-  .space
-    flex: 1
+.tool-card
+  ::v-deep
+    .toolbar-row
+      display: flex
+      justify-content: center
+      width: 100%
+      :not(:last-child)
+        margin-right: 10px
+      .space
+        flex: 1
 </style>

@@ -113,19 +113,19 @@ export const constantRouterMap = [
                 path: '/class/:classID/edit',
                 name: 'class.edit',
                 component: () => import('@/views/class/EditClass'),
-                meta: { title: '编辑班级' }
+                meta: { title: '编辑班级', permission: 'manage_class' }
               },
               {
                 path: '/class/:classID/edit_student',
                 name: 'class.editStudent',
                 component: () => import('@/views/class/EditStudent'),
-                meta: { title: '学生管理' }
+                meta: { title: '学生管理', permission: 'manage_class' }
               },
               {
                 path: '/class/:classID/edit_problem_set',
                 name: 'class.editProblemSets',
                 component: () => import('@/views/class/EditProblemSets'),
-                meta: { title: '作业管理' }
+                meta: { title: '作业管理', permission: 'manage_problem_sets' }
               },
               {
                 path: '/class/:classID/edit_problem_set/add',

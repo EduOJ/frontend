@@ -94,7 +94,7 @@ export const constantRouterMap = [
             path: '/class/add',
             name: 'class.add',
             component: () => import('@/views/class/CreateClass'),
-            meta: { title: '创建班级' }
+            meta: { title: '创建班级', permission: 'manage_class' }
           },
           {
             path: '/class/:classID',
@@ -352,12 +352,6 @@ export const constantRouterMap = [
         name: 'account',
         meta: { title: '我的', icon: 'user' },
         children: [
-          {
-            path: '/account/center',
-            name: 'center',
-            component: () => import('@/views/account/center'),
-            meta: { title: '个人中心' }
-          },
           {
             path: '/account/settings',
             name: 'settings',

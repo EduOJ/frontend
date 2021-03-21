@@ -13,20 +13,10 @@ const isProd = process.env.NODE_ENV === 'production'
 
 const assetsCDN = {
   // webpack build externals
-  externals: {
-    vue: 'Vue',
-    'vue-router': 'VueRouter',
-    vuex: 'Vuex',
-    axios: 'axios'
-  },
+  externals: {},
   css: [],
   // https://unpkg.com/browse/vue@2.6.10/
-  js: [
-    '//cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js',
-    '//cdn.jsdelivr.net/npm/vue-router@3.1.3/dist/vue-router.min.js',
-    '//cdn.jsdelivr.net/npm/vuex@3.1.1/dist/vuex.min.js',
-    '//cdn.jsdelivr.net/npm/axios@0.19.0/dist/axios.min.js'
-  ]
+  js: []
 }
 
 // vue.config.js
@@ -48,7 +38,7 @@ const vueConfig = {
 
   chainWebpack: (config) => {
     config.resolve.alias
-      .set('@$', resolve('src'))
+      .set('@', resolve('src'))
 
     const svgRule = config.module.rule('svg')
     svgRule.uses.clear()
@@ -94,15 +84,15 @@ const vueConfig = {
 
   devServer: {
     // development server port 8000
-    port: 80
+    port: 80,
     // If you want to turn on the proxy, please remove the mockjs /src/main.jsL11
-    // proxy: {
-    //   '/api': {
-    //     target: 'https://mock.ihx.me/mock/5baf3052f7da7e07e04a5116/antd-pro',
-    //     ws: false,
-    //     changeOrigin: true
-    //   }
-    // }
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:8080',
+        ws: false,
+        changeOrigin: true
+      }
+    }
   },
 
   // disable source map in production

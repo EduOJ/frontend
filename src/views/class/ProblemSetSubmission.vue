@@ -67,18 +67,18 @@
                     <Code :url="config.apiUrl + `/api/submission/${submission.id}/run/${run.id}/compiler_output`"></Code>
                     <a-space direction="vertical" v-if="can_read_secret || run.sample">
                       <h3> 输入： </h3>
-                      <Code language="text" height="200px" :url="config.apiUrl + `/api/submission/${submission.id}/run/${run.id}/input`"></Code>
+                      <Code language="text" height="200px" :url="config.apiUrl + `/api/class/${classID}/problem_set/${problemSetID}/submission/${submission.id}/run/${run.id}/input`"></Code>
                       <h3> 输出： </h3>
-                      <Code language="text" height="200px" :url="config.apiUrl + `/api/submission/${submission.id}/run/${run.id}/output`"></Code>
+                      <Code language="text" height="200px" :url="config.apiUrl + `/api/class/${classID}/problem_set/${problemSetID}/submission/${submission.id}/run/${run.id}/output`"></Code>
                       <h3> 程序输出与标准答案的区别： </h3>
-                      <Diff language="text" height="200px" :url="config.apiUrl + `/api/submission/${submission.id}/run/${run.id}/comparer_output`"></Diff>
+                      <Diff language="text" height="200px" :url="config.apiUrl + `/api/class/${classID}/problem_set/${problemSetID}/submission/${submission.id}/run/${run.id}/comparer_output`"></Diff>
                     </a-space>
                   </a-collapse-panel>
                 </a-collapse>
               </a-card>
               <a-card title="源代码">
                 文件名： {{ submission.file_name }}
-                <Code :url="config.apiUrl + `/api/submission/${submission.id}/code`" :filename="submission.file_name" :language="submission.language" />
+                <Code :url="config.apiUrl + `/api/class/${classID}/problem_set/${problemSetID}/submission/${submission.id}/code`" :filename="submission.file_name" :language="submission.language" />
               </a-card>
             </a-space>
           </a-skeleton>
@@ -100,6 +100,7 @@ import Diff from '@/components/Diff'
 import Memory from '@/components/Memory'
 import config from '@/config/config'
 import moment from 'moment'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Submission',
@@ -140,6 +141,7 @@ export default {
     this.fetch()
   },
   methods: {
+    ...mapGetters(['can']),
     format (time) {
       return moment(time).fromNow()
     },
@@ -155,8 +157,8 @@ export default {
           return !a.sample ? 1 : -1 // make sample testcase top.
         })
         this.submission = data.submission
-        this.can_read_problem = this.$store.getters.can()('read_answers', 'problem_set', data.submission.problem_set_id) || this.$store.getters.can()('read_answers')
-        this.can_read_secret = this.$store.getters.can()('read_answers', 'problem_set', data.submission.problem_set_id) || this.$store.getters.can()('read_answers')
+        this.can_read_problem = this.$store.getters.can('read_answers', 'problem_set', data.submission.problem_set_id) || this.$store.getters.can('read_answers')
+        this.can_read_secret = this.$store.getters.can('read_answers', 'problem_set', data.submission.problem_set_id) || this.$store.getters.can('read_answers')
         if (!data.submission.judged) {
           this.fetch(true)
         }

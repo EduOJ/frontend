@@ -68,7 +68,7 @@
             <template slot="title">最近提交</template>
             <a-list size="small" bordered :data-source="submissions">
               <a-list-item slot="renderItem" slot-scope="s">
-                <router-link :to="{name:'class.problemSet.submit', params: {id, classID: classID, pid: problem.id}}" style="color: black;width: 100%;">
+                <router-link :to="{name:'class.problemSet.submission', params: {submissionID: s.id, classID: classID, problemSetID}}" style="color: black;width: 100%;">
                   <a-row>
                     <a-col :span="4">
                       {{ s.id }}
@@ -149,7 +149,7 @@ export default {
       this.problem_loading = true
       getProblemSet(this.classID, this.problemSetID).then(data => {
         this.problem_set = data.problem_set
-        if (moment(data.problem_set.end_time).isAfter(moment())) {
+        if (moment(data.problem_set.end_time).isBefore(moment())) {
           this.$info({
             content: '本次作业已经截止，还可以继续提交做题，但是不会更新作业成绩！'
           })

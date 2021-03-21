@@ -1,7 +1,8 @@
 import request from '@/utils/request'
 import api from '@/api/api'
 const userApi = {
-  GetUser: '/api/user/',
+  GetUser: '/api/user/:id',
+  GetUserProblemInfo: '/api/user/:id/problem_info',
   UserMe: '/api/user/me',
   GetUsers: '/api/users',
   ChangePassword: '/api/user/change_password'
@@ -9,7 +10,13 @@ const userApi = {
 
 export function getUser (id) {
   return api({
-    url: userApi.GetUser + id,
+    url: userApi.GetUser.replace(':id', id),
+    method: 'get'
+  })
+}
+export function getUserProblemInfo (id) {
+  return api({
+    url: userApi.GetUserProblemInfo.replace(':id', id),
     method: 'get'
   })
 }

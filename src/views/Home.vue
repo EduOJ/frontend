@@ -10,20 +10,16 @@
             {{ timeFix }}，{{ user.nickname }}<span class="welcome-text">，欢迎您。</span>
           </div>
           <del>今天你做题了吗？</del>
-          <!--          <div>前端工程师 | 蚂蚁金服 - 某某某事业群 - VUE平台</div>-->
         </div>
       </div>
     </template>
     <template v-slot:extraContent>
       <div class="extra-content">
         <div class="stat-item">
-          <a-statistic title="做题数" :value="'功能开发中'" />
+          <a-statistic title="通过的题目" :value="passed_count" />
         </div>
         <div class="stat-item">
-          <a-statistic title="做题数排名" :value="'功能开发中'"/>
-        </div>
-        <div class="stat-item">
-          <a-statistic title="被点赞数" :value="'坏耶！这个功能也在开发中！'" />
+          <a-statistic title="尝试但没通过的题目" :value="tried_count" />
         </div>
       </div>
     </template>
@@ -42,15 +38,16 @@
                 <a-card :bordered="false" :body-style="{ padding: 0 }">
                   <a-card-meta>
                     <div slot="title" class="card-title">
-                      <a>标题</a>
+                      <a>作业</a>
                     </div>
                     <div slot="description" class="card-description">
-                      项目描述
+                      作业描述
+                      这里会展示所有作业
+                      功能还在开发中......
                     </div>
                   </a-card-meta>
                   <div class="problem_set-item">
-                    <a href="/#/">项目名称</a>
-                    <span class="datetime">9小时前</span>
+                    <span class="datetime">作业时间</span>
                   </div>
                 </a-card>
               </a-card-grid>
@@ -61,11 +58,11 @@
             <a-list>
               <a-list-item>
                 <a-list-item-meta>
-                  <a-avatar slot="avatar" :src="user.avatar"/>
+                  <Avatar :user="user"></Avatar>
                   <div slot="title">
                     <span>{{ user.nickname }}</span>&nbsp;
                   </div>
-                  <div slot="description"> 321 </div>
+                  <div slot="description"> 通过了xx题！ </div>
                 </a-list-item-meta>
               </a-list-item>
             </a-list>
@@ -125,6 +122,7 @@ import { mapState } from 'vuex'
 import { PageHeaderWrapper } from '@ant-design-vue/pro-layout'
 import Avatar from '@/components/Avatar'
 import { getClassManaging, getClassTaking } from '@/api/class'
+import { getUserProblemInfo } from '@/api/user'
 
 export default {
   name: 'Home',
@@ -136,7 +134,9 @@ export default {
     return {
       timeFix: timeFix(),
       class_managing: [],
-      class_taking: []
+      class_taking: [],
+      passed_count: '加载中',
+      tried_count: '加载中'
     }
   },
   computed: {
@@ -154,6 +154,15 @@ export default {
       console.log(err)
       this.$error({
         content: '获取班级信息时发生了错误'
+      })
+    })
+    getUserProblemInfo(this.user.id).then(resp => {
+      this.passed_count = resp.passed_count
+      this.tried_count = resp.tried_count
+    }).catch(err => {
+      console.log(err)
+      this.$error({
+        content: '获取做题信息时发生了错误'
       })
     })
   },

@@ -68,7 +68,8 @@ export function createTestCase (testCase) {
   return api({
     url: problemApi.CreateTestCase.replace(':id', testCase.problem_id),
     method: 'post',
-    data: formData
+    data: formData,
+    timeout: 60000
   })
 }
 

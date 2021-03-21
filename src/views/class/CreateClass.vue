@@ -106,9 +106,9 @@ export default {
               onOk: () => {
                 console.log(resp)
                 this.$router.push({
-                  'name': 'class',
+                  'name': 'class.dashboard',
                   params: {
-                    id: resp.class.id
+                    classID: resp.class.id
                   }
                 })
               },

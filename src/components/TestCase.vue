@@ -77,7 +77,7 @@ export default {
 
 <style scoped lang="sass">
 .card
-  margin-bottom: 10px
+  margin-top: 10px
 .locked
   display: flex
   align-items: center

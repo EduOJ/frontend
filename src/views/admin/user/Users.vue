@@ -10,7 +10,7 @@
       <router-link :to="{name: 'admin.user.add'}">
         <a-button>添加用户</a-button>
       </router-link>
-      <a-button>导入用户</a-button>
+      <a-button @click="importUserModal = true">导入用户</a-button>
       <a-button>导出用户</a-button>
     </a-space>
     <p></p>
@@ -47,12 +47,25 @@
     >
       <p>{{ deleteModelText }}</p>
     </a-modal>
+    <a-modal
+      title="导入用户"
+      :visible="importUserModal"
+      :confirm-loading="confirmLoading"
+      @ok="importUser"
+      @cancel="importUserModal = false"
+    >
+      <a-textarea
+        v-model="importUserText"
+        placeholder="顺序：用户名（学号），昵称（姓名），密码，邮箱。 <br>制表符分割。 从excel复制表格后粘贴即可。"
+        :auto-size="{ minRows: 3, maxRows: 10000 }"
+      />
+    </a-modal>
   </a-card>
 </template>
 
 <script>
 import Vue from 'vue'
-import { deleteUser, getUsers } from '@/api/admin_manage_user'
+import { deleteUser, getUsers, createUser } from '@/api/admin_manage_user'
 import ResizableTableHeader from '@/components/Table/ResizableTableHeader.js'
 
 const columns = [
@@ -100,6 +113,8 @@ export default {
     return {
       deleting: {},
       deleteModelText: '',
+      importUserText: '',
+      importUserModal: false,
       visible: false,
       confirmLoading: false,
       components: {
@@ -186,6 +201,65 @@ export default {
         page: pagination.current,
         sortField: sorter.field,
         sortOrder: sorter.order
+      })
+    },
+    importUser () {
+      const users = []
+      for (const u of this.importUserText.split('\n')) {
+        users.push({
+          username: u.split('\t')[0],
+          nickname: u.split('\t')[1],
+          password: u.split('\t')[2],
+          email: u.split('\t')[3]
+        })
+      }
+      const promises = []
+      for (const u of users) {
+        promises.push(new Promise((resolve, reject) => {
+          createUser(u).then(resp => {
+            resolve(resp)
+          }).catch(err => {
+            err.user = u
+            reject(err)
+          })
+        }))
+      }
+      Promise.allSettled(promises).then(results => {
+        console.log(results)
+        let message = ''
+        let error = false
+        for (const r of results) {
+          if (r.status === 'fulfilled') {
+            message += `用户${r.value.user.nickname}创建成功\n`
+          } else {
+            error = true
+            message += `用户${r.reason.user.nickname}创建失败: ${r.reason}\n`
+          }
+        }
+        message = message.split('\n').map(m => {
+          return (<p style="margin-block-end: 0;"> {m} </p>)
+        })
+        if (error) {
+          this.$error({
+            content: (h) => {
+              return (
+                <div>
+                  {message}
+                </div>
+              )
+            }
+          })
+        } else {
+          this.$success({
+            content: (h) => {
+              return (
+                <div>
+                  {message}
+                </div>
+              )
+            }
+          })
+        }
       })
     },
     fetch (params = {}) {

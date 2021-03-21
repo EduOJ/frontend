@@ -8,16 +8,13 @@
             <span class="title">duOJ</span>
           </a>
         </div>
-        <div class="desc">
-          EduOJ 牛逼！
-        </div>
       </div>
 
       <router-view />
 
       <div class="footer">
         <div class="links">
-          <a href="https://www.github.com/leoleoasd/EduOJBackend" target="_blank">EduOJ</a>
+          <a href="https://www.github.com/EduOJ/backend" target="_blank">EduOJ</a>
           <a href="https://www.github.com/leoleoasd/" target="_blank">@leoleoasd</a>
         </div>
       </div>

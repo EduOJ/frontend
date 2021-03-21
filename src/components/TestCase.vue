@@ -17,7 +17,7 @@
           :lazy-load="!t.sample"
           language="text"
           :filename="t.input_file_name"
-          :url="config.apiUrl + '/api/problem/' + t.problem_id + '/test_case/' + t.id + '/input_file'"/>
+          :url="baseUrl + t.problem_id + '/test_case/' + t.id + '/input_file'"/>
       </a-col>
       <a-col span="12">
         Output:
@@ -26,7 +26,7 @@
           :lazy-load="!t.sample"
           language="text"
           :filename="t.output_file_name"
-          :url="config.apiUrl + '/api/problem/' + t.problem_id + '/test_case/' + t.id + '/output_file'"/>
+          :url="baseUrl + t.problem_id + '/test_case/' + t.id + '/output_file'"/>
       </a-col>
     </a-row>
     <div v-else class="locked">
@@ -53,11 +53,14 @@ export default {
     canReadSecret: {
       type: Boolean,
       required: true
+    },
+    baseUrl: {
+      type: String,
+      default: config.apiUrl + '/api/problem/'
     }
   },
   data () {
     return {
-      config: config
     }
   },
   computed: {

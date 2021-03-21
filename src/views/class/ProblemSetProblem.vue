@@ -6,7 +6,7 @@
           <a-skeleton active :loading="problem_loading">
             <markdown v-model="problem.description">
             </markdown>
-            <test-case v-for="t in problem.test_cases" :t="t" :key="t.id" :can-read-secret="can_read_secret"/>
+            <test-case :base-url="`/api/class/${classID}/problem_set/${problemSetID}/problem/`" v-for="t in problem.test_cases" :t="t" :key="t.id" :can-read-secret="can_read_secret"/>
           </a-skeleton>
         </a-card>
       </a-col>
@@ -118,8 +118,8 @@ export default {
       submission_loading: true,
       downloading: false,
       download_message: '',
-      can_read_problem: this.$store.getters.can('read_problem', 'problem', this.$route.params.id) || this.$store.getters.can('read_problem'),
-      can_read_secret: this.$store.getters.can('read_problem_secret', 'problem', this.$route.params.id) || this.$store.getters.can('read_problem_secret'),
+      can_read_problem: this.$store.getters.can('manage_problem_sets', 'class', this.$route.params.classID) || this.$store.getters.can('manage_problem_sets'),
+      can_read_secret: this.$store.getters.can('read_problem_secret', 'class', this.$route.params.classID) || this.$store.getters.can('read_problem_secret'),
       problem: {
         id: this.$route.params.problemID,
         name: '',

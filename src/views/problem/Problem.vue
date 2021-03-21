@@ -165,7 +165,7 @@ export default {
       })
       getSubmissions({
         problem_id: this.id,
-        user_id: this.$store.state.user.id,
+        user_id: this.$store.state.user.info.id,
         limit: 5
       }).then(data => {
         this.submission_loading = false

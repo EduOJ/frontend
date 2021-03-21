@@ -38,7 +38,7 @@
               <a-button type="link">
                 查看分数（功能开发中）
               </a-button>
-              <a-button type="link" style="color: #E23c39;" @click="deleteProblemSet([problem_set])">
+              <a-button type="link" style="color: #E23c39;" @click="deleteProblemSet(problem_set)">
                 删除
               </a-button>
             </div>
@@ -53,6 +53,7 @@
 import Avatar from '@/components/Avatar'
 import { mapGetters } from 'vuex'
 import moment from 'moment'
+import { deleteProblemSet } from '@/api/class'
 
 export default {
   methods: {
@@ -63,17 +64,24 @@ export default {
         this.selected.splice(this.selected.indexOf(stu), 1)
       }
     },
-    deleteProblemSet (problemSets) {
-      if (problemSets.length === 0) {
-        this.$error({
-          content: '请至少选择一个作业'
-        })
-        return
-      }
+    deleteProblemSet (problemSet) {
       this.$confirm({
         content: '确定删除吗？',
         onOk: () => {
-
+          deleteProblemSet({
+            classID: this.klass.id,
+            id: problemSet.id
+          }).then(resp => {
+            this.$success({
+              content: '删除成功！'
+            })
+            this.refreshClass()
+          }).catch(err => {
+            console.log(err)
+            this.$error({
+              content: '删除失败：' + err.message
+            })
+          })
         }
       })
     }

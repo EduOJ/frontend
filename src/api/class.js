@@ -53,6 +53,13 @@ export function editProblemSet (data) {
   })
 }
 
+export function deleteProblemSet (data) {
+  return api({
+    url: classApi.ProblemSet.replace(':id', data.classID).replace(':pid', data.id),
+    method: 'delete'
+  })
+}
+
 export function getClassTaking (param) {
   return api({
     url: classApi.ClassTaking,

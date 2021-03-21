@@ -48,27 +48,6 @@ export default {
     },
     available (p) {
       return p.end_time.isAfter(moment()) && p.start_time.isBefore(moment())
-    },
-    selectProblemSet (stu, e) {
-      if (e.target.checked) {
-        this.selected.push(stu)
-      } else {
-        this.selected.splice(this.selected.indexOf(stu), 1)
-      }
-    },
-    deleteProblemSet (problemSets) {
-      if (problemSets.length === 0) {
-        this.$error({
-          content: '请至少选择一个作业'
-        })
-        return
-      }
-      this.$confirm({
-        content: '确定删除吗？',
-        onOk: () => {
-
-        }
-      })
     }
   },
   components: {

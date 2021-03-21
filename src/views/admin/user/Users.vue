@@ -56,7 +56,8 @@
     >
       <a-textarea
         v-model="importUserText"
-        placeholder="顺序：用户名（学号），昵称（姓名），密码，邮箱。 <br>制表符分割。 从excel复制表格后粘贴即可。"
+        placeholder="顺序：用户名（学号），昵称（姓名），密码，邮箱。
+制表符分割。 从excel复制表格后粘贴即可。"
         :auto-size="{ minRows: 3, maxRows: 10000 }"
       />
     </a-modal>

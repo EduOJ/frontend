@@ -64,7 +64,7 @@ export default {
   data () {
     return {
       submitBtn: false,
-      id: this.$route.params.id,
+      id: this.$route.params.problemSetID,
       loading: true,
       form: {
         name: '',
@@ -88,6 +88,7 @@ export default {
   watch: {
     storeClass: {
       handler (val) {
+        console.log(val)
         if (val && val.problem_sets) {
           const p = val.problem_sets.map(p => {
             p.time = [moment(p.start_time), moment(p.end_time)]

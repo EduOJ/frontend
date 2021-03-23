@@ -78,7 +78,7 @@
               </a-card>
               <a-card title="源代码">
                 文件名： {{ submission.file_name }}
-                <Code :url="config.apiUrl + `/api/submission/${submission.id}/code`" :filename="submission.file_name" :language="submission.language" />
+                <Code :url="config.apiUrl + `/api/submission/${submission.id}/code`" :filename="submission.file_name" :language="languageConf[submission.language].hljsLanguage" />
               </a-card>
             </a-space>
           </a-skeleton>
@@ -100,6 +100,7 @@ import Diff from '@/components/Diff'
 import Memory from '@/components/Memory'
 import config from '@/config/config'
 import moment from 'moment'
+import languageConf from '@/config/languageConf'
 
 export default {
   name: 'Submission',
@@ -115,6 +116,7 @@ export default {
   },
   data () {
     return {
+      languageConf,
       config: config,
       id: this.$route.params.id,
       loading: true,

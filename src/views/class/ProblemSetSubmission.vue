@@ -78,7 +78,7 @@
               </a-card>
               <a-card title="源代码">
                 文件名： {{ submission.file_name }}
-                <Code :url="config.apiUrl + `/api/class/${classID}/problem_set/${problemSetID}/submission/${submission.id}/code`" :filename="submission.file_name" :language="submission.language" />
+                <Code :url="config.apiUrl + `/api/submission/${submission.id}/code`" :filename="submission.file_name" :language="languageConf[submission.language].hljsLanguage" />
               </a-card>
             </a-space>
           </a-skeleton>
@@ -101,6 +101,7 @@ import Memory from '@/components/Memory'
 import config from '@/config/config'
 import moment from 'moment'
 import { mapGetters } from 'vuex'
+import languageConf from '@/config/languageConf'
 
 export default {
   name: 'Submission',
@@ -116,6 +117,7 @@ export default {
   },
   data () {
     return {
+      languageConf,
       config: config,
       problemSetID: this.$route.params.problemSetID,
       classID: this.$route.params.classID,

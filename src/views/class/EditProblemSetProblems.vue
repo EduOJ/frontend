@@ -34,7 +34,7 @@
           </a-list-item>
         </a-list>
         <div class="toolbar-row" style="margin-top: 20px">
-          <a-button @click="selected = problem_set.problems">
+          <a-button @click="this.selectAll">
             全选
           </a-button>
           <a-button @click="selected = []">
@@ -142,6 +142,12 @@ export default {
     },
     addProblem () {
       this.addProblemSetModal = true
+    },
+    selectAll () {
+      this.selected = []
+      for (const u of this.problem_set.problems) {
+        this.selected.push(u)
+      }
     },
     confirmAddProblemSet () {
       this.addProblemSetLoading = true

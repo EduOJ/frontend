@@ -28,10 +28,7 @@
               </a-descriptions-item>
               <a-descriptions-item label="允许的语言" :span="3">
                 <a-tag
-                  :color="{
-                    'c': 'green',
-                    'cpp': 'cyan'
-                  }[language]"
+                  :color="languageConf[language].color"
                   v-for="language in problem.language_allowed"
                   :key="language">
                   {{ language }}
@@ -100,6 +97,7 @@ import config from '@/config/config'
 import request from '@/utils/request'
 import download from 'js-file-download'
 import moment from 'moment'
+import languageConf from '@/config/languageConf'
 
 export default {
   name: 'Problem',
@@ -110,7 +108,8 @@ export default {
   },
   data () {
     return {
-      config: config,
+      languageConf,
+      config,
       problemSetID: this.$route.params.problemSetID,
       classID: this.$route.params.classID,
       id: this.$route.params.problemID,

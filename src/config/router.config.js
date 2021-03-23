@@ -61,7 +61,7 @@ export const constantRouterMap = [
             name: 'problem.edit',
             component: () => import('@/views/problem/EditProblem'),
             hidden: true,
-            meta: { title: '编辑题目', permission: 'update_problem' }
+            meta: { title: '编辑题目' }
           }
         ]
       },
@@ -113,19 +113,19 @@ export const constantRouterMap = [
                 path: '/class/:classID/edit',
                 name: 'class.edit',
                 component: () => import('@/views/class/EditClass'),
-                meta: { title: '编辑班级', permission: 'manage_class' }
+                meta: { title: '编辑班级' }
               },
               {
                 path: '/class/:classID/edit_student',
                 name: 'class.editStudent',
                 component: () => import('@/views/class/EditStudent'),
-                meta: { title: '学生管理', permission: 'manage_class' }
+                meta: { title: '学生管理' }
               },
               {
                 path: '/class/:classID/edit_problem_set',
                 name: 'class.editProblemSets',
                 component: () => import('@/views/class/EditProblemSets'),
-                meta: { title: '作业管理', permission: 'manage_problem_sets' }
+                meta: { title: '作业管理' }
               },
               {
                 path: '/class/:classID/edit_problem_set/add',
@@ -405,7 +405,7 @@ export const constantRouterMap = [
             name: 'admin.user.add',
             component: () => import('@/views/admin/user/CreateUser'),
             hidden: true,
-            meta: { title: '创建用户', permission: 'create_user' }
+            meta: { title: '创建用户', permission: 'manage_user' }
           },
           {
             path: '/admin/user/:id',

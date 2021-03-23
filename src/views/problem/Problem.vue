@@ -8,7 +8,7 @@
             </markdown>
             <test-case v-for="t in problem.test_cases" :t="t" :key="t.id" :can-read-secret="can_read_secret"/>
           </a-skeleton>
-          <router-link :to="{name: 'problem.edit', params: {id :problem.id}}" slot="extra">
+          <router-link :to="{name: 'problem.edit', params: {id :problem.id}}" slot="extra" v-if="can_edit_problem">
             <a-button>
               <a-icon type="edit"/> 编辑题目
             </a-button>
@@ -121,6 +121,7 @@ export default {
       submission_loading: true,
       downloading: false,
       download_message: '',
+      can_edit_problem: this.$store.getters.can('update_problem', 'problem', this.$route.params.id) || this.$store.getters.can('update_problem'),
       can_read_problem: this.$store.getters.can('read_problem', 'problem', this.$route.params.id) || this.$store.getters.can('read_problem'),
       can_read_secret: this.$store.getters.can('read_problem_secret', 'problem', this.$route.params.id) || this.$store.getters.can('read_problem_secret'),
       problem: {

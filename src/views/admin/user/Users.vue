@@ -129,7 +129,6 @@ export default {
         showSizeChanger: true,
         showQuickJumper: true,
         pageSizeOptions: [
-          '2',
           '20',
           '50',
           '100'
@@ -148,6 +147,10 @@ export default {
   },
   mounted () {
     this.fetch({
+      pageSize: this.$refs.table.pagination.pageSize,
+      page: this.$refs.table.pagination.current,
+      sortField: this.sorter.field,
+      sortOrder: this.sorter.order,
       callback: () => {
       this.$nextTick(() => {
         for (const col of this.columns) {

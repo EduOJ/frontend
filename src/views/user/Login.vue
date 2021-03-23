@@ -37,8 +37,9 @@
               type="primary"
               @click="onSubmit"
               class="login-button"
-              :loading="loginBtn"
-              :disabled="loginBtn"
+              :loading="loginBtnLoading"
+              :disabled="loginBtnLoading"
+              htmlType="submit"
               size="large">
               登录
             </a-button>
@@ -52,7 +53,7 @@
           </span>
         </a-form-model>
       </a-tab-pane>
-      <a-tab-pane key="2" tab="免密码登录">
+      <a-tab-pane key="2" tab="免密码登录" v-if="webauthnAvailable">
         <a-space
           direction="vertical">
           <a-input
@@ -63,7 +64,7 @@
           >
             <a-icon slot="prefix" type="user"/>
           </a-input>
-          <a-button @click="begin">开始</a-button>
+          <a-button @click="beginWebauthnLogin" htmlType="submit">开始</a-button>
         </a-space>
       </a-tab-pane>
     </a-tabs>
@@ -80,9 +81,11 @@ import { ACCESS_TOKEN } from '@/store/mutation-types'
 
 export default {
   data () {
+    const webauthnAvailable = document.location.protocol === 'https:' || document.location.host === 'localhost'
     return {
-      loginBtn: false,
-      useWebauthn: storage.get('useWebauthn') || false,
+      webauthnAvailable,
+      loginBtnLoading: false,
+      useWebauthn: storage.get('useWebauthn') && webauthnAvailable || false,
       form: {
         username: storage.get('username'),
         password: '',
@@ -104,7 +107,7 @@ export default {
   },
   methods: {
     ...mapActions(['Login']),
-    begin () {
+    beginWebauthnLogin () {
       storage.set('useWebauthn', true, 7 * 24 * 60 * 60 * 1000)
       beginLogin({
         username: this.form.username
@@ -156,7 +159,8 @@ export default {
       })
     },
     onSubmit () {
-      this.loginBtn = true
+      storage.set('useWebauthn', false, 7 * 24 * 60 * 60 * 1000)
+      this.loginBtnLoading = true
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.Login({
@@ -166,10 +170,10 @@ export default {
           }).then((res) => this.loginSuccess())
             .catch(err => this.requestFailed(err))
             .finally(() => {
-              this.loginBtn = false
+              this.loginBtnLoading = false
             })
         } else {
-          this.loginBtn = false
+          this.loginBtnLoading = false
           return false
         }
       })

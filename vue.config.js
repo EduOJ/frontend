@@ -99,7 +99,7 @@ const vueConfig = {
   productionSourceMap: false,
   lintOnSave: undefined,
   // babel-loader no-ignore node_modules/*
-  transpileDependencies: []
+  transpileDependencies: ['heti', 'diff2html']
 }
 
 // preview.pro.loacg.com only do not use in your production;

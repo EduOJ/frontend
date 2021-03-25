@@ -24,6 +24,16 @@
             </div>
           </a-list-item>
         </a-list>
+        <router-link
+          :to="{name: 'class.problemSet.submissions', params: {classID: classID, problemSetID: problem_set.id}}"
+        >
+          <a-button
+            style="margin-top: 10px"
+            type="link"
+          >
+            查看本次作业的提交
+          </a-button>
+        </router-link>
       </a-card>
     </a-col>
   </a-row>

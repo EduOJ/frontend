@@ -8,10 +8,7 @@
               语言选择：
               <a-select v-model="language" default-value="cpp" style="width: 120px">
                 <a-select-option :key="l" v-for="l in problem.language_allowed">
-                  {{ {
-                    c: "C",
-                    cpp: "C++"
-                  }[l] }}
+                  {{ languageConf[l].displayName }}
                 </a-select-option>
               </a-select>
             </p>
@@ -54,6 +51,7 @@ import { codemirror } from '@/components/codemirror'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/darcula.css'
 import 'codemirror/mode/clike/clike.js'
+import languageConf from '@/config/languageConf'
 
 export default {
   name: 'Problem',
@@ -66,6 +64,7 @@ export default {
   data () {
     return {
       config: config,
+      languageConf,
       problemSetID: this.$route.params.problemSetID,
       classID: this.$route.params.classID,
       id: this.$route.params.problemID,

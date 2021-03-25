@@ -25,6 +25,21 @@
                   查看题目
                 </a-button>
               </a-tooltip>
+
+              <router-link :to="{name: 'class.problemSet.submissions', params: {classID: klass.id, problemSetID: problem_set.id}}" v-if="started(problem_set)">
+                <a-button type="link">
+                  查看提交
+                </a-button>
+              </router-link>
+              <a-tooltip v-else>
+                <template slot="title">
+                  作业还未开放！
+                </template>
+                <a-button type="link" disabled>
+                  查看提交
+                </a-button>
+              </a-tooltip>
+
               <a-button type="link">
                 查看分数（功能开发中）
               </a-button>

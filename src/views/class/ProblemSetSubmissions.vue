@@ -1,5 +1,13 @@
 <template>
-  <a-card title="提交">
+  <a-card>
+    <template slot="title">
+      查看提交
+    </template>
+    <template slot="extra">
+      <a-checkbox @change="onlySeeSelf">
+        只看我的提交
+      </a-checkbox>
+    </template>
     <a-table
       :columns="columns"
       bordered
@@ -13,6 +21,7 @@
     >
       <template slot="id" slot-scope="text, record">
         <router-link
+          v-if="canReadAnswers || record.user.id === now_user_id"
           :to="{
             name: 'class.problemSet.submission',
             params: {
@@ -23,6 +32,9 @@
           }">
           {{ text }}
         </router-link>
+        <template v-else>
+          {{ text }}
+        </template>
       </template>
       <template slot="problem_name" slot-scope="text, record">
         <router-link :to="{name: 'class.problemSet.problem', params: {problemSetID, classID: classID, problemID: record.problem_id}}">
@@ -72,12 +84,11 @@
 <script>
 import Vue from 'vue'
 import { mapGetters } from 'vuex'
-import { getSubmissions } from '@/api/submission'
+import { getSubmissions } from '@/api/problem_set'
+import { getProblemSet } from '@/api/class'
 import ResizableTableHeader from '@/components/Table/ResizableTableHeader.js'
 import RunStatus from '@/components/RunStatus'
 import UserName from '@/components/UserName'
-import { getProblems } from '@/api/problem'
-import { getUsers } from '@/api/user'
 
 export default {
   data () {
@@ -131,10 +142,12 @@ export default {
       const draggingState = Vue.observable(draggingMap)
       return ResizableTableHeader(h, props, children, columns, draggingState)
     }
-
     return {
       problemSetID: this.$route.params.problemSetID,
       classID: this.$route.params.classID,
+      now_user_id: this.$store.state.user.info.id,
+      canReadAnswers: this.$store.getters.can('read_answers', 'class', this.$route.params.classID) || this.$store.getters.can('read_answers'),
+      problemSet: {},
       columns: columns,
       components: {
         header: {
@@ -171,6 +184,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      'storeClass': 'class'
+    }),
     ...mapGetters(['can'])
   },
   components: {
@@ -178,6 +194,14 @@ export default {
     UserName
   },
   mounted () {
+    getProblemSet(this.classID, this.problemSetID).then(resp => {
+      this.problemSet = resp.problem_set
+    }).catch(err => {
+      this.$error({
+        title: '发生错误',
+        content: err.response.message + err.response.error
+      })
+    })
     this.fetch({
       pageSize: this.$refs.table.pagination.pageSize,
       page: this.$refs.table.pagination.current,
@@ -199,35 +223,62 @@ export default {
       console.log(dataIndex)
       if (dataIndex === 'problem_name') {
         return (text) => {
-          getProblems({
-            offset: 0,
-            limit: 5,
-            search: text
-          }).then(data => {
-            this.search_result = data.problems.map((v) => {
-              return {
-                value: v.id,
-                text: v.name
-              }
-            })
+          this.search_result = this.problemSet.problems.map((v) => {
+            return {
+              value: v.id,
+              text: v.name
+            }
+          }).filter(v => {
+            return v.text.indexOf(text) !== -1 || !text
           })
         }
       } else if (dataIndex === 'user') {
         return (text) => {
-          getUsers({
-            offset: 0,
-            limit: 5,
-            search: text
-          }).then(data => {
-            this.search_result = data.users.map((v) => {
-              return {
-                value: v.id,
-                text: v.nickname
-              }
-            })
+          this.search_result = this.storeClass.students.map((v) => {
+            return {
+              value: v.id,
+              text: `@${v.username} ${v.nickname}`
+            }
+          }).filter(v => {
+            return v.text.indexOf(text) !== -1 || !text
           })
         }
       }
+    },
+    onlySeeSelf (val) {
+      console.log(val)
+      if (val.target.checked) {
+        this.search_user_id = this.$store.state.user.info.id
+        const params = {
+          user_id: this.$store.state.user.info.id
+        }
+        history.pushState(
+          {},
+          null,
+          this.$route.path +
+          '?' +
+          Object.keys(params)
+            .map(key => {
+              return (
+                encodeURIComponent(key) + '=' + encodeURIComponent(params[key])
+              )
+            })
+            .join('&')
+        )
+      } else {
+        this.search_user_id = null
+        history.pushState(
+          {},
+          null,
+          this.$route.path
+        )
+      }
+      this.fetch({
+        pageSize: this.pagination.pageSize,
+        page: this.pagination.current,
+        user_id: this.search_user_id,
+        problem_id: this.search_problem_id
+      })
     },
     handleTableChange (pagination, filters, sorter) {
       console.log(pagination, filters, sorter)
@@ -289,7 +340,7 @@ export default {
     fetch (params = {}) {
       console.log(params)
       this.loading = true
-      getSubmissions({
+      getSubmissions(this.classID, this.problemSetID, {
         user_id: params.user_id,
         problem_id: params.problem_id,
         limit: params.pageSize,

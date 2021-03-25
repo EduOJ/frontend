@@ -145,6 +145,16 @@ export default {
     })
   },
   mounted () {
+    if (window.localStorage.getItem('java_asked') === null) {
+      this.$info({
+        title: '公告',
+        content: 'Java语言主类名必须是Main。',
+        onOk () {
+          window.localStorage.setItem('java_asked', 'true')
+        }
+      })
+    }
+
     const p = [getClassManaging(), getClassTaking()]
     Promise.all(p).then(data => {
       console.log(data)

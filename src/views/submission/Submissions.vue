@@ -1,5 +1,13 @@
 <template>
-  <a-card title="提交">
+  <a-card>
+    <template slot="title">
+      查看提交
+    </template>
+    <template slot="extra">
+      <a-checkbox @change="onlySeeSelf">
+        只看我的提交
+      </a-checkbox>
+    </template>
     <a-table
       :columns="columns"
       bordered
@@ -12,9 +20,15 @@
       @change="handleTableChange"
     >
       <template slot="id" slot-scope="text, record">
-        <router-link :to="{name: 'submission', params: {id: record.id}}">
+        <router-link
+          :to="{name: 'submission', params: {id: record.id}}"
+          v-if="canReadAnswers || record.user.id === now_user_id"
+        >
           {{ text }}
         </router-link>
+        <template v-else>
+          {{ text }}
+        </template>
       </template>
       <template slot="problem_name" slot-scope="text, record">
         <router-link :to="{name: 'problem', params: {id: record.problem_id}}">
@@ -131,6 +145,8 @@ export default {
           cell: ResizableTableHeaderWithColumns
         }
       },
+      now_user_id: this.$store.state.user.info.id,
+      canReadAnswers: this.$store.getters.can('read_answers', 'class', this.$route.params.classID) || this.$store.getters.can('read_answers'),
       deleting: {},
       deleteModelText: '',
       visible: false,
@@ -185,6 +201,42 @@ export default {
     })
   },
   methods: {
+
+    onlySeeSelf (val) {
+      console.log(val)
+      if (val.target.checked) {
+        this.search_user_id = this.$store.state.user.info.id
+        const params = {
+          user_id: this.$store.state.user.info.id
+        }
+        history.pushState(
+          {},
+          null,
+          this.$route.path +
+          '?' +
+          Object.keys(params)
+            .map(key => {
+              return (
+                encodeURIComponent(key) + '=' + encodeURIComponent(params[key])
+              )
+            })
+            .join('&')
+        )
+      } else {
+        this.search_user_id = null
+        history.pushState(
+          {},
+          null,
+          this.$route.path
+        )
+      }
+      this.fetch({
+        pageSize: this.pagination.pageSize,
+        page: this.pagination.current,
+        user_id: this.search_user_id,
+        problem_id: this.search_problem_id
+      })
+    },
     handleSearch (dataIndex) {
       console.log(dataIndex)
       if (dataIndex === 'problem_name') {

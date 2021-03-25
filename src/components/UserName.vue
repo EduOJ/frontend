@@ -9,7 +9,7 @@
     </template>
     <span>
       <router-link :to="{name: 'user', params: {id: user.id}}">
-        {{ `@${user.username}` }}
+        {{ `@${user.username} ${user.nickname}` }}
       </router-link>
     </span>
   </a-popover>

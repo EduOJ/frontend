@@ -32,9 +32,11 @@
                   编辑信息
                 </a-button>
               </router-link>
-              <a-button type="link">
-                查看分数（功能开发中）
-              </a-button>
+              <router-link :to="{name: 'class.problemSet.submissions', params: {classID: klass.id, problemSetID: problem_set.id}}">
+                <a-button type="link">
+                  查看提交
+                </a-button>
+              </router-link>
               <a-button type="link">
                 查看分数（功能开发中）
               </a-button>

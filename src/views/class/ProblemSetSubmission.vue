@@ -78,7 +78,7 @@
               </a-card>
               <a-card title="源代码">
                 文件名： {{ submission.file_name }}
-                <Code :url="config.apiUrl + `/api/submission/${submission.id}/code`" :filename="submission.file_name" :language="languageConf[submission.language].hljsLanguage" />
+                <Code :url="config.apiUrl + `/api/class/${classID}/problem_set/${problemSetID}/submission/${submission.id}/code`" :filename="submission.file_name" :language="languageConf[submission.language].hljsLanguage" />
               </a-card>
             </a-space>
           </a-skeleton>
@@ -143,7 +143,10 @@ export default {
     this.fetch()
   },
   methods: {
-    ...mapGetters(['can']),
+    ...mapGetters({
+      'can': 'can',
+      'storeClass': 'class'
+    }),
     format (time) {
       return moment(time).fromNow()
     },
@@ -159,8 +162,8 @@ export default {
           return !a.sample ? 1 : -1 // make sample testcase top.
         })
         this.submission = data.submission
-        this.can_read_problem = this.$store.getters.can('read_answers', 'problem_set', data.submission.problem_set_id) || this.$store.getters.can('read_answers')
-        this.can_read_secret = this.$store.getters.can('read_answers', 'problem_set', data.submission.problem_set_id) || this.$store.getters.can('read_answers')
+        this.can_read_problem = this.$store.getters.can('read_answers', 'class', data.submission.problem_set_id) || this.$store.getters.can('read_answers')
+        this.can_read_secret = this.$store.getters.can('read_answers', 'class', data.submission.problem_set_id) || this.$store.getters.can('read_answers')
         if (!data.submission.judged) {
           this.fetch(true)
         }

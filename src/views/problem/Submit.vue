@@ -87,7 +87,22 @@ export default {
   },
   methods: {
     submit () {
-      console.log('submit!')
+      if (this.language === 'java') {
+        const match = this.code.match(/public[ \t]*class[ \t]*(.*)\n/)
+        if (match.length <= 1 || match[1] !== 'Main') {
+          this.$confirm({
+            content: '请确认 Java 语言主类名是否是 Main ！',
+            okText: '确认',
+            onOk: this.doSubmit
+          })
+        } else {
+          this.doSubmit()
+        }
+      } else {
+        this.doSubmit()
+      }
+    },
+    doSubmit () {
       localStorage.setItem(`problem:${this.$route.params.id}:code`, this.code)
       localStorage.setItem(`problem:${this.$route.params.id}:language`, this.language)
       var c = new Blob([this.code])

@@ -129,7 +129,7 @@ export default {
         id: null,
         problem_id: null,
         problem_name: null,
-        language: '',
+        language: 'java',
         score: 0,
         status: '',
         file_name: '',

@@ -158,13 +158,11 @@ export default {
         showSizeChanger: true,
         showQuickJumper: true,
         pageSizeOptions: [
-          '2',
           '20',
           '50',
           '100'
         ],
-        defaultPageSize: 50,
-        pageSize: 50,
+        pageSize: 20,
         showTotal: (total, range) => `共 ${total} 条数据, 正在显示 ${range[0]} - ${range[1]} 条`
       },
       loading: false,
@@ -200,6 +198,18 @@ export default {
         })
       }
     })
+  },
+
+  watch: {
+    '$route' (r) {
+      this.search_user_id = this.$route.query && +this.$route.query.user_id || null
+      this.fetch({
+        pageSize: this.pagination.pageSize,
+        page: this.pagination.current,
+        user_id: this.search_user_id,
+        problem_id: this.search_problem_id
+      })
+    }
   },
   methods: {
     format (time) {

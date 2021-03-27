@@ -116,7 +116,6 @@ export default {
       const draggingState = Vue.observable(draggingMap)
       return ResizableTableHeader(h, props, children, columns, draggingState)
     }
-
     return {
       languageConf,
       columns,
@@ -125,8 +124,8 @@ export default {
           cell: ResizableTableHeaderWithColumns
         }
       },
-      tried: this.$route.query && !!this.$route.query.tried || false,
-      passed: this.$route.query && !!this.$route.query.passed || false,
+      tried: this.$route.query && this.$route.query.tried === 'true' || false,
+      passed: this.$route.query && this.$route.query.passed === 'true' || false,
       deleting: {},
       deleteModelText: '',
       visible: false,
@@ -137,12 +136,10 @@ export default {
         showSizeChanger: true,
         showQuickJumper: true,
         pageSizeOptions: [
-          '2',
           '20',
           '50',
           '100'
         ],
-        defaultPageSize: 50,
         pageSize: 50,
         showTotal: (total, range) => `共 ${total} 条数据, 正在显示 ${range[0]} - ${range[1]} 条`
       },
@@ -173,6 +170,16 @@ export default {
         })
       }
     })
+  },
+  watch: {
+    '$route' (r) {
+      this.tried = this.$route.query && this.$route.query.tried === 'true' || false
+      this.passed = this.$route.query && this.$route.query.passed === 'true' || false
+      this.fetch({
+        pageSize: this.$refs.table.pagination.pageSize,
+        page: this.$refs.table.pagination.current
+      })
+    }
   },
   methods: {
     checkboxChange (name) {
@@ -240,7 +247,6 @@ export default {
       })
     },
     handleTableChange (pagination, filters, sorter) {
-      console.log(pagination, filters, sorter)
       this.pagination = pagination
       this.sorter = sorter
       this.fetch({

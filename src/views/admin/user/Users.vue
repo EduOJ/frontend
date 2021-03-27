@@ -133,7 +133,6 @@ export default {
           '50',
           '100'
         ],
-        defaultPageSize: 50,
         pageSize: 50,
         showTotal: (total, range) => `共 ${total} 条数据, 正在显示 ${range[0]} - ${range[1]} 条`
       },

@@ -40,7 +40,7 @@
         <run-status :status="text" :score="record.score" />
       </template>
       <template slot="created_at" slot-scope="time">
-        {{ (new Date(time)).toLocaleString() }}
+        {{ format(time) }}
       </template>
       <div
         slot="filterDropdown"
@@ -84,6 +84,7 @@ import RunStatus from '@/components/RunStatus'
 import UserName from '@/components/UserName'
 import { getProblems } from '@/api/problem'
 import { getUsers } from '@/api/user'
+import moment from 'moment'
 
 export default {
   data () {
@@ -201,7 +202,9 @@ export default {
     })
   },
   methods: {
-
+    format (time) {
+      return moment(time).format('lll')
+    },
     onlySeeSelf (val) {
       console.log(val)
       if (val.target.checked) {

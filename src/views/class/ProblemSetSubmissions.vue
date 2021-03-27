@@ -46,7 +46,7 @@
         <run-status :status="text" :score="record.score" />
       </template>
       <template slot="created_at" slot-scope="time">
-        {{ (new Date(time)).toLocaleString() }}
+        {{ format(time) }}
       </template>
       <div
         slot="filterDropdown"
@@ -89,6 +89,7 @@ import { getProblemSet } from '@/api/class'
 import ResizableTableHeader from '@/components/Table/ResizableTableHeader.js'
 import RunStatus from '@/components/RunStatus'
 import UserName from '@/components/UserName'
+import moment from 'moment'
 
 export default {
   data () {
@@ -219,6 +220,9 @@ export default {
     })
   },
   methods: {
+    format (time) {
+      return moment(time).format('lll')
+    },
     handleSearch (dataIndex) {
       console.log(dataIndex)
       if (dataIndex === 'problem_name') {
@@ -246,7 +250,6 @@ export default {
       }
     },
     onlySeeSelf (val) {
-      console.log(val)
       if (val.target.checked) {
         this.search_user_id = this.$store.state.user.info.id
         const params = {

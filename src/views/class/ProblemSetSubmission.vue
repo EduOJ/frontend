@@ -33,10 +33,10 @@
                   <language :language="submission.language"></language>
                 </a-descriptions-item>
                 <a-descriptions-item label="提交时间">
-                  {{ new Date(submission.created_at).toLocaleString('en-GB') }}
+                  {{ format(submission.created_at) }}
                 </a-descriptions-item>
                 <a-descriptions-item label="评测时间">
-                  {{ new Date(submission.updated_at).toLocaleString('en-GB') }}
+                  {{ format(submission.updated_at) }}
                 </a-descriptions-item>
               </a-descriptions>
               <a-card title="详细信息">
@@ -148,7 +148,7 @@ export default {
       'storeClass': 'class'
     }),
     format (time) {
-      return moment(time).fromNow()
+      return moment(time).format('lll')
     },
     getContainer () {
       return this.$refs.container.$el

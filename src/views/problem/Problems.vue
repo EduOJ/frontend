@@ -1,10 +1,18 @@
 <template>
   <a-card title="题目">
     <div slot="extra">
-      <a-input v-model="search" placeholder="搜索" @change="handleSearchChange">
-        <a-icon slot="prefix" type="search" />
-        <a-icon slot="suffix" type="close" @click="() => this.search=''" />
-      </a-input>
+      <a-space>
+        <a-checkbox v-model="tried" @change="checkboxChange('tried')($event)" ref="tried">
+          我试过的
+        </a-checkbox>
+        <a-checkbox v-model="passed" @change="checkboxChange('passed')($event)" ref="passed">
+          我通过的
+        </a-checkbox>
+        <a-input v-model="search" placeholder="搜索" @change="handleSearchChange">
+          <a-icon slot="prefix" type="search" />
+          <a-icon slot="suffix" type="close" @click="() => this.search=''" />
+        </a-input>
+      </a-space>
     </div>
     <a-space v-if="can('create_problem')">
       <router-link :to="{name: 'problem.add'}">
@@ -117,6 +125,8 @@ export default {
           cell: ResizableTableHeaderWithColumns
         }
       },
+      tried: this.$route.query && !!this.$route.query.tried || false,
+      passed: this.$route.query && !!this.$route.query.passed || false,
       deleting: {},
       deleteModelText: '',
       visible: false,
@@ -165,6 +175,41 @@ export default {
     })
   },
   methods: {
+    checkboxChange (name) {
+      return e => {
+        if (this.tried && this.passed) {
+          switch (name) {
+            case 'tried':
+              this.passed = false
+              break
+            case 'passed':
+              this.tried = false
+              break
+          }
+        }
+        const params = {
+          tried: this.tried,
+          passed: this.passed
+        }
+        history.pushState(
+          {},
+          null,
+          this.$route.path +
+          '?' +
+          Object.keys(params)
+            .map(key => {
+              return (
+                encodeURIComponent(key) + '=' + encodeURIComponent(params[key])
+              )
+            })
+            .join('&')
+        )
+        this.fetch({
+          pageSize: this.$refs.table.pagination.pageSize,
+          page: this.$refs.table.pagination.current
+        })
+      }
+    },
     handleDeleteBtnClick (record) {
       this.deleting = record
       this.deleteModelText = `你确认要删除 ${record.name} 吗?`
@@ -208,7 +253,10 @@ export default {
       getProblems({
         search: this.search,
         limit: params.pageSize,
-        offset: (params.page - 1) * params.pageSize || 0
+        offset: (params.page - 1) * params.pageSize || 0,
+        user_id: this.$store.state.user.info.id || null,
+        tried: this.$store.state.user.info.id && this.tried,
+        passed: this.$store.state.user.info.id && this.passed
       }).then(data => {
         const pagination = { ...this.pagination }
         pagination.total = data.total

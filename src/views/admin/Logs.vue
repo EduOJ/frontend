@@ -32,7 +32,7 @@
         {{ caller.replace("github.com/leoleoasd/EduOJBackend/", "") }}
       </template>
       <template slot="created_at" slot-scope="time">
-        {{ (new Date(time)).toLocaleString() }}
+        {{ format(time) }}
       </template>
     </a-table>
   </a-card>
@@ -42,6 +42,7 @@
 import Vue from 'vue'
 import { getLogs } from '@/api/admin_logs'
 import ResizableTableHeader from '@/components/Table/ResizableTableHeader.js'
+import moment from 'moment'
 
 const columns = [
   {
@@ -135,6 +136,9 @@ export default {
     this.fetch()
   },
   methods: {
+    format (time) {
+      return moment(time).format('lll')
+    },
     handleTableChange (pagination, filters, sorter) {
       console.log(pagination, filters, sorter)
       this.pagination = pagination

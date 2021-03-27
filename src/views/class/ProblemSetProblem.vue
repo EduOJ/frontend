@@ -74,7 +74,7 @@
                       <run-status :status="s.status" :score="s.score"/>
                     </a-col>
                     <a-col :span="8">
-                      {{ format(new Date(s.created_at)) }}
+                      {{ format(s.created_at) }}
                     </a-col>
                   </a-row>
                 </router-link>

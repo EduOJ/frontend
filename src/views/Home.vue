@@ -54,18 +54,22 @@
             </div>
           </a-card>
 
-          <a-card title="动态" :bordered="false">
-            <a-list>
-              <a-list-item>
-                <a-list-item-meta>
-                  <Avatar :user="user"></Avatar>
-                  <div slot="title">
-                    <span>{{ user.nickname }}</span>&nbsp;
-                  </div>
-                  <div slot="description"> 通过了xx题！ </div>
-                </a-list-item-meta>
-              </a-list-item>
-            </a-list>
+          <a-card :loading="problem_loading" :bordered="false">
+            <template slot="title">
+              随机题目： {{ problem.name }}
+            </template>
+            <template slot="extra">
+              <router-link :to="{name: 'problem', params: {id: problem.id}}">
+                <a-button>
+                  前往做题
+                </a-button>
+              </router-link>
+            </template>
+            <h2>#{{ problem.id }} {{ problem.name }}</h2>
+            <a-skeleton active :loading="problem_loading">
+              <markdown v-model="problem.description">
+              </markdown>
+            </a-skeleton>
           </a-card>
         </a-col>
         <a-col
@@ -77,7 +81,7 @@
           <a-card
             title="我在的班级"
             class="class-card"
-            bordered
+            :bordered="false"
             style="margin-bottom: 24px;">
             <a-list item-layout="horizontal" :data-source="class_taking">
               <a-list-item slot="renderItem" slot-scope="klass">
@@ -120,14 +124,17 @@
 import { timeFix } from '@/utils/util'
 import { mapState } from 'vuex'
 import { PageHeaderWrapper } from '@ant-design-vue/pro-layout'
-import Avatar from '@/components/Avatar'
 import { getClassManaging, getClassTaking } from '@/api/class'
 import { getUserProblemInfo } from '@/api/user'
+import { getProblem } from '@/api/problem'
+import Markdown from '@/components/Editor/Markdown'
+import Avatar from '@/components/Avatar'
 
 export default {
   name: 'Home',
   components: {
     PageHeaderWrapper,
+    Markdown,
     Avatar
   },
   data () {
@@ -136,7 +143,9 @@ export default {
       class_managing: [],
       class_taking: [],
       passed_count: '加载中',
-      tried_count: '加载中'
+      tried_count: '加载中',
+      problem: {},
+      problem_loading: true
     }
   },
   computed: {
@@ -163,6 +172,15 @@ export default {
       console.log(err)
       this.$error({
         content: '获取做题信息时发生了错误'
+      })
+    })
+    getProblem('random').then(resp => {
+      this.problem = resp.problem
+      this.problem_loading = false
+    }).catch(err => {
+      console.log(err)
+      this.$error({
+        content: '获取随机题目时发生了错误'
       })
     })
   },

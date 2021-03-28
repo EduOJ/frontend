@@ -60,9 +60,9 @@ export default {
   computed: {
     avatar () {
       if (this.user && this.user.email) {
-        return 'https://www.gravatar.com/avatar/' + md5(this.user.email.trim().toLowerCase()) + '?d=mp'
+        return 'https://cdn.v2ex.com/gravatar/' + md5(this.user.email.trim().toLowerCase()) + '?d=mp'
       } else {
-        return 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'
+        return 'https://cdn.v2ex.com/gravatar/00000000000000000000000000000000?d=mp&f=y'
       }
     }
   },

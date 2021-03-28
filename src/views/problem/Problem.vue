@@ -123,7 +123,7 @@ export default {
       download_message: '',
       can_edit_problem: this.$store.getters.can('update_problem', 'problem', this.$route.params.id) || this.$store.getters.can('update_problem'),
       can_read_problem: this.$store.getters.can('read_problem', 'problem', this.$route.params.id) || this.$store.getters.can('read_problem'),
-      can_read_secret: this.$store.getters.can('read_problem_secret', 'problem', this.$route.params.id) || this.$store.getters.can('read_problem_secret'),
+      can_read_secret: this.$store.getters.can('read_problem_secrets', 'problem', this.$route.params.id) || this.$store.getters.can('read_problem_secrets'),
       problem: {
         id: this.$route.params.id,
         name: '',

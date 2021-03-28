@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import request from '@/utils/request'
 import md5 from 'js-md5'
 
 export default {
@@ -18,25 +17,10 @@ export default {
   },
   data () {
     return {
-      avatar: ''
+      avatar: 'https://cdn.v2ex.com/gravatar/' + md5(this.user.email.trim().toLowerCase()) + '?d=404'
     }
   },
-  mounted () {
-    if (window.localStorage.getItem(`users.${this.user.email}.avatar`)) {
-      this.avatar = window.localStorage.getItem(`users.${this.user.email}.avatar`)
-    } else {
-      request({
-        url: 'https://en.gravatar.com/' + md5(this.user.email.trim().toLowerCase()) + '.json',
-        method: 'get',
-        validateStatus: () => true
-      }).then(resp => {
-        window.localStorage.setItem(`users.${this.user.email}.avatar`, 'https://www.gravatar.com/avatar/' + md5(this.user.email.trim().toLowerCase()) + '?d=mp')
-        this.avatar = 'https://www.gravatar.com/avatar/' + md5(this.user.email.trim().toLowerCase()) + '?d=mp'
-      }).catch(err => {
-        console.log(err)
-      })
-    }
-  }
+  mounted () {}
 }
 </script>
 

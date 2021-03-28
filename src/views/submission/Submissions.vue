@@ -22,7 +22,7 @@
       <template slot="id" slot-scope="text, record">
         <router-link
           :to="{name: 'submission', params: {id: record.id}}"
-          v-if="canReadAnswers || record.user.id === now_user_id"
+          v-if="canReadAnswers || record.user.id === now_user_id || can('read_submission', 'problem', record.id)"
         >
           {{ text }}
         </router-link>
@@ -147,7 +147,7 @@ export default {
         }
       },
       now_user_id: this.$store.state.user.info.id,
-      canReadAnswers: this.$store.getters.can('read_answers', 'class', this.$route.params.classID) || this.$store.getters.can('read_answers'),
+      canReadAnswers: this.$store.getters.can('read_submission'),
       deleting: {},
       deleteModelText: '',
       visible: false,

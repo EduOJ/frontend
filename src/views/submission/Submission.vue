@@ -121,7 +121,7 @@ export default {
       id: this.$route.params.id,
       loading: true,
       can_read_problem: false, // this.$store.getters.can('read_problem', 'problem', this.$route.params.id) || this.$store.getters.can('read_problem'),
-      can_read_secret: false, // this.$store.getters.can('read_problem_secret', 'problem', this.$route.params.id) || this.$store.getters.can('read_problem_secret'),
+      can_read_secret: false, // this.$store.getters.can('read_problem_secrets', 'problem', this.$route.params.id) || this.$store.getters.can('read_problem_secrets'),
       submission: {
         id: null,
         problem_id: null,
@@ -156,7 +156,7 @@ export default {
         })
         this.submission = data.submission
         this.can_read_problem = this.$store.getters.can('read_problem', 'problem', data.submission.problem_id) || this.$store.getters.can('read_problem')
-        this.can_read_secret = this.$store.getters.can('read_problem_secret', 'problem', data.submission.problem_id) || this.$store.getters.can('read_problem_secret')
+        this.can_read_secret = this.$store.getters.can('read_problem_secrets', 'problem', data.submission.problem_id) || this.$store.getters.can('read_problem_secrets')
         if (!data.submission.judged) {
           this.fetch(true)
         }

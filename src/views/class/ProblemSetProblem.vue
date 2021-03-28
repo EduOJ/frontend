@@ -118,7 +118,7 @@ export default {
       downloading: false,
       download_message: '',
       can_read_problem: this.$store.getters.can('manage_problem_sets', 'class', this.$route.params.classID) || this.$store.getters.can('manage_problem_sets'),
-      can_read_secret: this.$store.getters.can('read_problem_secret', 'class', this.$route.params.classID) || this.$store.getters.can('read_problem_secret'),
+      can_read_secret: this.$store.getters.can('read_problem_secrets', 'class', this.$route.params.classID) || this.$store.getters.can('read_problem_secrets'),
       problem: {
         id: this.$route.params.problemID,
         name: '',

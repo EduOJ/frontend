@@ -124,7 +124,7 @@ export default {
       id: this.$route.params.submissionID,
       loading: true,
       can_read_problem: false, // this.$store.getters.can('read_problem', 'problem', this.$route.params.id) || this.$store.getters.can('read_problem'),
-      can_read_secret: false, // this.$store.getters.can('read_problem_secret', 'problem', this.$route.params.id) || this.$store.getters.can('read_problem_secret'),
+      can_read_secret: false, // this.$store.getters.can('read_problem_secrets', 'problem', this.$route.params.id) || this.$store.getters.can('read_problem_secrets'),
       submission: {
         id: null,
         problem_id: null,

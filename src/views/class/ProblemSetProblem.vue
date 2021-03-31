@@ -45,7 +45,7 @@
                   compare_exact_match: "字符级严格匹配",
                 }[problem.compare_script_name] }}
               </a-descriptions-item>
-              <a-descriptions-item label="编译环境" :span="3" v-if="can_read_problem">
+              <a-descriptions-item label="编译选项" :span="3" v-if="can_read_problem">
                 {{ problem.build_arg == "" ? "无" :problem.build_arg }}
               </a-descriptions-item>
               <a-descriptions-item label="附件" :span="3">

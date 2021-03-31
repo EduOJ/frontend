@@ -60,7 +60,7 @@
             <a-input size="large" v-model="form.time_limit" style="width: 300px" suffix="ms"/>
           </a-form-model-item>
 
-          <a-form-model-item ref="build_arg" prop="build_arg" label="编译环境变量">
+          <a-form-model-item ref="build_arg" prop="build_arg" label="编译选项">
             <a-input size="large" v-model="form.build_arg" style="width: 300px" placeholder="一般不需要填写"/>
           </a-form-model-item>
 
@@ -163,7 +163,7 @@ export default {
           { required: true, message: '请输入时间限制', trigger: 'blur' }
         ],
         build_arg: [
-          { max: 255, message: '编译环境最长为255个字符', trigger: 'blur' }
+          { max: 255, message: '编译选项最长为255个字符', trigger: 'blur' }
         ],
         compare_script_name: [
           { required: true, message: '请选择评测脚本', trigger: 'blur' }

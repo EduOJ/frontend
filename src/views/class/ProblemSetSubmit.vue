@@ -6,7 +6,7 @@
           <a-space direction="vertical">
             <p>
               语言选择：
-              <a-select v-model="language" default-value="cpp" style="width: 120px">
+              <a-select v-model="mLanguage" default-value="cpp" style="width: 120px" @change="languageChange">
                 <a-select-option :key="l" v-for="l in problem.language_allowed">
                   {{ languageConf[l].displayName }}
                 </a-select-option>
@@ -24,7 +24,7 @@
                 }"/>
             </a-card>
             <a-space>
-              <a-button type="primary" @click="submit()">
+              <a-button type="primary" @click="submit()" :loading="submitLoading">
                 提交
               </a-button>
               <a-button type="secondary" @click="$router.go(-1)">
@@ -46,8 +46,6 @@ import TestCase from '@/components/TestCase'
 import config from '@/config/config'
 import { codemirror } from '@/components/codemirror'
 import 'codemirror/lib/codemirror.css'
-import 'codemirror/theme/darcula.css'
-import 'codemirror/mode/clike/clike.js'
 import languageConf from '@/config/languageConf'
 
 export default {
@@ -59,6 +57,15 @@ export default {
     codemirror
   },
   data () {
+    const language = localStorage.getItem(`problem:${this.$route.params.id}:language`)
+    let code = ''
+    if (localStorage.getItem(`problem:${this.$route.params.id}:code`)) {
+      code = localStorage.getItem(`problem:${this.$route.params.id}:code`)
+      localStorage.removeItem(`problem:${this.$route.params.id}:code`)
+      localStorage.setItem(`problem:${this.$route.params.id}:code:${language}`, code)
+    } else {
+      code = localStorage.getItem(`problem:${this.$route.params.id}:code:${language}`) || ''
+    }
     return {
       config: config,
       languageConf,
@@ -66,6 +73,7 @@ export default {
       classID: this.$route.params.classID,
       id: this.$route.params.problemID,
       loading: true,
+      submitLoading: false,
       problem: {
         id: this.$route.params.id,
         name: '',
@@ -80,8 +88,9 @@ export default {
         attachment_file_name: '',
         test_cases: []
       },
-      code: localStorage.getItem(`problem:${this.$route.params.id}:code`),
-      language: localStorage.getItem(`problem:${this.$route.params.id}:language`)
+      code: code,
+      language: localStorage.getItem(`problem:${this.$route.params.id}:language`),
+      mLanguage: localStorage.getItem(`problem:${this.$route.params.id}:language`)
     }
   },
   mounted () {
@@ -104,8 +113,15 @@ export default {
         this.doSubmit()
       }
     },
+    languageChange (val) {
+      localStorage.setItem(`problem:${this.$route.params.id}:code:${this.language}`, this.code)
+      this.language = this.mLanguage
+      localStorage.setItem(`problem:${this.$route.params.id}:language}`, this.language)
+      this.code = localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || ''
+    },
     doSubmit () {
-      localStorage.setItem(`problem:${this.$route.params.id}:code`, this.code)
+      this.submitLoading = true
+      localStorage.setItem(`problem:${this.$route.params.id}:code:${this.language}`, this.code)
       localStorage.setItem(`problem:${this.$route.params.id}:language`, this.language)
       var c = new Blob([this.code])
       createSubmission({
@@ -116,7 +132,7 @@ export default {
         problemSetID: this.problemSetID
       }).then(data => {
         let oked = 0
-        console.log(data)
+        this.submitLoading = false
         const modal = this.$success({
           content: '提交成功！',
           okText: '立即查看',
@@ -150,6 +166,7 @@ export default {
           content: '遇到错误：' + err.message
         })
         console.error(err)
+        this.submitLoading = false
       })
     },
     fetch () {

@@ -94,7 +94,7 @@ export default {
       rules: {
         username: [
           { required: true, message: '请输入用户名或邮箱', trigger: 'blur' },
-          { max: 30, message: '用户名/邮箱最长为30个字符', trigger: 'blur' },
+          { max: 320, message: '用户名/邮箱最长为320个字符', trigger: 'blur' },
           { min: 5, message: '用户名/邮箱最短为5个字符', trigger: 'blur' }
         ],
         password: [

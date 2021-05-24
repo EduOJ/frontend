@@ -364,7 +364,7 @@ export const constantRouterMap = [
                 path: '/account/settings/base',
                 name: 'settings.base',
                 component: () => import('@/views/account/settings/BaseSetting'),
-                meta: { title: '基本设置', hidden: true }
+                meta: { title: '个人信息', hidden: true }
               },
               {
                 path: '/account/settings/change_password',
@@ -377,6 +377,12 @@ export const constantRouterMap = [
                 name: 'settings.webauthn',
                 component: () => import('@/views/account/settings/Webauthn'),
                 meta: { title: '使用安全秘钥登录', hidden: true }
+              },
+              {
+                path: '/account/settings/system',
+                name: 'settings.system',
+                component: () => import('@/views/account/settings/SystemSettings'),
+                meta: { title: '系统设置', hidden: true }
               }
             ]
           }

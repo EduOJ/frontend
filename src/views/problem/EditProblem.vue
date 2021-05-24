@@ -77,14 +77,8 @@
               v-model="form.compare_script_name"
               style="width: 300px"
             >
-              <a-select-option key="compare_soft_match" value="compare_soft_match">
-                忽略行末空格 + 最后回车
-              </a-select-option>
-              <a-select-option key="compare_float" value="compare_float">
-                浮点数匹配 （相差1e-8内认为正确)
-              </a-select-option>
-              <a-select-option key="compare_exact_match" value="compare_exact_match">
-                字符级严格匹配
+              <a-select-option v-for="k in comparerConf.keys" :key="k">
+                {{ comparerConf[k].name }}
               </a-select-option>
             </a-select>
           </a-form-model-item>
@@ -211,12 +205,15 @@ import { getProblem, updateProblem, createTestCase, updateTestCase, deleteTestCa
 import MarkDownEditor from '@/components/Editor/MarkdownEditor'
 import { v4 as uuid } from 'uuid'
 import languageConf from '@/config/languageConf'
+import comparerConf from '@/config/comparerConf'
+
 export default {
   components: {
     MarkDownEditor
   },
   data () {
     return {
+      comparerConf,
       languageConf,
       submitBtnLoading: false,
       defaultFileList: [],
@@ -443,11 +440,11 @@ export default {
           // is a valid input file
           let outputFile = ''
           let sample = false
-          if (file.replace('in', 'ans') in files) {
-            outputFile = file.replace('in', 'ans')
+          if (file.replace('.in', '.ans') in files) {
+            outputFile = file.replace('.in', '.ans')
           }
-          if (file.replace('in', 'out') in files) {
-            outputFile = file.replace('in', 'out')
+          if (file.replace('.in', '.out') in files) {
+            outputFile = file.replace('.in', '.out')
           }
           if (file.search('sample') !== -1) {
             sample = true

@@ -34,16 +34,8 @@
                   {{ language }}
                 </a-tag>
               </a-descriptions-item>
-              <a-descriptions-item label="编译脚本" :span="3">
-                {{ {
-                  compare_soft_match: "忽略行末空格 + 最后回车",
-                  compare_float: "浮点数匹配 （相差1e-8内认为正确)",
-                  compare_exact_match: "字符级严格匹配",
-                }[problem.compare_script_name] == null ? problem.compare_script_name : {
-                  compare_soft_match: "忽略行末空格 + 最后回车",
-                  compare_float: "浮点数匹配 （相差1e-8内认为正确)",
-                  compare_exact_match: "字符级严格匹配",
-                }[problem.compare_script_name] }}
+              <a-descriptions-item label="答案比较方式" :span="3">
+                {{ comparerConf[problem.compare_script_name].name == null ? problem.compare_script_name : comparerConf[problem.compare_script_name].name }}
               </a-descriptions-item>
               <a-descriptions-item label="编译选项" :span="3" v-if="can_read_problem">
                 {{ problem.build_arg == "" ? "无" :problem.build_arg }}
@@ -98,6 +90,7 @@ import request from '@/utils/request'
 import download from 'js-file-download'
 import moment from 'moment'
 import languageConf from '@/config/languageConf'
+import comparerConf from '@/config/comparerConf'
 
 export default {
   name: 'Problem',
@@ -108,6 +101,7 @@ export default {
   },
   data () {
     return {
+      comparerConf,
       languageConf,
       config,
       problemSetID: this.$route.params.problemSetID,
@@ -118,7 +112,7 @@ export default {
       downloading: false,
       download_message: '',
       can_read_problem: this.$store.getters.can('manage_problem_sets', 'class', this.$route.params.classID) || this.$store.getters.can('manage_problem_sets'),
-      can_read_secret: this.$store.getters.can('read_problem_secrets', 'class', this.$route.params.classID) || this.$store.getters.can('read_problem_secrets'),
+      can_read_secret: this.$store.getters.can('read_answers', 'class', this.$route.params.classID) || this.$store.getters.can('read_answers'),
       problem: {
         id: this.$route.params.problemID,
         name: '',

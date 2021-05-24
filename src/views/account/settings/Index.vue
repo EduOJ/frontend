@@ -12,7 +12,7 @@
           >
             <a-menu-item key="/account/settings/base">
               <router-link :to="{ name: 'settings.base' }">
-                基本设置
+                个人信息
               </router-link>
             </a-menu-item>
             <a-menu-item key="/account/settings/change_password">
@@ -20,9 +20,14 @@
                 修改密码
               </router-link>
             </a-menu-item>
-            <a-menu-item key="/account/settings/webauthn">
+            <a-menu-item key="/account/settings/webauthn" v-if="webauthnAvailable">
               <router-link :to="{ name: 'settings.webauthn' }">
                 使用安全秘钥登录
+              </router-link>
+            </a-menu-item>
+            <a-menu-item key="/account/settings/system">
+              <router-link :to="{ name: 'settings.system' }">
+                系统设置
               </router-link>
             </a-menu-item>
           </a-menu>
@@ -48,8 +53,10 @@ export default {
   },
   mixins: [baseMixin],
   data () {
+    const webauthnAvailable = document.location.protocol === 'https:' || document.location.host === 'localhost'
     return {
       // horizontal  inline
+      webauthnAvailable,
       mode: 'inline',
       openKeys: [],
       selectedKeys: []

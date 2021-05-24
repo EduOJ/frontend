@@ -45,7 +45,6 @@ import RunStatus from '@/components/RunStatus'
 import TestCase from '@/components/TestCase'
 import config from '@/config/config'
 import { codemirror } from '@/components/codemirror'
-import 'codemirror/lib/codemirror.css'
 import languageConf from '@/config/languageConf'
 
 export default {
@@ -57,14 +56,19 @@ export default {
     codemirror
   },
   data () {
-    const language = localStorage.getItem(`problem:${this.$route.params.id}:language`)
+    let language = localStorage.getItem(`problem:${this.$route.params.problemID}:language`)
     let code = ''
-    if (localStorage.getItem(`problem:${this.$route.params.id}:code`)) {
-      code = localStorage.getItem(`problem:${this.$route.params.id}:code`)
-      localStorage.removeItem(`problem:${this.$route.params.id}:code`)
-      localStorage.setItem(`problem:${this.$route.params.id}:code:${language}`, code)
+    if (language) {
+      if (localStorage.getItem(`problem:${this.$route.params.problemID}:code`)) {
+        code = localStorage.getItem(`problem:${this.$route.params.problemID}:code`)
+        localStorage.removeItem(`problem:${this.$route.params.problemID}:code`)
+        localStorage.setItem(`problem:${this.$route.params.problemID}:code:${language}`, code)
+      } else {
+        code = localStorage.getItem(`problem:${this.$route.params.problemID}:code:${language}`) || ''
+      }
     } else {
-      code = localStorage.getItem(`problem:${this.$route.params.id}:code:${language}`) || ''
+      language = null
+      code = ''
     }
     return {
       config: config,
@@ -75,7 +79,7 @@ export default {
       loading: true,
       submitLoading: false,
       problem: {
-        id: this.$route.params.id,
+        id: this.$route.params.problemID,
         name: '',
         description: '',
         language_allowed: [],
@@ -89,8 +93,8 @@ export default {
         test_cases: []
       },
       code: code,
-      language: localStorage.getItem(`problem:${this.$route.params.id}:language`),
-      mLanguage: localStorage.getItem(`problem:${this.$route.params.id}:language`)
+      language: language,
+      mLanguage: language
     }
   },
   mounted () {
@@ -114,15 +118,15 @@ export default {
       }
     },
     languageChange (val) {
-      localStorage.setItem(`problem:${this.$route.params.id}:code:${this.language}`, this.code)
+      localStorage.setItem(`problem:${this.$route.params.problemID}:code:${this.language}`, this.code)
       this.language = this.mLanguage
-      localStorage.setItem(`problem:${this.$route.params.id}:language}`, this.language)
-      this.code = localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || ''
+      localStorage.setItem(`problem:${this.$route.params.problemID}:language}`, this.language)
+      this.code = localStorage.getItem(`problem:${this.$route.params.problemID}:code:${this.language}`) || ''
     },
     doSubmit () {
       this.submitLoading = true
-      localStorage.setItem(`problem:${this.$route.params.id}:code:${this.language}`, this.code)
-      localStorage.setItem(`problem:${this.$route.params.id}:language`, this.language)
+      localStorage.setItem(`problem:${this.$route.params.problemID}:code:${this.language}`, this.code)
+      localStorage.setItem(`problem:${this.$route.params.problemID}:language`, this.language)
       var c = new Blob([this.code])
       createSubmission({
         problem_id: this.problem.id,
@@ -178,8 +182,10 @@ export default {
           return !a.sample ? 1 : -1 // make sample testcase top.
         })
         this.problem = data.problem
-        if (!this.language) {
+        if (!this.mLanguage) {
+          this.mLanguage = data.problem.language_allowed[0]
           this.language = data.problem.language_allowed[0]
+          this.code = localStorage.getItem(`problem:${this.$route.params.problemID}:code:${this.language}`) || ''
         }
       }).catch(err => {
         this.$error({

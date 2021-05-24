@@ -38,23 +38,15 @@
                   :language="language">
                 </Language>
               </a-descriptions-item>
-              <a-descriptions-item label="编译脚本" :span="3">
-                {{ {
-                  compare_soft_match: "忽略行末空格 + 最后回车",
-                  compare_float: "浮点数匹配 （相差1e-8内认为正确)",
-                  compare_exact_match: "字符级严格匹配",
-                }[problem.compare_script_name] == null ? problem.compare_script_name : {
-                  compare_soft_match: "忽略行末空格 + 最后回车",
-                  compare_float: "浮点数匹配 （相差1e-8内认为正确)",
-                  compare_exact_match: "字符级严格匹配",
-                }[problem.compare_script_name] }}
+              <a-descriptions-item label="答案比较方式" :span="3">
+                {{ comparerConf[problem.compare_script_name].name == null ? problem.compare_script_name : comparerConf[problem.compare_script_name].name }}
               </a-descriptions-item>
               <a-descriptions-item label="编译选项" :span="3" v-if="can_read_problem">
-                {{ problem.build_arg == "" ? "无" :problem.build_arg }}
+                {{ problem.build_arg === "" ? "无" :problem.build_arg }}
               </a-descriptions-item>
               <a-descriptions-item label="附件" :span="3">
-                {{ problem.attachment_file_name == "" ? "无" : "" }}
-                <a-button :loading="downloading" @click="downloadAttachment()" v-if="problem.attachment_file_name != ''">
+                {{ problem.attachment_file_name === "" ? "无" : "" }}
+                <a-button :loading="downloading" @click="downloadAttachment()" v-if="problem.attachment_file_name !== ''">
                   <a-icon type="download" />
                   {{ download_message }}</a-button>
               </a-descriptions-item>
@@ -103,6 +95,7 @@ import download from 'js-file-download'
 import languageConf from '@/config/languageConf'
 import Language from '@/components/Language'
 import moment from 'moment'
+import comparerConf from '@/config/comparerConf'
 
 export default {
   name: 'Problem',
@@ -114,6 +107,7 @@ export default {
   },
   data () {
     return {
+      comparerConf,
       languageConf,
       config,
       id: this.$route.params.id,
@@ -196,7 +190,6 @@ export default {
       }).then(resp => {
         this.download_message = this.problem.attachment_file_name
         this.downloading = false
-        console.log(resp)
         download(resp, this.problem.attachment_file_name)
       }).catch(err => {
         this.download_message = this.problem.attachment_file_name

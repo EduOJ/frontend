@@ -78,7 +78,16 @@
               </a-card>
               <a-card title="源代码">
                 文件名： {{ submission.file_name }}
-                <Code :url="config.apiUrl + `/api/class/${classID}/problem_set/${problemSetID}/submission/${submission.id}/code`" :filename="submission.file_name" :language="languageConf[submission.language].hljsLanguage" />
+                <codemirror
+                  v-model="code"
+                  :options="{
+                    lineNumbers: true,
+                    theme: 'darcula',
+                    mode: languageConf[submission.language] && languageConf[submission.language].mimeType || 'text/html',
+                    line: true,
+                    viewportMargin: Infinity,
+                    readOnly: true,
+                  }"/>
               </a-card>
             </a-space>
           </a-skeleton>
@@ -102,10 +111,15 @@ import config from '@/config/config'
 import moment from 'moment'
 import { mapGetters } from 'vuex'
 import languageConf from '@/config/languageConf'
+import request from '@/utils/request'
+import storage from 'store'
+import { ACCESS_TOKEN } from '@/store/mutation-types'
+import codemirror from '@/components/codemirror/codemirror'
 
 export default {
   name: 'Submission',
   components: {
+    codemirror,
     Markdown,
     TestCase,
     RunStatus,
@@ -123,8 +137,8 @@ export default {
       classID: this.$route.params.classID,
       id: this.$route.params.submissionID,
       loading: true,
-      can_read_problem: false, // this.$store.getters.can('read_problem', 'problem', this.$route.params.id) || this.$store.getters.can('read_problem'),
-      can_read_secret: false, // this.$store.getters.can('read_problem_secrets', 'problem', this.$route.params.id) || this.$store.getters.can('read_problem_secrets'),
+      can_read_problem: this.$store.getters.can('manage_problem_sets', 'class', this.$route.params.classID) || this.$store.getters.can('manage_problem_sets'),
+      can_read_secret: this.$store.getters.can('read_answers', 'class', this.$route.params.classID) || this.$store.getters.can('read_answers'),
       submission: {
         id: null,
         problem_id: null,
@@ -136,11 +150,34 @@ export default {
         created_at: null,
         updated_at: null,
         runs: []
-      }
+      },
+      code: '',
+      code_loading: true
     }
   },
   mounted () {
     this.fetch()
+    request({
+      url: config.apiUrl + `/api/class/${this.classID}/problem_set/${this.problemSetID}/submission/${this.id}/code`,
+      method: 'get',
+      responseType: 'text',
+      headers: {
+        Authorization: storage.get(ACCESS_TOKEN) || ''
+      },
+      transformResponse: [
+        data => data
+      ]
+    }).then(resp => {
+      this.code_loading = false
+      this.code = resp
+      if (this.content === '') {
+        this.content = '内容为空'
+      }
+    }).catch(err => {
+      console.log(err)
+      this.code = '发生了错误'
+      this.code_loading = false
+    })
   },
   methods: {
     ...mapGetters({
@@ -162,8 +199,8 @@ export default {
           return !a.sample ? 1 : -1 // make sample testcase top.
         })
         this.submission = data.submission
-        this.can_read_problem = this.$store.getters.can('read_answers', 'class', data.submission.problem_set_id) || this.$store.getters.can('read_answers')
-        this.can_read_secret = this.$store.getters.can('read_answers', 'class', data.submission.problem_set_id) || this.$store.getters.can('read_answers')
+        // this.can_read_problem = this.$store.getters.can('read_answers', 'class', data.submission.problem_set_id) || this.$store.getters.can('read_answers')
+        // this.can_read_secret = this.$store.getters.can('read_answers', 'class', data.submission.problem_set_id) || this.$store.getters.can('read_answers')
         if (!data.submission.judged) {
           this.fetch(true)
         }

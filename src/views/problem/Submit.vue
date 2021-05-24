@@ -18,7 +18,7 @@
                 :options="{
                   lineNumbers: true,
                   theme: 'darcula',
-                  mode: languageConf[language].mimeType,
+                  mode: languageConf[language] && languageConf[language].mimeType || 'text/html',
                   line: true,
                   viewportMargin: Infinity
                 }"/>
@@ -45,7 +45,6 @@ import RunStatus from '@/components/RunStatus'
 import TestCase from '@/components/TestCase'
 import config from '@/config/config'
 import codemirror from '@/components/codemirror/codemirror'
-import 'codemirror/lib/codemirror.css'
 import languageConf from '@/config/languageConf'
 
 export default {
@@ -57,14 +56,19 @@ export default {
     codemirror
   },
   data () {
-    const language = localStorage.getItem(`problem:${this.$route.params.id}:language`)
+    let language = localStorage.getItem(`problem:${this.$route.params.id}:language`)
     let code = ''
-    if (localStorage.getItem(`problem:${this.$route.params.id}:code`)) {
-      code = localStorage.getItem(`problem:${this.$route.params.id}:code`)
-      localStorage.removeItem(`problem:${this.$route.params.id}:code`)
-      localStorage.setItem(`problem:${this.$route.params.id}:code:${language}`, code)
+    if (language) {
+      if (localStorage.getItem(`problem:${this.$route.params.id}:code`)) {
+        code = localStorage.getItem(`problem:${this.$route.params.id}:code`)
+        localStorage.removeItem(`problem:${this.$route.params.id}:code`)
+        localStorage.setItem(`problem:${this.$route.params.id}:code:${language}`, code)
+      } else {
+        code = localStorage.getItem(`problem:${this.$route.params.id}:code:${language}`) || ''
+      }
     } else {
-      code = localStorage.getItem(`problem:${this.$route.params.id}:code:${language}`) || ''
+      language = null
+      code = ''
     }
     return {
       languageConf,
@@ -87,8 +91,8 @@ export default {
         test_cases: []
       },
       code: code,
-      language: localStorage.getItem(`problem:${this.$route.params.id}:language`),
-      mLanguage: localStorage.getItem(`problem:${this.$route.params.id}:language`)
+      language: language,
+      mLanguage: language
     }
   },
   mounted () {
@@ -170,8 +174,10 @@ export default {
           return !a.sample ? 1 : -1 // make sample testcase top.
         })
         this.problem = data.problem
-        if (!this.language) {
+        if (!this.mLanguage) {
+          this.mLanguage = data.problem.language_allowed[0]
           this.language = data.problem.language_allowed[0]
+          this.code = localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || ''
         }
       }).catch(err => {
         this.$error({
@@ -194,10 +200,4 @@ export default {
     padding: 0
   .ant-list
     border: 0
-</style>
-<style lang="sass">
-.CodeMirror-code
-  font-family: 'JetBrains Mono', serif !important
-.CodeMirror
-  height: auto
 </style>

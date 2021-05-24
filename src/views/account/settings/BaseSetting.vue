@@ -13,6 +13,7 @@
             size="large"
             v-model="form.username"
             placeholder="用户名"
+            disabled
           >
             <a-icon slot="prefix" type="user"/>
           </a-input>
@@ -31,6 +32,7 @@
             size="large"
             v-model="form.nickname"
             placeholder="昵称"
+            disabled
           >
             <a-icon slot="prefix" type="idcard"/>
           </a-input>

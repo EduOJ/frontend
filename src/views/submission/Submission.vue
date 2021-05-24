@@ -76,9 +76,18 @@
                   </a-collapse-panel>
                 </a-collapse>
               </a-card>
-              <a-card title="源代码">
+              <a-card title="源代码" :loading="code_loading">
                 文件名： {{ submission.file_name }}
-                <Code :url="config.apiUrl + `/api/submission/${submission.id}/code`" :filename="submission.file_name" :language="languageConf[submission.language].hljsLanguage" />
+                <codemirror
+                  v-model="code"
+                  :options="{
+                    lineNumbers: true,
+                    theme: 'darcula',
+                    mode: languageConf[submission.language] && languageConf[submission.language].mimeType || 'text/html',
+                    line: true,
+                    viewportMargin: Infinity,
+                    readOnly: true,
+                  }"/>
               </a-card>
             </a-space>
           </a-skeleton>
@@ -101,10 +110,15 @@ import Memory from '@/components/Memory'
 import config from '@/config/config'
 import moment from 'moment'
 import languageConf from '@/config/languageConf'
+import request from '@/utils/request'
+import storage from 'store'
+import { ACCESS_TOKEN } from '@/store/mutation-types'
+import codemirror from '@/components/codemirror/codemirror'
 
 export default {
   name: 'Submission',
   components: {
+    codemirror,
     Markdown,
     TestCase,
     RunStatus,
@@ -133,11 +147,34 @@ export default {
         created_at: null,
         updated_at: null,
         runs: []
-      }
+      },
+      code_loading: true,
+      code: ''
     }
   },
   mounted () {
     this.fetch()
+    request({
+      url: this.config.apiUrl + `/api/submission/${this.$route.params.id}/code`,
+      method: 'get',
+      responseType: 'text',
+      headers: {
+        Authorization: storage.get(ACCESS_TOKEN) || ''
+      },
+      transformResponse: [
+        data => data
+      ]
+    }).then(resp => {
+      this.code_loading = false
+      this.code = resp
+      if (this.content === '') {
+        this.content = '内容为空'
+      }
+    }).catch(err => {
+      console.log(err)
+      this.code = '发生了错误'
+      this.code_loading = false
+    })
   },
   methods: {
     format (time) {

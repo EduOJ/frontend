@@ -1,9 +1,9 @@
 <template>
-  <a-spin :spinning="(!lazyLoad) && loading" @mouseover="show_actions = true" @mouseout="show_actions = false">
+  <a-spin :spinning="(!lazyLoaded) && loading" @mouseover="show_actions = true" @mouseout="show_actions = false">
     <perfect-scrollbar :style="{'max-height': height}">
       <highlightjs :autodetect="language === ''" :language="language === '' ? undefined : language" :code="content" class="eduoj-code"/>
     </perfect-scrollbar>
-    <div class="load" v-if="lazyLoad">
+    <div class="load" v-if="lazyLoaded">
       <a-button size="small" @click="load()" ghost>点击加载</a-button>
     </div>
     <div class="action" v-show="show_actions" v-else>
@@ -32,6 +32,8 @@ import hljs from 'highlight.js'
 import Vue from 'vue'
 import request from '@/utils/request'
 import download from 'js-file-download'
+import storage from 'store'
+import { ACCESS_TOKEN } from '@/store/mutation-types'
 
 Vue.use(hljs.vuePlugin)
 export default {
@@ -65,6 +67,7 @@ export default {
   data () {
     if (this.text !== '') {
       return {
+        lazyLoaded: this.lazyLoad,
         loading: false,
         content: this.text,
         show_actions: false,
@@ -72,6 +75,7 @@ export default {
       }
     }
     return {
+      lazyLoaded: this.lazyLoad,
       loading: true,
       content: '',
       show_actions: false,
@@ -79,7 +83,7 @@ export default {
     }
   },
   mounted () {
-    if (!this.lazyLoad) {
+    if (!this.lazyLoaded) {
       this.load()
     }
   },
@@ -97,13 +101,20 @@ export default {
       download(this.content, this.filename)
     },
     load () {
-      this.lazyLoad = false
+      this.lazyLoaded = false
       request({
         url: this.url,
-        method: 'get'
+        method: 'get',
+        responseType: 'text',
+        headers: {
+          Authorization: storage.get(ACCESS_TOKEN) || ''
+        },
+        transformResponse: [
+          data => data
+        ]
       }).then(resp => {
         this.loading = false
-        this.content = String(resp)
+        this.content = resp
         if (this.content === '') {
           this.content = '内容为空'
         }

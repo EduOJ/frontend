@@ -24,6 +24,14 @@ export default {
     displayName: 'Python3',
     mimeType: 'text/x-python',
     hljsLanguage: 'python',
-    color: 'orange'
+    color: 'orange',
+    multifile: false
+  },
+  c_multifile: {
+    displayName: 'C（多文件）',
+    mimeType: 'text/x-csrc',
+    hljsLanguage: 'c',
+    color: 'green',
+    multifile: true
   }
 }

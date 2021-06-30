@@ -4,14 +4,32 @@
       <a-col :xl="{span:14, offset:5}" :lg="{span:16}">
         <a-card :title="problem.name" style="height: 100%">
           <a-space direction="vertical">
-            <p>
-              语言选择：
-              <a-select v-model="mLanguage" default-value="cpp" style="width: 120px" @change="languageChange">
-                <a-select-option :key="l" v-for="l in problem.language_allowed">
-                  {{ languageConf[l].displayName }}
-                </a-select-option>
-              </a-select>
-            </p>
+            <a-space>
+              <p>
+                语言选择：
+                <a-select v-model="mLanguage" default-value="cpp" style="width: 120px" @change="languageChange">
+                  <a-select-option :key="l" v-for="l in problem.language_allowed">
+                    {{ languageConf[l].displayName }}
+                  </a-select-option>
+                </a-select>
+              </p>
+              <p>
+                上传文件
+                <a-upload
+                  accept="application/x-zip-compressed"
+                  :multiple="false"
+                  :file-list="fileList"
+                  :customRequest="uploadZipFile">
+                  <a-button> <a-icon type="upload" /> Upload </a-button>
+                </a-upload>
+              </p>
+            </a-space>
+            <a-directory-tree
+              @select="onNodeSelect"
+              :load-data="onLoadData"
+              :replace-fields="replaceFields"
+              :tree-data="treeData">
+            </a-directory-tree>
             <a-card title="输入代码" class="submission_card" size="small">
               <codemirror
                 v-model="code"
@@ -46,6 +64,9 @@ import TestCase from '@/components/TestCase'
 import config from '@/config/config'
 import codemirror from '@/components/codemirror/codemirror'
 import languageConf from '@/config/languageConf'
+import JSZip from 'jszip'
+import { Base64 } from 'js-base64'
+// import fs from 'fs'
 
 export default {
   name: 'Problem',
@@ -92,7 +113,17 @@ export default {
       },
       code: code,
       language: language,
-      mLanguage: language
+      mLanguage: language,
+      fileList: [],
+      treeData: [],
+      replaceFields: {
+        children: 'child',
+        title: 'label',
+        key: 'path'
+      },
+      newZipFiles: {},
+      currentFile: '',
+      codeInStorage: ''
     }
   },
   mounted () {
@@ -116,10 +147,24 @@ export default {
       }
     },
     languageChange (val) {
-      localStorage.setItem(`problem:${this.$route.params.id}:code:${this.language}`, this.code)
-      this.language = this.mLanguage
-      localStorage.setItem(`problem:${this.$route.params.id}:language`, this.language)
-      this.code = localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || ''
+      const fileReader = new FileReader()
+      var zipCode
+      // const that = this
+      this.newZipFiles.generateAsync({ type: 'blob' }).then((content) => {
+        fileReader.onload = (evt) => {
+          zipCode = evt.target.result
+          zipCode = Base64.encode(zipCode)
+          console.log(zipCode)
+          // console.log(Base64.decode(zipCode))
+          localStorage.setItem(`problem:${this.$route.params.id}:code:${this.language}`, zipCode)
+          this.language = this.mLanguage
+          localStorage.setItem(`problem:${this.$route.params.id}:language`, this.language)
+          this.code = localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`)
+          this.code = Base64.decode(this.code)
+          console.log(this.code)
+        }
+        fileReader.readAsDataURL(content)
+      })
     },
     doSubmit () {
       this.submitLoading = true
@@ -197,6 +242,103 @@ export default {
         })
         console.error(err)
       })
+    },
+    uploadZipFile (data) {
+      // todo: 检查zip中文件类型
+      // const zipName = data.file.name.slice(0, -4)
+      this.treeData = []
+      JSZip.loadAsync(data.file).then(this.findRoot).catch(() => {
+        throw Error('Could not load the zip project')
+      })
+    },
+    onNodeSelect (keys, event) {
+      // todo:目前只能处理选中一个文件/文件夹
+      this.saveCurrentFile()
+      if (!event.node.dataRef.isFolder) {
+        this.newZipFiles.file(keys[0]).async('string').then(content => {
+          this.code = content
+        })
+        this.currentFile = event.node.dataRef
+      }
+    },
+    saveCurrentFile () {
+      this.newZipFiles.file(this.currentFile.path, this.code)
+    },
+    onLoadData (treeNode) {
+      return new Promise(resolve => {
+        if (treeNode.dataRef.child || !treeNode.dataRef.isFolder) {
+          resolve()
+          return
+        }
+        setTimeout(() => {
+          const dirsKeys = Object.keys(this.newZipFiles.files)
+          const needKeys = dirsKeys.filter(function (dir) {
+            if (!RegExp(treeNode.dataRef.path).test(dir)) {
+              return false
+            }
+            const prefix = treeNode.dataRef.path + '/'
+            dir = dir.replace(prefix, '')
+            if (dir === '') {
+              return false
+            }
+            dir = dir.split('/')
+            if (dir.length === 1 || dir[1] === '/') {
+              return true
+            }
+            return false
+          })
+          needKeys.map((key, index) => {
+            const dirKeys = key.split('/')
+            const suffix = key.charAt(key.length - 1)
+            const children = {
+              isFolder: suffix === '/',
+              isLeaf: suffix !== '/',
+              path: key,
+              label: dirKeys[dirKeys.length - 1]
+            }
+            treeNode.dataRef.hasOwnProperty('child') ? treeNode.dataRef.child.push(children) : treeNode.dataRef.child = [children]
+            this.treeData = [...this.treeData]
+          })
+          resolve()
+        }, 1000)
+      })
+    },
+    findRoot (zip) {
+      this.newZipFiles = zip
+      const that = this
+      const dirKeys = Object.keys(zip.files)
+      const zipFileKeys = dirKeys.sort((a, b) => a.split('/').length - b.split('/').length)
+      if (dirKeys.length < 1) {
+        return
+      }
+      zipFileKeys.map((key, index) => {
+        const dirKeys = key.split('/')
+        if (dirKeys.length < 2 || dirKeys[1] === '') {
+          // const prevPath = dirKeys[0] + '/' + dirKeys[1]
+          // const isExistDir = that.treeData[0].child.filter(v => v.label === dirKeys[1])
+          const children = {
+            isFolder: dirKeys.length >= 2,
+            isLeaf: dirKeys.length < 2,
+            label: dirKeys[0],
+            path: dirKeys[0]
+          }
+          that.treeData.push(children)
+        }
+      })
+      // 过滤出二级目录中可以展示的文件
+      const defaultData = this.treeData.filter(v => !v.isFolder)[0]
+      if (defaultData) {
+        this.currentFile = this.treeData[0]
+        this.defaultExpandedKeys = [this.treeData[0].label, defaultData.label]
+        // 获取默认展示的文件内容
+        this.currentFile = defaultData
+        if (!defaultData.isFolder) {
+          // path:当前zip文件的绝对路径
+          this.newZipFiles.file(defaultData.path).async('string').then(content => {
+            that.code = content
+          })
+        }
+      }
     }
   }
 }

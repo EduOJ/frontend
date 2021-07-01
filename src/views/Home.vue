@@ -72,6 +72,8 @@
               </markdown>
             </a-skeleton>
           </a-card>
+
+          <MultiFileEditor/>
         </a-col>
         <a-col
           :xl="8"
@@ -131,13 +133,15 @@ import { getUserProblemInfo } from '@/api/user'
 import { getProblem } from '@/api/problem'
 import Markdown from '@/components/Editor/Markdown'
 import Avatar from '@/components/Avatar'
+import MultiFileEditor from '@/components/Editor/MultiFileEditor'
 
 export default {
   name: 'Home',
   components: {
     PageHeaderWrapper,
     Markdown,
-    Avatar
+    Avatar,
+    MultiFileEditor
   },
   data () {
     return {

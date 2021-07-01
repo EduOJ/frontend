@@ -4,34 +4,34 @@ export default {
     mimeType: 'text/x-csrc',
     hljsLanguage: 'c',
     color: 'green',
-    multifile: false
+    multiFile: false
   },
   cpp: {
     displayName: 'C++',
     mimeType: 'text/x-c++src',
     hljsLanguage: 'cpp',
     color: 'cyan',
-    multifile: false
+    multiFile: false
   },
   java: {
     displayName: 'Java',
     mimeType: 'text/x-java',
     hljsLanguage: 'java',
     color: 'red',
-    multifile: false
+    multiFile: false
   },
   python3: {
     displayName: 'Python3',
     mimeType: 'text/x-python',
     hljsLanguage: 'python',
     color: 'orange',
-    multifile: false
+    multiFile: false
   },
   c_multifile: {
     displayName: 'C（多文件）',
     mimeType: 'text/x-csrc',
     hljsLanguage: 'c',
     color: 'green',
-    multifile: true
+    multiFile: true
   }
 }

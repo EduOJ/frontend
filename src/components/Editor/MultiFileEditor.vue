@@ -164,7 +164,7 @@ export default {
               fa: this.selectedNode.dataRef.fa
             })
           }
-          // add to zip
+          // add file to zip
           this.zip.file(filePath, '')
         } else {
           // add to tree
@@ -206,7 +206,7 @@ export default {
               children: []
             })
           }
-          // add to zip
+          // add folder to zip
           this.zip.folder(this.inputName)
         }
         this.inputName = ''

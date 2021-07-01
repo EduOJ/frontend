@@ -1,48 +1,53 @@
 <template>
-  <a-card>
-    <a-button type="primary" @click="createFile">
-      新建文件
-    </a-button>
-    <a-modal
-      title="新建文件"
-      :visible="createFileDialog"
-      :confirm-loading="confirmLoading"
-      @ok="handleCreate"
-      @cancel="handleCancel"
-    >
-      <a-input placeholder="请输入文件名称" v-model="inputName"/> <!-- todo: validation -->
-    </a-modal>
-    <a-button type="primary" @click="createFolder">
-      新建文件夹
-    </a-button>
-    <a-modal
-      title="新建文件夹"
-      :visible="createFolderDialog"
-      :confirm-loading="confirmLoading"
-      @ok="handleCreate"
-      @cancel="handleCancel"
-    >
-      <a-input placeholder="请输入文件夹名称" v-model="inputName"/> <!-- todo: validation -->
-    </a-modal>
-    <a-button type="primary" @click="deleteFiles">
-      删除
-    </a-button>
-    <a-modal
-      title="删除"
-      :visible="deleteDialog"
-      :confirm-loading="confirmLoading"
-      @ok="handleDelete"
-      @cancel="handleCancel"
-    >
-      <p>确认删除</p> <!-- todo: validation -->
-    </a-modal>
+  <div>
+    <a-space>
+      <a-button type="primary" @click="createFile">
+        新建文件
+      </a-button>
+      <a-modal
+        title="新建文件"
+        :visible="createFileDialog"
+        :confirm-loading="confirmLoading"
+        @ok="handleCreate"
+        @cancel="handleCancel"
+      >
+        <a-input placeholder="请输入文件名称" v-model="inputName"/> <!-- todo: validation -->
+      </a-modal>
+      <a-button type="primary" @click="createFolder">
+        新建文件夹
+      </a-button>
+      <a-modal
+        title="新建文件夹"
+        :visible="createFolderDialog"
+        :confirm-loading="confirmLoading"
+        @ok="handleCreate"
+        @cancel="handleCancel"
+      >
+        <a-input placeholder="请输入文件夹名称" v-model="inputName"/> <!-- todo: validation -->
+      </a-modal>
+      <a-button type="primary" @click="deleteFiles">
+        删除
+      </a-button>
+      <a-modal
+        title="删除"
+        :visible="deleteDialog"
+        :confirm-loading="confirmLoading"
+        @ok="handleDelete"
+        @cancel="handleCancel"
+      >
+        <p>确认删除</p> <!-- todo: validation -->
+      </a-modal>
+      <a-button type="primary" @click="downloadFile">
+        下载
+      </a-button>
+    </a-space>
     <a-directory-tree
       @select="onNodeSelect"
       :selectedKeys="selectedKeys"
       :replace-fields="replaceFields"
       :tree-data="treeData">
     </a-directory-tree>
-    <a-card title="输入代码" class="submission_card" size="small">
+    <a-card :title="currentFile || '输入代码'" class="submission_card" size="small">
       <codemirror
         v-model="code"
         :options="{
@@ -50,16 +55,18 @@
           theme: 'darcula',
           mode: languageConf[language] && languageConf[language].mimeType || 'text/html',
           line: true,
-          viewportMargin: Infinity
+          viewportMargin: Infinity,
+          extraKeys: extraKeys
         }"/>
     </a-card>
-  </a-card>
+  </div>
 </template>
 
 <script>
 import codemirror from '@/components/codemirror/codemirror'
 import languageConf from '@/config/languageConf'
 import JSZip from 'jszip'
+import { Base64 } from 'js-base64'
 
 export default {
   name: 'MultiFileEditor',
@@ -72,6 +79,12 @@ export default {
   data () {
     return {
       languageConf,
+      extraKeys: {
+        'Ctrl-S': (v) => {
+          this.saveCurrentFile()
+          this.$message.success('已保存', 1)
+        }
+      },
       code: '',
       data: '',
       treeData: [],
@@ -102,6 +115,11 @@ export default {
         this.deleteDialog = true
       }
     },
+    saveCurrentFile () {
+      if (this.currentFile) {
+        this.zip.file(this.currentFile, this.code)
+      }
+    },
     onNodeSelect (keys, event) {
       // todo:目前只能处理选中一个文件/文件夹
       if (this.selectedNode === event.node) {
@@ -112,7 +130,7 @@ export default {
         this.selectedKeys = []
         this.selectedKeys.push(event.node.dataRef.path)
         if (event.node.dataRef.isLeaf) {
-          this.zip.file(this.currentFile, this.code)
+          this.saveCurrentFile()
           this.zip.file(event.node.dataRef.path).async('string').then((data) => {
             this.code = data
           })
@@ -240,6 +258,27 @@ export default {
         this.deleteDialog = false
         this.confirmLoading = false
       }, 100)
+    },
+    downloadFile () {
+      const fileReader = new FileReader()
+      this.zip.generateAsync({ type: 'blob' }).then((content) => {
+        fileReader.onload = (evt) => {
+          let blobUrl = Base64.encode(evt.target.result)
+          blobUrl = Base64.decode(blobUrl)
+          console.log(blobUrl)
+          fetch(blobUrl).then(r => {
+            JSZip.loadAsync(r.blob()).then((zipContent) => {
+              console.log(zipContent)
+            })
+          })
+          // const zipBlob = new Blob([blobUrl])
+          // console.log(zipBlob)
+          // JSZip.loadAsync(zipBlob).then((zipContent) => {
+          //   console.log(zipContent)
+          // })
+        }
+        fileReader.readAsDataURL(content)
+      })
     }
   }
 }

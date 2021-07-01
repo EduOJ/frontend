@@ -39,7 +39,6 @@
     <a-directory-tree
       @select="onNodeSelect"
       :selectedKeys="selectedKeys"
-      :load-data="onLoadData"
       :replace-fields="replaceFields"
       :tree-data="treeData">
     </a-directory-tree>
@@ -60,6 +59,7 @@
 <script>
 import codemirror from '@/components/codemirror/codemirror'
 import languageConf from '@/config/languageConf'
+import JSZip from 'jszip'
 
 export default {
   name: 'MultiFileEditor',
@@ -72,6 +72,7 @@ export default {
   data () {
     return {
       languageConf,
+      code: '',
       data: '',
       treeData: [],
       replaceFields: {
@@ -85,7 +86,8 @@ export default {
       inputName: '',
       confirmLoading: false,
       selectedKeys: [],
-      currentFile: '' // path
+      currentFile: '', // path,
+      zip: new JSZip()
     }
   },
   methods: {
@@ -109,6 +111,13 @@ export default {
         this.selectedNode = event.node
         this.selectedKeys = []
         this.selectedKeys.push(event.node.dataRef.path)
+        if (event.node.dataRef.isLeaf) {
+          this.zip.file(this.currentFile, this.code)
+          this.zip.file(event.node.dataRef.path).async('string').then((data) => {
+            this.code = data
+          })
+          this.currentFile = event.node.dataRef.path
+        }
       }
     },
     handleCancel () {
@@ -119,38 +128,86 @@ export default {
     handleCreate () {
       this.confirmLoading = true
       setTimeout(() => {
-        if (!this.selectedNode.dataRef) {
-          this.treeData.push({
-            name: this.inputName,
-            path: this.createFileDialog ? this.inputName : '/' + this.inputName + '/',
-            isLeaf: Boolean(this.createFileDialog),
-            fa: Object(),
-            children: []
-          })
-        } else if (!this.selectedNode.dataRef.isLeaf) {
-          this.selectedNode.dataRef.children.push({
-            name: this.inputName,
-            path: this.selectedNode.dataRef.path + this.inputName + (this.createFolderDialog ? '/' : ''),
-            isLeaf: Boolean(this.createFileDialog),
-            fa: this.selectedNode,
-            children: []
-          })
-        } else if (!this.selectedNode.dataRef.fa.dataRef) {
-          this.treeData.push({
-            name: this.inputName,
-            path: this.createFileDialog ? this.inputName : '/' + this.inputName + '/',
-            isLeaf: Boolean(this.createFileDialog),
-            fa: Object(),
-            children: []
-          })
+        let filePath
+        if (this.createFileDialog) {
+          // add to tree
+          if (!this.selectedNode.dataRef) {
+            filePath = this.inputName
+            this.treeData.push({
+              name: this.inputName,
+              path: filePath,
+              isLeaf: true,
+              fa: Object()
+            })
+          } else if (!this.selectedNode.dataRef.isLeaf) {
+            filePath = this.selectedNode.dataRef.path + this.inputName
+            this.selectedNode.dataRef.children.push({
+              name: this.inputName,
+              path: filePath,
+              isLeaf: true,
+              fa: this.selectedNode
+            })
+          } else if (!this.selectedNode.dataRef.fa.dataRef) {
+            filePath = this.inputName
+            this.treeData.push({
+              name: this.inputName,
+              path: filePath,
+              isLeaf: true,
+              fa: Object()
+            })
+          } else {
+            filePath = this.selectedNode.dataRef.fa.dataRef.path + this.inputName
+            this.selectedNode.dataRef.fa.dataRef.children.push({
+              name: this.inputName,
+              path: filePath,
+              isLeaf: true,
+              fa: this.selectedNode.dataRef.fa
+            })
+          }
+          // add to zip
+          this.zip.file(filePath, '')
         } else {
-          this.selectedNode.dataRef.fa.dataRef.children.push({
-            name: this.inputName,
-            path: this.selectedNode.dataRef.fa.dataRef.path + this.inputName + (this.createFolderDialog ? '/' : ''),
-            isLeaf: Boolean(this.createFileDialog),
-            fa: this.selectedNode.dataRef.fa,
-            children: []
-          })
+          // add to tree
+          // todo: delete filePath
+          if (!this.selectedNode.dataRef) {
+            filePath = this.inputName + '/'
+            this.treeData.push({
+              name: this.inputName,
+              path: filePath,
+              isLeaf: false,
+              fa: Object(),
+              children: []
+            })
+          } else if (!this.selectedNode.dataRef.isLeaf) {
+            filePath = this.selectedNode.dataRef.path + this.inputName + '/'
+            this.selectedNode.dataRef.children.push({
+              name: this.inputName,
+              path: filePath,
+              isLeaf: false,
+              fa: this.selectedNode,
+              children: []
+            })
+          } else if (!this.selectedNode.dataRef.fa.dataRef) {
+            filePath = this.inputName + '/'
+            this.treeData.push({
+              name: this.inputName,
+              path: filePath,
+              isLeaf: false,
+              fa: Object(),
+              children: []
+            })
+          } else {
+            filePath = this.selectedNode.dataRef.fa.dataRef.path + this.inputName + '/'
+            this.selectedNode.dataRef.fa.dataRef.children.push({
+              name: this.inputName,
+              path: filePath,
+              isLeaf: false,
+              fa: this.selectedNode.dataRef.fa,
+              children: []
+            })
+          }
+          // add to zip
+          this.zip.folder(this.inputName)
         }
         this.inputName = ''
         this.createFileDialog = false
@@ -164,7 +221,7 @@ export default {
         if (!this.selectedNode.dataRef.fa.dataRef) {
           for (let i = 0; i < this.treeData.length; i++) {
             if (this.treeData[i] === this.selectedNode.dataRef) {
-              console.log('!!!')
+              this.zip.remove(this.treeData[i].path)
               this.treeData.splice(i, 1)
               break
             }
@@ -172,6 +229,7 @@ export default {
         } else {
           for (let i = 0; i < this.selectedNode.dataRef.fa.dataRef.children.length; i++) {
             if (this.selectedNode.dataRef.fa.dataRef.children[i] === this.selectedNode.dataRef) {
+              this.zip.remove(this.selectedNode.dataRef.path)
               this.selectedNode.dataRef.fa.dataRef.children.splice(i, 1)
               break
             }

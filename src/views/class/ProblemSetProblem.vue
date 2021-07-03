@@ -14,13 +14,9 @@
         </a-card>
         <ul v-for="comment in this.comments" :key="comment.ID">
           <one-comment
-          :depth='0'
-          :detail="comment.Detail"
-          :comment_id="comment.ID"
-          :times="comment.created_at"
-          :writer="comment.Writer"
-          :jsonStr="jsonTree[comment.ID.toString()]"
-          :content="comment.Content" ></one-comment>
+          :depth="0"
+          :comment="comment"
+          :jsonStr="jsonTree[comment.ID.toString()]"></one-comment>
         </ul>
         <div >
             <span><avatar size="large" :user="this.$store.state.user.info"></avatar></span>
@@ -171,7 +167,7 @@ export default {
       comments: [],
       commentsNoneRoot: [],
       jsonTree: {},
-      jsonChildren: {},
+      jsonChildren: {}, // children of all the nodes
       commentsMap: {}
     }
   },
@@ -226,8 +222,10 @@ export default {
       })
 
       getComment({
-        query_type: 'problem',
-        query_id: this.$route.params.problemID
+        target_type: 'problem',
+        target_id: this.$route.params.problemID,
+        begin: 0,
+        end: 5
       }).then(data => {
         this.comments = data.ComsRoot
         this.commentsNoneRoot = data.ComsNoneRoot
@@ -288,10 +286,9 @@ export default {
         })
       } else {
         createComment({
-        father_id: this.$route.params.problemID,
-        first_id: this.$route.params.problemID,
-        first_type: 'problem',
-        father_type: 'problem',
+        father_id: 0,
+        target_id: this.$route.params.problemID,
+        target_type: 'problem',
         content: this.CommentDescription
         }).catch(err => {
         this.$error({

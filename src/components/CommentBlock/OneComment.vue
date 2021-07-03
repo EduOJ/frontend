@@ -1,40 +1,3 @@
-<!--<template>
-    <article class="timeline-comment">
-        <avatar size="large" :user="user">
-        <div class="comment">
-          <header class="comment-header">
-            <span class="comment-meta">
-                this is header
-            </span>
-          </header>
-          <article class="markdown-body" md>
-            <markdown v-model="problem.description">
-            </markdown>
-          </article>
-        </div>
-    </article>
-</template> -->
-
-<!--<template>
-    <a-spin :spinning="comment_loading" :class="problem_spin">
-    <a-row :gutter="[16,16]" style="height: 100%">
-    <a-col :xl="{span:1, offset:0}" :lg="{span:24}" style="height: 100%">
-    <avatar size="large" :user="writer"></avatar>
-    </a-col>
-    <a-col :xl="{span:14}" :lg="{span:20}" style="height: 100%">
-        <a-card :title="id" style="height: 100%">
-            <a-skeleton active :loading="comment_loading">
-                <markdown v-model="this.content">
-                </markdown>
-            </a-skeleton>
-        </a-card>
-    </a-col>
-    <a-col>
-        <a-comment :content="this.content"/>
-    </a-col>
-    </a-row>
-    </a-spin>
-</template>-->
 <template>
   <a-comment>
    <div>
@@ -45,33 +8,33 @@
     <div style="margin-up:5pt; margin-left:2pt">
     <a-row  justify="space-between">
         <span><avatar size="large" :user="this.writer"></avatar></span>
-        <span>{{ this.writer.nickname }}</span> <span v-if="this.writer.nickname===this.$store.state.user.info.nickname">(你)</span> <span> #{{ this.comment_id }}</span>
+        <span>{{ this.comment.User.nickname }}</span> <span v-if="this.comment.User.nickname===this.$store.state.user.info.nickname">(你)</span> <span> #{{ this.comment.ID }}</span>
     </a-row>
     <br>
     <a-row >
-            <markdown v-model="this.content"> </markdown>
+            <markdown v-model="this.comment.Content"> </markdown>
             <br>
         <div style="margin-right:20pt">
             <span key="comment-basic-like">
               <a-tooltip title="Like">
-                <a-icon type="like" :theme="this.actions[0] === 1 ? 'filled' : 'outlined'" @click="active('0')" />
+                <a-icon type="like" :theme="this.actions['👍'] === 1 ? 'filled' : 'outlined'" @click="active('👍')" />
               </a-tooltip>
               <span style="padding-left: '8px'; cursor: 'auto'">
-                :{{actionCount['0']}}
+                :{{actionCount['👍']}}
               </span>
             </span>
             <span key="comment-basic-dislike">
               <a-tooltip title="Dislike">
-                <a-icon type="dislike" :theme="this.actions[1] === 1 ? 'filled' : 'outlined'" @click="active('1')" />
+                <a-icon type="dislike" :theme="this.actions['👎'] === 1 ? 'filled' : 'outlined'" @click="active('👎')" />
               </a-tooltip>
               <span style="padding-left: '8px'; cursor: 'auto'">
-                :{{actionCount['1']}}
+                :{{actionCount['👎']}}
               </span>
             </span>
             <span><a-button @click="reply()" > Reply to</a-button></span>
           <span style="float:right">
-              <a-tooltip slot="datetime" :title="moment(this.times).format('YYYY-MM-DD HH:mm:ss')">
-                    <span>{{ moment(this.times).fromNow() }}</span>
+              <a-tooltip slot="datetime" :title="moment(this.comment.created_at).format('YYYY-MM-DD HH:mm:ss')">
+                    <span>{{ moment(this.comment.created_at).fromNow() }}</span>
                 </a-tooltip>
           </span>
         </div>
@@ -98,12 +61,8 @@
             <div style="margin-left:20pt; margin-top:5pt; margin-right:5pt" >
             <oneComment
             :depth="depth + 1"
-            :detail="jsonStr[keyID]['data'].Detail"
-            :comment_id="jsonStr[keyID]['data'].ID"
-            :times="jsonStr[keyID]['data'].created_at"
-            :writer="jsonStr[keyID]['data'].Writer"
-            :jsonStr="jsonStr[keyID]"
-            :content="jsonStr[keyID]['data'].Content" ></oneComment>
+            :comment="jsonStr[keyID]['data']"
+            :jsonStr="jsonStr[keyID]"></oneComment>
             </div>
         </div>
     </a-row>
@@ -141,44 +100,47 @@ export default {
       languageConf,
       config,
       moment,
-      actions: [0, 0],
       loading: true,
       canEdit: false,
       description: '',
       coll: '#FFFFFF',
+      actions: {},
+      emojis: ['👍', '👎'],
       children: [],
       actionMap: {},
       actionCount: {}
     }
   },
-  props: ['writer', 'jsonStr', 'content', 'times', 'comment_id', 'detail', 'depth'],
+  props: ['depth', 'comment', 'jsonStr'],
   mounted () {
     this.fetch()
   },
   methods: {
     fetch () {
-        this.id = Number(this.id)
-        if (this.detail !== '') {
-            this.actionMap = JSON.parse(this.detail)
-            for (var i = 0; i <= 1; i++) {
+        this.loading = true
+        if (this.comment.Reaction.Details !== '') {
+            this.actionMap = JSON.parse(this.comment.Reaction.Details)
+            for (var i = 0; i < this.emojis.length; i++) {
                 // for all actions
-                if (!this.actionMap.hasOwnProperty(i.toString())) {
-                    this.actionCount[i.toString()] = 0
+                this.actions[this.emojis[i]] = 0
+                if (!this.actionMap.hasOwnProperty(this.emojis[i])) {
+                    this.actionCount[this.emojis[i]] = 0
                 } else {
                     // this action not 0, find if you have done that
-                    this.actionCount[i.toString()] = this.actionMap[i].length
-                    for (var j = 0; j < this.actionMap[i].length; j++) {
-                        if (this.actionMap[i][j] === this.$store.state.user.info.id) {
-                            this.actions[i] = 1
+                    // the first index stands for length
+                    this.actionCount[this.emojis[i]] = this.actionMap[this.emojis[i]][0]
+                    for (var j = 1; j < this.actionMap[this.emojis[i]].length; j++) {
+                        if (this.actionMap[this.emojis[i]][j] === this.$store.state.user.info.id) {
+                            this.actions[this.emojis[i]] = 1
                             break
                         }
                     }
                 }
             }
         } else {
-            for (j = 0; j <= 1; j++) {
-                this.actionMap[j.toString()] = 0
-                this.actionCount[j.toString()] = 0
+            for (j = 0; j < this.emojis.length; j++) {
+                this.actionCount[this.emojis[j]] = 0
+                this.actions[this.emojis[j]] = 0
             }
         }
 
@@ -187,6 +149,7 @@ export default {
                 this.children.push(key.toString())
             }
         }
+
         var tempCol = ['D9FFFD', 'C5E1E8', 'E5F3FF', 'C5CFE8', 'D9D9FF']
         this.depth = Number(this.depth)
 
@@ -199,12 +162,12 @@ export default {
     },
     active (typeNum) {
       AddReaction({
-        comment_id: this.comment_id,
-        type_id: typeNum,
-        if_add_action: 1 - this.actions[Number(typeNum)]
+        reaction_id: this.comment.Reaction.ID,
+        emoji_type: typeNum,
+        if_add_action: Boolean(1 - this.actions[typeNum])
         }).then(
-            this.actionCount[typeNum] += 1 - 2 * this.actions[Number(typeNum)],
-            this.actions[Number(typeNum)] = 1 - this.actions[Number(typeNum)],
+            this.actionCount[typeNum] += 1 - 2 * this.actions[typeNum],
+            this.actions[typeNum] = 1 - this.actions[typeNum],
             this.$forceUpdate()
         ).catch(err => {
         this.$error({
@@ -226,10 +189,9 @@ export default {
         })
       } else {
         createComment({
-            father_id: this.comment_id,
-            first_id: '0',
-            first_type: '0',
-            father_type: 'comment',
+            father_id: this.comment.ID,
+            target_type: '0',
+            target_id: '0',
             content: this.description
         }).then(
             this.$forceUpdate()

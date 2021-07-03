@@ -2,9 +2,9 @@ import api from '@/api/api'
 
 const commentApi = {
 
-    CreateComment: '/api/comment/create',
-    GetComment: '/api/comment/get',
-    AddReaction: '/api/comment/reaction/add'
+    CreateComment: '/api/comments',
+    GetComment: '/api/comments',
+    AddReaction: '/api/comments'
 }
 
 export function createComment (param) {
@@ -12,7 +12,6 @@ export function createComment (param) {
     for (const prop in param) {
       formData.append(prop, param[prop])
     }
-
     return api({
       url: commentApi.CreateComment,
       method: 'post',
@@ -21,15 +20,12 @@ export function createComment (param) {
 }
 
 export function getComment (param) {
-    const formData = new FormData()
-    for (const prop in param) {
-      formData.append(prop, param[prop])
-    }
-
     return api({
       url: commentApi.GetComment,
-      method: 'post',
-      data: formData
+      method: 'get',
+      params: {
+        ...param
+      }
     })
 }
 
@@ -38,10 +34,9 @@ export function AddReaction (param) {
     for (const prop in param) {
       formData.append(prop, param[prop])
     }
-
     return api({
       url: commentApi.AddReaction,
-      method: 'post',
+      method: 'put',
       data: formData
     })
 }

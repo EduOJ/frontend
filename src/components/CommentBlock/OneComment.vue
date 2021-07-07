@@ -7,11 +7,11 @@
     <div>
     <div style="margin-up:5pt; margin-left:2pt">
     <a-row  justify="space-between">
-        <span><avatar size="large" :user="this.writer"></avatar></span>
+        <span><avatar size="large" :user="this.comment.User"></avatar></span>
         <span>{{ this.comment.User.nickname }}</span> <span v-if="this.comment.User.nickname===this.$store.state.user.info.nickname">(你)</span> <span> #{{ this.comment.ID }}</span>
     </a-row>
     <br>
-    <a-row >
+    <a-row>
             <markdown v-model="this.comment.Content"> </markdown>
             <br>
         <div style="margin-right:20pt">
@@ -43,7 +43,7 @@
             <span> 你的发言</span>
             <div slot="content">
             <a-form-item>
-                <mark-down-editor v-model="description"/>
+                <mark-down-editor v-model="description" :dealAt="dealAt" :dealHashTag="dealHashTag"/>
             </a-form-item>
             <a-form-item>
             <div style="margin-left:20pt; margin-right:20pt">
@@ -79,6 +79,8 @@
 import Markdown from '@/components/Editor/Markdown'
 import MarkDownEditor from '@/components/Editor/MarkdownEditor'
 import { AddReaction, createComment } from '@/api/comment'
+import { getUsers } from '@/api/user'
+import { getProblems } from '@/api/problem'
 import Avatar from '@/components/Avatar'
 import OneComment from '@/components/CommentBlock/OneComment'
 import config from '@/config/config'
@@ -108,7 +110,9 @@ export default {
       emojis: ['👍', '👎'],
       children: [],
       actionMap: {},
-      actionCount: {}
+      actionCount: {},
+      userSearchResult: [],
+      hashSearchResult: []
     }
   },
   props: ['depth', 'comment', 'jsonStr'],
@@ -162,7 +166,8 @@ export default {
     },
     active (typeNum) {
       AddReaction({
-        reaction_id: this.comment.Reaction.ID,
+        target_id: this.comment.ID,
+        target_type: 'comment',
         emoji_type: typeNum,
         if_add_action: Boolean(1 - this.actions[typeNum])
         }).then(
@@ -202,6 +207,34 @@ export default {
             console.error(err)
         })
       }
+    },
+    dealAt: function (val) {
+        getUsers({
+            offset: 0,
+            search: val
+        }).then(data => {
+            this.userSearchResult = data.users.map((v) => {
+                return {
+                    value: '  @' + v.username + '  ',
+                    html: `#${v.id} ${v.username} ${v.nickname}`
+                }
+            })
+        })
+        return this.userSearchResult
+    },
+    dealHashTag: function (val) {
+        getProblems({
+            offset: 0,
+            search: val
+        }).then(data => {
+            this.hashSearchResult = data.problems.map((v) => {
+                return {
+                    value: '  #' + v.name + '  ',
+                    html: `#${v.id} ${v.name} `
+                }
+            })
+        })
+        return this.hashSearchResult
     }
   }
 }

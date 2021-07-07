@@ -2,9 +2,9 @@ import api from '@/api/api'
 
 const commentApi = {
 
-    CreateComment: '/api/comments',
+    CreateComment: '/api/comment',
     GetComment: '/api/comments',
-    AddReaction: '/api/comments'
+    AddReaction: '/api/comment'
 }
 
 export function createComment (param) {
@@ -35,8 +35,8 @@ export function AddReaction (param) {
       formData.append(prop, param[prop])
     }
     return api({
-      url: commentApi.AddReaction,
-      method: 'put',
+      url: commentApi.AddReaction + '/' + param['comment_id'] + '/reaction',
+      method: 'post',
       data: formData
     })
 }

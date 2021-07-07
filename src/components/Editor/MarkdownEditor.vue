@@ -27,6 +27,14 @@ export default {
       default () {
         return {}
       }
+    },
+    dealAt: {
+      type: Function,
+      default: null
+    },
+    dealHashTag: {
+      type: Function,
+      default: null
     }
   },
   data () {
@@ -67,6 +75,21 @@ export default {
       },
       tab: '    ',
       value: '',
+      hint: {
+        extend: [
+          {
+            key: '@',
+            hint: (key) => {
+              return this.dealAt(key)
+            }
+          },
+          {
+            key: '#',
+            hint: (key) => {
+              return this.dealHashTag(key)
+            }
+          }]
+      },
       after: () => {
         that.loaded = true
         that.editor.setValue(that.value)

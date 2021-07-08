@@ -4,8 +4,9 @@
    <a-spin :spinning="loading">
     <a-skeleton active :loading="loading">
     <div :style="{'--coll': this.coll}" class="basic" >
-    <div>
-    <div style="margin-up:5pt; margin-left:2pt">
+
+    <div style="margin-up:5pt; margin-left:2pt;margin-right:2pt;">
+        <div>
     <a-row  justify="space-between">
         <span><avatar size="large" :user="this.comment.User"></avatar></span>
         <span>{{ this.comment.User.nickname }}</span> <span v-if="this.comment.User.nickname===this.$store.state.user.info.nickname">(你)</span> <span> #{{ this.comment.ID }}</span>
@@ -31,7 +32,7 @@
                 :{{actionCount['👎']}}
               </span>
             </span>
-            <span><a-button @click="reply()" > Reply to</a-button></span>
+            <span v-if="!this.canEdit"><a-button @click="reply()" > 回复</a-button></span>
           <span style="float:right">
               <a-tooltip slot="datetime" :title="moment(this.comment.created_at).format('YYYY-MM-DD HH:mm:ss')">
                     <span>{{ moment(this.comment.created_at).fromNow() }}</span>
@@ -57,14 +58,28 @@
             </a-form-item>
       </div>
         </div>
-        <div v-for="keyID in this.children" :key="keyID" >
+        <a-list
+            v-if="children.length!==0"
+            :data-source="children"
+            :split="false"
+            :size="large">
+            <a-list-item slot="renderItem" slot-scope="keyID">
+                <one-comment
+                    style="width:95%; margin-left:5pt"
+                    :depth="depth + 1"
+                    :comment="jsonStr[keyID]['data']"
+                    :jsonStr="jsonStr[keyID]">
+                </one-comment>
+            </a-list-item>
+        </a-list>
+        <!--<div v-for="keyID in this.children" :key="keyID" >
             <div style="margin-left:20pt; margin-top:5pt; margin-right:5pt" >
             <oneComment
             :depth="depth + 1"
             :comment="jsonStr[keyID]['data']"
             :jsonStr="jsonStr[keyID]"></oneComment>
             </div>
-        </div>
+        </div>-->
     </a-row>
     </div>
     </div>

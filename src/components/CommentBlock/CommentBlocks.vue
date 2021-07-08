@@ -1,12 +1,22 @@
 <template>
   <a-spin :spinning="blockLoading">
   <a-skeleton active :loading="blockLoading">
-  <ul v-for="comment in this.comments" :key="comment.ID">
+  <a-list
+    :data-source="comments"
+    :load="true"
+    :size="large"
+    :split="false"
+    :pagination="{ ...pagination, onChange: onChange, onShowSizeChange: showSizeChange}"
+    ref="comments"
+    :border="true">
+    <a-list-item slot="renderItem" slot-scope="comment">
+      <one-comment style="width:100%" :depth="0" :comment="comment" :jsonStr="jsonTree[comment.ID.toString()]"></one-comment>
+    </a-list-item>
+  </a-list>
+  <!--<ul v-for="comment in this.comments" :key="comment.ID">
     <one-comment :depth="0" :comment="comment" :jsonStr="jsonTree[comment.ID.toString()]"></one-comment>
-  </ul>
-  <a-pagination v-model="pagination.current" :total="50" show-less-items />
+  </ul>-->
   <div>
-    <span><avatar size="large" :user="this.$store.state.user.info"></avatar></span>
     <span> 对本题留言</span>
     <div slot="content">
       <a-form-item> </a-form-item>
@@ -62,9 +72,11 @@ export default {
         current: 1,
         showSizeChanger: true,
         showQuickJumper: true,
-        pageSizeOptions: ['20', '50', '100'],
-        pageSize: 50,
-        showTotal: (total, range) => `共 ${total} 条数据, 正在显示 ${range[0]} - ${range[1]} 条`
+        pageSizeOptions: ['5', '10', '20', '50'],
+        total: 0,
+        begin: 0,
+        pageSize: 5,
+        showTotal: (total, range) => `共 ${total} 条数据, 正在显示 ${this.pagination.begin + 1} - ${Math.min(this.pagination.begin + this.pagination.pageSize, total)} 条`
       }
     }
   },
@@ -72,18 +84,37 @@ export default {
     this.fetch()
   },
   methods: {
+    onChange (page, pageSize) {
+      this.pagination.current = page
+      this.pagination.begin = (page - 1) * pageSize
+      this.fetch()
+      this.$forceUpdate()
+    },
+    showSizeChange (current, size) {
+      this.pagination.current = 1
+      this.pagination.begin = 0
+      this.pagination.pageSize = size
+      this.fetch()
+      this.$forceUpdate()
+    },
     fetch () {
+      this.comments = []
+      this.commentsNoneRoot = []
+      this.jsonTree = {}
+      this.jsonChildren = {}
+      this.commentsMap = {}
       getComment({
         target_type: this.targetType,
         target_id: Number(this.targetID),
-        limit: 5,
-        offset: 0
+        limit: this.pagination.pageSize,
+        offset: this.pagination.begin
       })
         .then((data) => {
           this.comments = data.RootComments
           this.commentsNoneRoot = data.NotRootComments
           this.parseJson()
-          this.pagination.current = data.Current
+          this.pagination.total = data.total
+          this.pagination.begin = data.offset
           this.blockLoading = false
         })
         .catch((err) => {
@@ -135,7 +166,13 @@ export default {
         target_id: this.$route.params.problemID,
         target_type: 'problem',
         content: this.commentDescription
-        }).catch(err => {
+        })
+        .then((data) => {
+          this.commentDescription = ''
+          this.fetch()
+          this.$forceUpdate()
+        })
+        .catch(err => {
         this.$error({
           content: '遇到错误：' + err.message
         })

@@ -1,6 +1,6 @@
 <template>
   <a-spin :spinning="problem_loading" class="problem_spin">
-    <a-row :gutter="[16,16]" style="height: 100%">
+    <a-row :gutter="[16,0]" style="height: 100%">
       <a-col :xl="{span:14, offset:2}" :lg="{span:16}" style="height: 100%">
         <a-card :title="problem.name" style="height: 100%">
           <a-skeleton active :loading="problem_loading">
@@ -11,7 +11,6 @@
         </a-card>
         <comment-blocks :targetID="this.$route.params.problemID" :targetType="this.hashType" ></comment-blocks>
       </a-col>
-
       <a-col :xl="{span:6}" :lg="{span:8}" >
         <a-space direction="vertical">
           <a-card>

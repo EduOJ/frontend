@@ -1,8 +1,8 @@
 <template>
   <div>
     <a-space>
-      <a-button type="primary" @click="createFile">
-        新建文件
+      <a-button type="primary" @click="createFile" size="small">
+        <a-icon type="file-add" />
       </a-button>
       <a-modal
         title="新建文件"
@@ -13,8 +13,8 @@
       >
         <a-input placeholder="请输入文件名称" v-model="inputName"/> <!-- todo: validation -->
       </a-modal>
-      <a-button type="primary" @click="createFolder">
-        新建文件夹
+      <a-button type="primary" @click="createFolder" size="small">
+        <a-icon type="folder-add" />
       </a-button>
       <a-modal
         title="新建文件夹"
@@ -25,8 +25,8 @@
       >
         <a-input placeholder="请输入文件夹名称" v-model="inputName"/> <!-- todo: validation -->
       </a-modal>
-      <a-button type="primary" @click="deleteFiles">
-        删除
+      <a-button type="danger" @click="deleteFiles" size="small">
+        <a-icon type="delete" />
       </a-button>
       <a-modal
         title="删除"
@@ -37,8 +37,8 @@
       >
         <p>确认删除</p>
       </a-modal>
-      <a-button type="primary" @click="downloadFile">
-        下载
+      <a-button @click="downloadFile" size="small">
+        <a-icon type="download" />
       </a-button>
     </a-space>
     <a-directory-tree
@@ -47,7 +47,7 @@
       :replace-fields="replaceFields"
       :tree-data="treeData">
     </a-directory-tree>
-    <a-card :title="currentFile || '输入代码'" class="submission_card" size="small">
+    <a-card :title="title" class="submission_card" size="small">
       <codemirror
         v-model="code"
         :options="{
@@ -93,6 +93,7 @@ export default {
         title: 'name',
         key: 'path'
       },
+      title: '输入代码',
       selectedNode: Object(),
       createFileDialog: false,
       createFolderDialog: false,
@@ -100,7 +101,7 @@ export default {
       inputName: '',
       confirmLoading: false,
       selectedKeys: [],
-      currentFile: '', // path,
+      currentFile: Object(), // path,
       zip: new JSZip()
     }
   },
@@ -133,22 +134,48 @@ export default {
         let preNode = this.treeData
         const len = pathArray.length - 1
         for (let i = 0; i < len; i++) {
-          for (const nodeIdx in preNode) {
-            if (preNode[nodeIdx].name === pathArray[i]) {
-              preNode = preNode[nodeIdx]
-              break
+          if (i > 0) {
+            for (const nodeIdx in preNode.children) {
+              if (preNode.children[nodeIdx].name === pathArray[i]) {
+                preNode = preNode.children[nodeIdx]
+                break
+              }
+            }
+          } else {
+            for (const nodeIdx in preNode) {
+              if (preNode[nodeIdx].name === pathArray[i]) {
+                preNode = preNode[nodeIdx]
+                break
+              }
             }
           }
         }
         // preNode exists && is Folder
-        // if (this.zip.files[dirKeys[idx]].dir) {
-        //   preNode.push({
-        //     name: pathArray[pathArray.length - 1],
-        //     path: dirKeys[idx],
-        //     isLeaf: false,
-        //     fa:
-        //   })
-        // }
+        let fa
+        if (Object.prototype.toString.call(preNode) !== '[object Array]') {
+          fa = preNode
+          console.log(fa)
+          preNode = preNode.children
+          console.log(fa)
+        } else {
+          fa = Object()
+        }
+        if (this.zip.files[dirKeys[idx]].dir) {
+          preNode.push({
+            name: pathArray[pathArray.length - 1],
+            path: dirKeys[idx],
+            isLeaf: false,
+            fa: fa,
+            children: []
+          })
+        } else {
+          preNode.push({
+            name: pathArray[pathArray.length - 1],
+            path: dirKeys[idx],
+            isLeaf: true,
+            fa: fa
+          })
+        }
       }
     },
     createFile () {
@@ -163,8 +190,8 @@ export default {
       }
     },
     saveCurrentFile () {
-      if (this.currentFile) {
-        this.zip.file(this.currentFile, this.code)
+      if (this.currentFile.path) {
+        this.zip.file(this.currentFile.path, this.code)
       }
     },
     onNodeSelect (keys, event) {
@@ -181,7 +208,8 @@ export default {
           this.zip.file(event.node.dataRef.path).async('string').then((data) => {
             this.code = data
           })
-          this.currentFile = event.node.dataRef.path
+          this.currentFile = event.node.dataRef
+          this.title = this.currentFile.path
         }
       }
     },
@@ -210,7 +238,7 @@ export default {
               name: this.inputName,
               path: filePath,
               isLeaf: true,
-              fa: this.selectedNode
+              fa: this.selectedNode.dataRef
             })
           } else if (!this.selectedNode.dataRef.fa.dataRef) {
             filePath = this.inputName
@@ -248,7 +276,7 @@ export default {
               name: this.inputName,
               path: filePath,
               isLeaf: false,
-              fa: this.selectedNode,
+              fa: this.selectedNode.dataRef,
               children: []
             })
           } else if (!this.selectedNode.dataRef.fa.dataRef) {
@@ -282,7 +310,23 @@ export default {
     handleDelete () {
       this.confirmLoading = true
       setTimeout(() => {
-        if (!this.selectedNode.dataRef.fa.dataRef) {
+        if (this.selectedNode.dataRef.isLeaf) {
+          this.code = ''
+          this.currentFile = Object()
+          this.title = '输入代码'
+        } else if (this.currentFile.name) {
+          let tempNode = this.currentFile.fa
+          while (tempNode.name) {
+            if (tempNode.name === this.selectedNode.name) {
+              this.code = ''
+              this.currentFile = Object()
+              this.title = '输入代码'
+              break
+            }
+            tempNode = tempNode.fa
+          }
+        }
+        if (!this.selectedNode.dataRef.fa.name) {
           for (let i = 0; i < this.treeData.length; i++) {
             if (this.treeData[i] === this.selectedNode.dataRef) {
               this.zip.remove(this.treeData[i].path)
@@ -291,10 +335,10 @@ export default {
             }
           }
         } else {
-          for (let i = 0; i < this.selectedNode.dataRef.fa.dataRef.children.length; i++) {
-            if (this.selectedNode.dataRef.fa.dataRef.children[i] === this.selectedNode.dataRef) {
+          for (let i = 0; i < this.selectedNode.dataRef.fa.children.length; i++) {
+            if (this.selectedNode.dataRef.fa.children[i] === this.selectedNode.dataRef) {
               this.zip.remove(this.selectedNode.dataRef.path)
-              this.selectedNode.dataRef.fa.dataRef.children.splice(i, 1)
+              this.selectedNode.dataRef.fa.children.splice(i, 1)
               break
             }
           }
@@ -306,19 +350,12 @@ export default {
       }, 100)
     },
     downloadFile () {
-      const fileReader = new FileReader()
       this.zip.generateAsync({ type: 'blob' }).then((content) => {
-        fileReader.onload = (evt) => {
-          let blobUrl = Base64.encode(evt.target.result)
-          blobUrl = Base64.decode(blobUrl)
-          console.log(blobUrl)
-          fetch(blobUrl).then(r => {
-            JSZip.loadAsync(r.blob()).then((zipContent) => {
-              console.log(zipContent)
-            })
-          })
-        }
-        fileReader.readAsDataURL(content)
+        const downloadA = document.createElement('a')
+        downloadA.href = window.URL.createObjectURL(content)
+        downloadA.download = 'src'
+        downloadA.click()
+        window.URL.revokeObjectURL(downloadA.href)
       })
     }
   }

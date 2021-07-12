@@ -68,18 +68,28 @@ export default {
     let language = localStorage.getItem(`problem:${this.$route.params.id}:language`)
     let code = ''
     let multiFile = false
+    let zipURL = ''
     if (language) {
-      if (localStorage.getItem(`problem:${this.$route.params.id}:code`)) {
-        code = localStorage.getItem(`problem:${this.$route.params.id}:code`)
-        localStorage.removeItem(`problem:${this.$route.params.id}:code`)
-        localStorage.setItem(`problem:${this.$route.params.id}:code:${language}`, code)
-      } else {
-        code = localStorage.getItem(`problem:${this.$route.params.id}:code:${language}`) || ''
-      }
       multiFile = languageConf[language].multiFile
+      if (!multiFile) {
+        if (localStorage.getItem(`problem:${this.$route.params.id}:code`)) {
+          code = localStorage.getItem(`problem:${this.$route.params.id}:code`)
+          localStorage.removeItem(`problem:${this.$route.params.id}:code`)
+          localStorage.setItem(`problem:${this.$route.params.id}:code:${language}`, code)
+        } else {
+          code = localStorage.getItem(`problem:${this.$route.params.id}:code:${language}`) || ''
+        }
+      } else {
+        if (localStorage.getItem(`problem:${this.$route.params.id}:code`)) {
+          zipURL = localStorage.getItem(`problem:${this.$route.params.id}:code`)
+          localStorage.removeItem(`problem:${this.$route.params.id}:code`)
+          localStorage.setItem(`problem:${this.$route.params.id}:code:${language}`, zipURL)
+        } else {
+          zipURL = localStorage.getItem(`problem:${this.$route.params.id}:code:${language}`) || ''
+        }
+      }
     } else {
       language = null
-      code = ''
     }
     return {
       languageConf,
@@ -105,7 +115,7 @@ export default {
       language: language,
       mLanguage: language,
       multiFile: multiFile,
-      zipURL: ''
+      zipURL: zipURL
     }
   },
   mounted () {
@@ -232,7 +242,13 @@ export default {
           this.mLanguage = data.problem.language_allowed[0]
           this.language = data.problem.language_allowed[0]
           this.multiFile = languageConf[this.language].multiFile
-          this.code = localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || ''
+          if (this.multiFile) {
+            this.zipURL = localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || ''
+            this.code = ''
+          } else {
+            this.code = localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || ''
+            this.zipURL = ''
+          }
         }
       }).catch(err => {
         this.$error({

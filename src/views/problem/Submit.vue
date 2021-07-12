@@ -23,7 +23,12 @@
                   viewportMargin: Infinity
                 }"/>
             </a-card>
-            <MultiFileEditor v-if="multiFile"></MultiFileEditor>
+            <MultiFileEditor
+              :zip-u-r-l="zipURL"
+              :language="language"
+              v-if="multiFile"
+              ref="mEditor">
+            </MultiFileEditor>
             <a-space>
               <a-button type="primary" @click="submit()" :loading="submitLoading">
                 提交
@@ -48,6 +53,8 @@ import config from '@/config/config'
 import codemirror from '@/components/codemirror/codemirror'
 import languageConf from '@/config/languageConf'
 import MultiFileEditor from '@/components/Editor/MultiFileEditor'
+import { Base64 } from 'js-base64'
+
 export default {
   name: 'Problem',
   components: {
@@ -97,7 +104,8 @@ export default {
       code: code,
       language: language,
       mLanguage: language,
-      multiFile: multiFile
+      multiFile: multiFile,
+      zipURL: ''
     }
   },
   mounted () {
@@ -120,12 +128,40 @@ export default {
         this.doSubmit()
       }
     },
-    languageChange (val) {
-      localStorage.setItem(`problem:${this.$route.params.id}:code:${this.language}`, this.code)
-      this.language = this.mLanguage
-      this.multiFile = languageConf[this.language].multiFile
-      localStorage.setItem(`problem:${this.$route.params.id}:language`, this.language)
-      this.code = localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || ''
+    async languageChange (val) {
+      if (!languageConf[this.language].multiFile) {
+        localStorage.setItem(`problem:${this.$route.params.id}:code:${this.language}`, this.code)
+        this.language = this.mLanguage
+        this.multiFile = languageConf[this.language].multiFile
+        localStorage.setItem(`problem:${this.$route.params.id}:language`, this.language)
+        if (!this.multiFile) {
+          this.code = localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || ''
+        } else {
+          this.zipURL = localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || ''
+        }
+      } else {
+        const fileReader = new FileReader()
+        this.$refs.mEditor.saveCurrentFile()
+        this.$refs.mEditor.zip.generateAsync({ type: 'blob' }).then(async (content) => {
+          fileReader.onload = (evt) => {
+            const lastZipURL = Base64.decode(localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || '')
+            if (lastZipURL) {
+              URL.revokeObjectURL(lastZipURL) // todo: revoked?
+            }
+            const zip = Base64.encode(evt.target.result)
+            localStorage.setItem(`problem:${this.$route.params.id}:code:${this.language}`, zip)
+            this.language = this.mLanguage
+            this.multiFile = languageConf[this.language].multiFile
+            localStorage.setItem(`problem:${this.$route.params.id}:language`, this.language)
+            if (!this.multiFile) {
+              this.code = localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || ''
+            } else {
+              this.zipURL = localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || ''
+            }
+          }
+          fileReader.readAsDataURL(content)
+        })
+      }
     },
     doSubmit () {
       this.submitLoading = true

@@ -35,7 +35,7 @@
         @ok="handleDelete"
         @cancel="handleCancel"
       >
-        <p>确认删除</p> <!-- todo: validation -->
+        <p>确认删除</p>
       </a-modal>
       <a-button type="primary" @click="downloadFile">
         下载
@@ -74,7 +74,8 @@ export default {
     codemirror
   },
   props: {
-    language: String('')
+    language: String(),
+    zipURL: String()
   },
   data () {
     return {
@@ -103,7 +104,53 @@ export default {
       zip: new JSZip()
     }
   },
+  mounted () {
+    if (this.zipURL) {
+      const decodedURL = Base64.decode(this.zipURL)
+      console.log(decodedURL)
+      fetch(decodedURL).then(async r => {
+        JSZip.loadAsync(await r.blob()).then((zipContent) => {
+          this.zip = zipContent
+          this.buildTreeFromZip()
+        })
+      })
+    }
+  },
   methods: {
+    buildTreeFromZip () {
+      this.treeData = []
+      let dirKeys = Object.keys(this.zip.files)
+      dirKeys = dirKeys.sort((a, b) => (a.charAt(a.length - 1) === '/' ? a.split('/').length - 1 : a.split('/').length) -
+        (b.charAt(b.length - 1) === '/' ? b.split('/').length - 1 : b.split('/').length))
+      console.log(dirKeys)
+      for (const idx in dirKeys) {
+        console.log(dirKeys[idx])
+        const pathArray = dirKeys[idx].split('/')
+        if (dirKeys[idx].charAt(dirKeys[idx].length - 1) === '/') {
+          pathArray.pop()
+        }
+        console.log(pathArray)
+        let preNode = this.treeData
+        const len = pathArray.length - 1
+        for (let i = 0; i < len; i++) {
+          for (const nodeIdx in preNode) {
+            if (preNode[nodeIdx].name === pathArray[i]) {
+              preNode = preNode[nodeIdx]
+              break
+            }
+          }
+        }
+        // preNode exists && is Folder
+        // if (this.zip.files[dirKeys[idx]].dir) {
+        //   preNode.push({
+        //     name: pathArray[pathArray.length - 1],
+        //     path: dirKeys[idx],
+        //     isLeaf: false,
+        //     fa:
+        //   })
+        // }
+      }
+    },
     createFile () {
       this.createFileDialog = true
     },
@@ -186,7 +233,6 @@ export default {
           this.zip.file(filePath, '')
         } else {
           // add to tree
-          // todo: delete filePath
           if (!this.selectedNode.dataRef) {
             filePath = this.inputName + '/'
             this.treeData.push({
@@ -225,7 +271,7 @@ export default {
             })
           }
           // add folder to zip
-          this.zip.folder(this.inputName)
+          this.zip.folder(filePath)
         }
         this.inputName = ''
         this.createFileDialog = false
@@ -271,11 +317,6 @@ export default {
               console.log(zipContent)
             })
           })
-          // const zipBlob = new Blob([blobUrl])
-          // console.log(zipBlob)
-          // JSZip.loadAsync(zipBlob).then((zipContent) => {
-          //   console.log(zipContent)
-          // })
         }
         fileReader.readAsDataURL(content)
       })

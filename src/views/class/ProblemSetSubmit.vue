@@ -12,7 +12,7 @@
                 </a-select-option>
               </a-select>
             </p>
-            <a-card title="输入代码" class="submission_card" size="small">
+            <a-card title="输入代码" class="submission_card" size="small" v-if="!multiFile">
               <codemirror
                 v-model="code"
                 :options="{
@@ -23,6 +23,12 @@
                   viewportMargin: Infinity
                 }"/>
             </a-card>
+            <MultiFileEditor
+              :zip-u-r-l="zipURL"
+              :language="language"
+              v-if="multiFile"
+              ref="mEditor">
+            </MultiFileEditor>
             <a-space>
               <a-button type="primary" @click="submit()" :loading="submitLoading">
                 提交
@@ -46,6 +52,8 @@ import TestCase from '@/components/TestCase'
 import config from '@/config/config'
 import { codemirror } from '@/components/codemirror'
 import languageConf from '@/config/languageConf'
+import MultiFileEditor from '@/components/Editor/MultiFileEditor'
+import { Base64 } from 'js-base64'
 
 export default {
   name: 'Problem',
@@ -53,26 +61,39 @@ export default {
     Markdown,
     TestCase,
     RunStatus,
-    codemirror
+    codemirror,
+    MultiFileEditor
   },
   data () {
     let language = localStorage.getItem(`problem:${this.$route.params.problemID}:language`)
     let code = ''
+    let multiFile = false
+    let zipURL = ''
     if (language) {
-      if (localStorage.getItem(`problem:${this.$route.params.problemID}:code`)) {
-        code = localStorage.getItem(`problem:${this.$route.params.problemID}:code`)
-        localStorage.removeItem(`problem:${this.$route.params.problemID}:code`)
-        localStorage.setItem(`problem:${this.$route.params.problemID}:code:${language}`, code)
+      multiFile = languageConf[language].multiFile
+      if (!multiFile) {
+        if (localStorage.getItem(`problem:${this.$route.params.id}:code`)) {
+          code = localStorage.getItem(`problem:${this.$route.params.id}:code`)
+          localStorage.removeItem(`problem:${this.$route.params.id}:code`)
+          localStorage.setItem(`problem:${this.$route.params.id}:code:${language}`, code)
+        } else {
+          code = localStorage.getItem(`problem:${this.$route.params.id}:code:${language}`) || ''
+        }
       } else {
-        code = localStorage.getItem(`problem:${this.$route.params.problemID}:code:${language}`) || ''
+        if (localStorage.getItem(`problem:${this.$route.params.id}:code`)) {
+          zipURL = localStorage.getItem(`problem:${this.$route.params.id}:code`)
+          localStorage.removeItem(`problem:${this.$route.params.id}:code`)
+          localStorage.setItem(`problem:${this.$route.params.id}:code:${language}`, zipURL)
+        } else {
+          zipURL = localStorage.getItem(`problem:${this.$route.params.id}:code:${language}`) || ''
+        }
       }
     } else {
       language = null
-      code = ''
     }
     return {
-      config: config,
       languageConf,
+      config: config,
       problemSetID: this.$route.params.problemSetID,
       classID: this.$route.params.classID,
       id: this.$route.params.problemID,
@@ -94,7 +115,9 @@ export default {
       },
       code: code,
       language: language,
-      mLanguage: language
+      mLanguage: language,
+      multiFile: multiFile,
+      zipURL: zipURL
     }
   },
   mounted () {
@@ -117,17 +140,66 @@ export default {
         this.doSubmit()
       }
     },
-    languageChange (val) {
-      localStorage.setItem(`problem:${this.$route.params.problemID}:code:${this.language}`, this.code)
-      this.language = this.mLanguage
-      localStorage.setItem(`problem:${this.$route.params.problemID}:language}`, this.language)
-      this.code = localStorage.getItem(`problem:${this.$route.params.problemID}:code:${this.language}`) || ''
+    async languageChange (val) {
+      if (!languageConf[this.language].multiFile) {
+        localStorage.setItem(`problem:${this.$route.params.id}:code:${this.language}`, this.code)
+        this.language = this.mLanguage
+        this.multiFile = languageConf[this.language].multiFile
+        localStorage.setItem(`problem:${this.$route.params.id}:language`, this.language)
+        if (!this.multiFile) {
+          this.code = localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || ''
+        } else {
+          this.zipURL = localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || ''
+        }
+      } else {
+        const fileReader = new FileReader()
+        this.$refs.mEditor.saveCurrentFile()
+        this.$refs.mEditor.zip.generateAsync({ type: 'blob' }).then(async (content) => {
+          fileReader.onload = (evt) => {
+            const lastZipURL = Base64.decode(localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || '')
+            if (lastZipURL) {
+              URL.revokeObjectURL(lastZipURL) // todo: revoked?
+            }
+            const zip = Base64.encode(evt.target.result)
+            localStorage.setItem(`problem:${this.$route.params.id}:code:${this.language}`, zip)
+            this.language = this.mLanguage
+            this.multiFile = languageConf[this.language].multiFile
+            localStorage.setItem(`problem:${this.$route.params.id}:language`, this.language)
+            if (!this.multiFile) {
+              this.code = localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || ''
+            } else {
+              this.zipURL = localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || ''
+            }
+          }
+          fileReader.readAsDataURL(content)
+        })
+      }
     },
-    doSubmit () {
+    async doSubmit () {
       this.submitLoading = true
-      localStorage.setItem(`problem:${this.$route.params.problemID}:code:${this.language}`, this.code)
-      localStorage.setItem(`problem:${this.$route.params.problemID}:language`, this.language)
-      var c = new Blob([this.code])
+      var c
+      if (!this.multiFile) {
+        localStorage.setItem(`problem:${this.$route.params.id}:code:${this.language}`, this.code)
+        localStorage.setItem(`problem:${this.$route.params.id}:language`, this.language)
+        c = new Blob([this.code])
+      } else {
+        const fileReader = new FileReader()
+        this.$refs.mEditor.saveCurrentFile()
+        await this.$refs.mEditor.zip.generateAsync({ type: 'blob' }).then(async (content) => {
+          c = content
+          fileReader.onload = (evt) => {
+            const lastZipURL = Base64.decode(localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || '')
+            if (lastZipURL) {
+              URL.revokeObjectURL(lastZipURL) // todo: revoked?
+            }
+            const zip = Base64.encode(evt.target.result)
+            localStorage.setItem(`problem:${this.$route.params.id}:code:${this.language}`, zip)
+            localStorage.setItem(`problem:${this.$route.params.id}:language`, this.language)
+            this.zipURL = zip
+          }
+          fileReader.readAsDataURL(content)
+        })
+      }
       createSubmission({
         problem_id: this.problem.id,
         language: this.language,

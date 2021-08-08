@@ -71,6 +71,7 @@
               </markdown>
             </a-skeleton>
           </a-card>
+
         </a-col>
         <a-col
           :xl="8"

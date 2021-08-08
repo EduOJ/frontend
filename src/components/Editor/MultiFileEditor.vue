@@ -47,7 +47,7 @@
       :replace-fields="replaceFields"
       :tree-data="treeData">
     </a-directory-tree>
-    <a-card :title="title" class="submission_card" size="small">
+    <a-card :title="title" class="submission_card" size="small" style="margin-top: 1%">
       <codemirror
         v-model="code"
         :options="{

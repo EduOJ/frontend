@@ -173,11 +173,32 @@ export default {
         })
       }
     },
-    doSubmit () {
+    async doSubmit () {
       this.submitLoading = true
-      localStorage.setItem(`problem:${this.$route.params.id}:code:${this.language}`, this.code)
-      localStorage.setItem(`problem:${this.$route.params.id}:language`, this.language)
-      var c = new Blob([this.code])
+      var c
+      if (!this.multiFile) {
+        localStorage.setItem(`problem:${this.$route.params.id}:code:${this.language}`, this.code)
+        localStorage.setItem(`problem:${this.$route.params.id}:language`, this.language)
+        c = new Blob([this.code])
+      } else {
+        const fileReader = new FileReader()
+        this.$refs.mEditor.saveCurrentFile()
+        await this.$refs.mEditor.zip.generateAsync({ type: 'blob' }).then(async (content) => {
+          c = content
+          fileReader.onload = (evt) => {
+            const lastZipURL = Base64.decode(localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || '')
+            if (lastZipURL) {
+              URL.revokeObjectURL(lastZipURL) // todo: revoked?
+            }
+            const zip = Base64.encode(evt.target.result)
+            localStorage.setItem(`problem:${this.$route.params.id}:code:${this.language}`, zip)
+            localStorage.setItem(`problem:${this.$route.params.id}:language`, this.language)
+            this.zipURL = zip
+          }
+          fileReader.readAsDataURL(content)
+        })
+      }
+      console.log(c)
       createSubmission({
         problem_id: this.problem.id,
         language: this.language,

@@ -198,7 +198,6 @@ export default {
           fileReader.readAsDataURL(content)
         })
       }
-      console.log(c)
       createSubmission({
         problem_id: this.problem.id,
         language: this.language,

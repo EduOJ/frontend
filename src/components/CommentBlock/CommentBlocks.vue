@@ -1,45 +1,43 @@
 <template>
   <a-spin :spinning="blockLoading">
-  <a-skeleton active :loading="blockLoading">
-  <a-list
-    :data-source="comments"
-    :load="true"
-    :size="large"
-    :split="false"
-    :pagination="{ ...pagination, onChange: onChange, onShowSizeChange: showSizeChange}"
-    ref="comments"
-    :border="true">
-    <a-list-item slot="renderItem" slot-scope="comment">
-      <one-comment style="width:100%" :depth="0" :comment="comment" :jsonStr="jsonTree[comment.ID.toString()]"></one-comment>
-    </a-list-item>
-  </a-list>
-  <!--<ul v-for="comment in this.comments" :key="comment.ID">
-    <one-comment :depth="0" :comment="comment" :jsonStr="jsonTree[comment.ID.toString()]"></one-comment>
-  </ul>-->
-  <div>
-    <span> 对本题留言</span>
-    <div slot="content">
-      <a-form-item> </a-form-item>
-      <mark-down-editor unique-id="description_markdown" v-model="commentDescription" :dealAt="dealAt" :dealHashTag="dealHashTag"/>
-      <a-form-item>
-        <div style="margin-left: 20pt; margin-right: 20pt">
-          <span
-            ><a-button html-type="submit" :loading="submitting" type="primary" @click="handleCancel()">
-              取消
-            </a-button></span
-          >
-          <span
-          style="float: right">
-          <a-button html-type="submit" :loading="submitting" type="primary" @click="handleSubmit()">
-              提交
-            </a-button></span
-          >
+    <a-skeleton active :loading="blockLoading">
+      <a-list
+        :data-source="comments"
+        :load="true"
+        :size="large"
+        :split="false"
+        :pagination="{ ...pagination, onChange: onChange, onShowSizeChange: showSizeChange}"
+        ref="comments"
+        :border="true">
+        <a-list-item slot="renderItem" slot-scope="comment">
+          <one-comment
+            style="width:100%"
+            :depth="0"
+            :comment="comment"
+            :jsonStr="jsonTree[comment.ID.toString()]"
+            :canDeleteComment="canDeleteComment"></one-comment>
+        </a-list-item>
+      </a-list>
+      <div>
+        <span> 您的发言</span>
+        <div slot="content">
+          <a-form-item> </a-form-item>
+          <mark-down-editor unique-id="description_markdown" v-model="commentDescription" :dealAt="dealAt" :dealHashTag="dealHashTag"/>
+          <a-form-item>
+            <div class="toolbar-row">
+              <a-button html-type="submit" :loading="submitting" type="primary" @click="handleCancel()">
+                取消
+              </a-button>
+              <div class="space"></div>
+              <a-button html-type="submit" :loading="submitting" type="primary" @click="handleSubmit()">
+                提交
+              </a-button>
+            </div>
+          </a-form-item>
         </div>
-      </a-form-item>
-    </div>
-  </div>
-  </a-skeleton>
-    </a-spin>
+      </div>
+    </a-skeleton>
+  </a-spin>
 </template>
 
 <script>
@@ -62,6 +60,7 @@ export default {
     return {
       blockLoading: true,
       canEdit: false,
+      canDeleteComment: false,
       comments: [],
       commentsNoneRoot: [],
       jsonTree: {},
@@ -98,6 +97,13 @@ export default {
       this.$forceUpdate()
     },
     fetch () {
+      console.log(this.$store.state.user.info)
+      for (var i = 0; i < this.$store.state.user.info.roles.length; i++) {
+        if (this.$store.state.user.info.roles[i]['name'] === 'admin') {
+          this.canDeleteComment = true
+          break
+        }
+      }
       this.comments = []
       this.commentsNoneRoot = []
       this.jsonTree = {}
@@ -163,14 +169,23 @@ export default {
       } else {
         createComment({
         father_id: 0,
-        target_id: this.$route.params.problemID,
-        target_type: 'problem',
+        target_id: Number(this.targetID),
+        target_type: this.targetType,
         content: this.commentDescription
         })
         .then((data) => {
-          this.commentDescription = ''
-          this.fetch()
-          this.$forceUpdate()
+            this.$confirm({
+              title: '成功',
+              content: '发送成功',
+              okText: '前往查看',
+              icon: () => <a-icon type="check-circle" style="color: #52c41a !important;"/>,
+              onOk: () => {
+                console.log(data)
+                this.commentDescription = ''
+                this.fetch()
+                this.$forceUpdate()
+              }
+            })
         })
         .catch(err => {
         this.$error({
@@ -215,3 +230,13 @@ export default {
   }
 }
 </script>
+
+<style lang="sass" scoped>
+.toolbar-row
+  display: flex
+  width: 100%
+  :not(:last-child)
+    margin-right: 5px
+  .space
+    flex: 1
+</style>

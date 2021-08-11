@@ -1,6 +1,6 @@
 <template>
   <a-spin :spinning="problem_loading" class="problem_spin">
-    <a-row :gutter="[16,0]" style="height: 100%">
+    <a-row :gutter="[16,16]" style="height: 100%">
       <a-col :xl="{span:14, offset:2}" :lg="{span:16}" style="height: 100%">
         <a-card :title="problem.name" style="height: 100%">
           <a-skeleton active :loading="problem_loading">
@@ -9,7 +9,7 @@
             <test-case :base-url="`/api/class/${classID}/problem_set/${problemSetID}/problem/`" v-for="t in problem.test_cases" :t="t" :key="t.id" :can-read-secret="can_read_secret"/>
           </a-skeleton>
         </a-card>
-        <comment-blocks :targetID="this.$route.params.problemID" :targetType="this.hashType" ></comment-blocks>
+        <comment-blocks :targetID="this.$route.params.problemID" targetType="problem" ></comment-blocks>
       </a-col>
       <a-col :xl="{span:6}" :lg="{span:8}" >
         <a-space direction="vertical">
@@ -106,7 +106,6 @@ export default {
   },
   data () {
     return {
-      hashType: 'problem',
       comparerConf,
       languageConf,
       config,

@@ -35,6 +35,7 @@
           </a-button>
         </router-link>
       </a-card>
+      <comment-blocks :targetID="this.id" targetType="problemSet" ></comment-blocks>
     </a-col>
   </a-row>
 </template>
@@ -44,6 +45,7 @@ import Avatar from '@/components/Avatar'
 import { mapGetters } from 'vuex'
 import { getProblemSet } from '@/api/class'
 import moment from 'moment'
+import CommentBlocks from '@/components/CommentBlock/CommentBlocks'
 
 export default {
   methods: {
@@ -60,7 +62,8 @@ export default {
     }
   },
   components: {
-    Avatar
+    Avatar,
+    CommentBlocks
   },
   inject: ['refreshClass'],
   data () {

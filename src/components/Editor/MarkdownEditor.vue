@@ -28,11 +28,11 @@ export default {
         return {}
       }
     },
-    dealAt: {
+    handleAt: {
       type: Function,
       default: null
     },
-    dealHashTag: {
+    handleHashTag: {
       type: Function,
       default: null
     }
@@ -80,13 +80,13 @@ export default {
           {
             key: '@',
             hint: (key) => {
-              return this.dealAt(key)
+              return this.handleAt(key)
             }
           },
           {
             key: '#',
             hint: (key) => {
-              return this.dealHashTag(key)
+              return this.handleHashTag(key)
             }
           }]
       },

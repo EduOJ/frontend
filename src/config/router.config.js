@@ -66,6 +66,19 @@ export const constantRouterMap = [
         ]
       },
       {
+        path: '/comments/',
+        component: RouteView,
+        meta: { title: '评论管理', icon: 'database' },
+        children: [
+          {
+            path: '/comments/add',
+            name: 'comment.add',
+            component: () => import('@/views/problem/CreateProblem'),
+            meta: { title: '发送评论' }
+          }
+        ]
+      },
+      {
         path: '/submissions',
         component: RouteView,
         meta: { title: '提交管理', icon: 'database' },

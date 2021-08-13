@@ -27,6 +27,14 @@ export default {
       default () {
         return {}
       }
+    },
+    handleAt: {
+      type: Function,
+      default: null
+    },
+    handleHashTag: {
+      type: Function,
+      default: null
     }
   },
   data () {
@@ -67,6 +75,21 @@ export default {
       },
       tab: '    ',
       value: '',
+      hint: {
+        extend: [
+          {
+            key: '@',
+            hint: (key) => {
+              return this.handleAt(key)
+            }
+          },
+          {
+            key: '#',
+            hint: (key) => {
+              return this.handleHashTag(key)
+            }
+          }]
+      },
       after: () => {
         that.loaded = true
         that.editor.setValue(that.value)

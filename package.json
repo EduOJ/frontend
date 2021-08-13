@@ -13,6 +13,7 @@
   "dependencies": {
     "@ant-design-vue/pro-layout": "1.0.8",
     "@antv/data-set": "^0.10.2",
+    "@primer/css": "^17.3.0",
     "@ragg/inline-attachment": "^5.0.2",
     "ant-design-vue": "1.7.3",
     "axios": "^0.19.0",

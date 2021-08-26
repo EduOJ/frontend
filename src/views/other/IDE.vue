@@ -54,14 +54,6 @@
       <a-col :span="12">
         输出
         <br>
-        <codemirror
-          v-model="output"
-          :options="{
-            lineNumbers: true,
-            mode: 'text/plain',
-            line: true,
-            viewportMargin: Infinity
-          }" />
         <div id="terminal"></div>
       </a-col>
     </a-row>
@@ -73,8 +65,7 @@
 import codemirror from '@/components/codemirror/codemirror'
 import { API } from '@eduoj/wasm-clang/src/shared.mjs'
 import { Terminal } from 'xterm'
-import { FitAddon } from 'xterm-addon-fit'
-import fetch from 'node-fetch'
+import 'xterm/css/xterm.css'
 
 export default {
   name: 'IDE',
@@ -83,14 +74,13 @@ export default {
   },
   mounted () {
     const term = new Terminal({
-      fontSize: 14,
+      fontSize: 16,
       cursorBlink: true,
-      screenKeys: true
+      screenKeys: true,
+      convertEol: true,
+      disableStdin: true
     })
-    const fitAddon = new FitAddon()
-    term.loadAddon(fitAddon)
     term.open(document.getElementById('terminal'))
-    fitAddon.fit()
     this.term = term
   },
   data () {
@@ -109,7 +99,7 @@ export default {
   methods: {
     runCode () {
       this.output = ''
-      this.term.clear()
+      this.term.reset()
       const vm = this
       const options = {
         async readBuffer (filename) {
@@ -122,7 +112,6 @@ export default {
             return WebAssembly.compile(await response.arrayBuffer())
         },
         hostWrite (s) {
-          vm.output += s
           vm.term.write(s)
         }
       }

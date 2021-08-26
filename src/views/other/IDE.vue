@@ -79,14 +79,7 @@ export default {
     codemirror
   },
   data () {
-    const code = `#include <iostream>
-using namespace std;
-int main() {
-    int a, b;
-    cin >> a >> b;
-    cout << a + b << endl;
-    return 0;
-}`
+    const code = ''
     const input = ''
     const output = ''
     const language = 'cpp'
@@ -112,7 +105,6 @@ int main() {
             return WebAssembly.compile(await response.arrayBuffer())
         },
         hostWrite (s) {
-          console.log(s)
           vm.output += s.toString()
         }
       }

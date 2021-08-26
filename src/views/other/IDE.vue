@@ -20,7 +20,7 @@
           v-model="code"
           :options="{
             lineNumbers: true,
-            mode: 'c++',
+            mode: 'c',
             line: true,
             viewportMargin: Infinity
           }" />
@@ -46,7 +46,7 @@
           v-model="input"
           :options="{
             lineNumbers: true,
-            mode: 'javascript',
+            mode: 'text/plain',
             line: true,
             viewportMargin: Infinity
           }" />
@@ -58,7 +58,7 @@
           v-model="output"
           :options="{
             lineNumbers: true,
-            mode: 'javascript',
+            mode: 'text/plain',
             line: true,
             viewportMargin: Infinity
           }" />
@@ -70,6 +70,8 @@
 <script>
 
 import codemirror from '@/components/codemirror/codemirror'
+import { API } from '@eduoj/wasm-clang/src/shared.mjs'
+import fetch from 'node-fetch'
 
 export default {
   name: 'IDE',
@@ -98,7 +100,25 @@ int main() {
   },
   methods: {
     runCode () {
-      console.log(this.code)
+      const vm = this
+      const options = {
+        async readBuffer (filename) {
+          const response = await fetch(filename)
+          return response.arrayBuffer()
+        },
+
+        async compileStreaming (filename) {
+            const response = await fetch(filename)
+            return WebAssembly.compile(await response.arrayBuffer())
+        },
+        hostWrite (s) {
+          console.log(s)
+          vm.output += s.toString()
+        }
+      }
+      const x = new API(options)
+      x.setStdinStr(this.input)
+      x.compileLinkRun(this.code)
     },
     resetCode () {
       this.code = `#include <iostream>

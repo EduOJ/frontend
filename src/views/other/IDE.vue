@@ -93,6 +93,7 @@ export default {
   },
   methods: {
     runCode () {
+      this.output = ''
       const vm = this
       const options = {
         async readBuffer (filename) {

@@ -62,6 +62,7 @@
             line: true,
             viewportMargin: Infinity
           }" />
+        <div id="terminal"></div>
       </a-col>
     </a-row>
   </a-spin>
@@ -71,12 +72,26 @@
 
 import codemirror from '@/components/codemirror/codemirror'
 import { API } from '@eduoj/wasm-clang/src/shared.mjs'
+import { Terminal } from 'xterm'
+import { FitAddon } from 'xterm-addon-fit'
 import fetch from 'node-fetch'
 
 export default {
   name: 'IDE',
   components: {
     codemirror
+  },
+  mounted () {
+    const term = new Terminal({
+      fontSize: 14,
+      cursorBlink: true,
+      screenKeys: true
+    })
+    const fitAddon = new FitAddon()
+    term.loadAddon(fitAddon)
+    term.open(document.getElementById('terminal'))
+    fitAddon.fit()
+    this.term = term
   },
   data () {
     const code = ''
@@ -94,6 +109,7 @@ export default {
   methods: {
     runCode () {
       this.output = ''
+      this.term.clear()
       const vm = this
       const options = {
         async readBuffer (filename) {
@@ -106,7 +122,8 @@ export default {
             return WebAssembly.compile(await response.arrayBuffer())
         },
         hostWrite (s) {
-          vm.output += s.toString()
+          vm.output += s
+          vm.term.write(s)
         }
       }
       const x = new API(options)

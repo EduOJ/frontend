@@ -5,13 +5,12 @@
         代码
       </a-col>
       <a-col :span="2" :offset="20">
-        <a-dropdown>
-          <a-menu slot="overlay" @click="handleLangSelect">
-            <a-menu-item key="c">C</a-menu-item>
-            <a-menu-item key="cpp">C++</a-menu-item>
-          </a-menu>
-          <a-button>语言选择<a-icon type="down" /></a-button>
-        </a-dropdown>
+        语言选择：
+        <a-select v-model="mLanguage" default-value="cpp" style="width: 120px" @change="languageChange">
+          <a-select-option :key="l" v-for="l in ['c89','c98', 'c11', 'cpp11', 'cpp14', 'cpp17']">
+            {{ ideAvailableLanguages[l].displayName }}
+          </a-select-option>
+        </a-select>
       </a-col>
     </a-row>
     <a-row :gutter="[8,8]" type="flex" justify="center">
@@ -21,7 +20,7 @@
           id="ide-codemirror-code"
           :options="{
             lineNumbers: true,
-            mode: 'text/x-c++src',
+            mode: ideAvailableLanguages[language] && ideAvailableLanguages[language].mimeType || 'text/html',
             theme: 'darcula',
             line: true
           }" />
@@ -89,12 +88,40 @@ export default {
     const code = ''
     const input = ''
     const output = ''
-    const language = 'cpp'
+    const language = null
+    const ideAvailableLanguages = {
+        c89: {
+          displayName: 'C 89',
+          mimeType: 'text/x-csrc'
+        },
+        c98: {
+          displayName: 'C 98',
+          mimeType: 'text/x-csrc'
+        },
+        c11: {
+          displayName: 'C 11',
+          mimeType: 'text/x-csrc'
+        },
+        cpp11: {
+          displayName: 'C++ 11',
+          mimeType: 'text/x-c++src'
+        },
+        cpp14: {
+          displayName: 'C++ 14',
+          mimeType: 'text/x-c++src'
+        },
+        cpp17: {
+          displayName: 'C++ 17',
+          mimeType: 'text/x-c++src'
+        }
+    }
     return {
+      ideAvailableLanguages,
       code: code,
       input: input,
       output: output,
       language: language,
+      mLanguage: language,
       loading: false
     }
   },
@@ -131,8 +158,8 @@ int main() {
     return 0;
 }`
     },
-    handleLangSelect (item) {
-      console.log('click', item)
+    languageChange (val) {
+      this.language = this.mLanguage
     }
   }
 }

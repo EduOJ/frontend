@@ -6,7 +6,7 @@
       </a-col>
       <a-col :span="2" :offset="20">
         语言选择：
-        <a-select v-model="mLanguage" default-value="cpp" style="width: 120px" @change="languageChange">
+        <a-select v-model="language" default-value="cpp" style="width: 120px">
           <a-select-option :key="l" v-for="l in ['c89','c98', 'c11', 'cpp11', 'cpp14', 'cpp17']">
             {{ ideAvailableLanguages[l].displayName }}
           </a-select-option>
@@ -121,7 +121,6 @@ export default {
       input: input,
       output: output,
       language: language,
-      mLanguage: language,
       loading: false
     }
   },
@@ -157,9 +156,6 @@ int main() {
     cout << a + b << endl;
     return 0;
 }`
-    },
-    languageChange (val) {
-      this.language = this.mLanguage
     }
   }
 }

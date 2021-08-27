@@ -18,11 +18,12 @@
       <a-col :span="24">
         <codemirror
           v-model="code"
+          id="ide-codemirror-code"
           :options="{
             lineNumbers: true,
-            mode: 'c',
-            line: true,
-            viewportMargin: Infinity
+            mode: 'text/x-c++src',
+            theme: 'darcula',
+            line: true
           }" />
       </a-col>
     </a-row>
@@ -43,12 +44,13 @@
         输入
         <br>
         <codemirror
+          id="ide-codemirror-input"
           v-model="input"
           :options="{
             lineNumbers: true,
             mode: 'text/plain',
+            theme: 'darcula',
             line: true,
-            viewportMargin: Infinity
           }" />
       </a-col>
       <a-col :span="12">
@@ -62,7 +64,7 @@
 
 <script>
 
-import codemirror from '@/components/codemirror/codemirror'
+import { codemirror } from '@/components/codemirror'
 import { API } from '@eduoj/wasm-clang/src/shared.mjs'
 import { Terminal } from 'xterm'
 import 'xterm/css/xterm.css'
@@ -136,6 +138,11 @@ int main() {
 }
 </script>
 
-<style scoped>
-
+<style>
+#ide-codemirror-code.vue-codemirror .CodeMirror {
+  height: 700px;
+}
+#ide-codemirror-input.vue-codemirror .CodeMirror {
+  height: 300px;
+}
 </style>

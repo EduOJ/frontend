@@ -1,12 +1,12 @@
 <template>
-  <a-spin :spinning="loading" class="problem_spin">
+  <div>
     <a-row :gutter="[8,8]" type="flex" justify="space-between">
       <a-col :span="2">
         代码
       </a-col>
       <a-col :span="2" :offset="20">
         语言选择：
-        <a-select v-model="language" default-value="cpp" style="width: 120px">
+        <a-select v-model="language" default-value="cpp" style="width: 120px" @change="languageChange">
           <a-select-option :key="l" v-for="l in ['c89','c98', 'c11', 'cpp11', 'cpp14', 'cpp17']">
             {{ ideAvailableLanguages[l].displayName }}
           </a-select-option>
@@ -52,13 +52,15 @@
             line: true,
           }" />
       </a-col>
-      <a-col :span="12">
-        输出
-        <br>
-        <div id="terminal"></div>
-      </a-col>
+      <a-spin :spinning="running">
+        <a-col :span="12">
+          输出
+          <br>
+          <div id="terminal"></div>
+        </a-col>
+      </a-spin>
     </a-row>
-  </a-spin>
+  </div>
 </template>
 
 <script>
@@ -85,10 +87,22 @@ export default {
     this.term = term
   },
   data () {
-    const code = ''
+    let language = localStorage.getItem(`ide:language`)
+    let code = ''
+    if (language) {
+      if (localStorage.getItem(`ide:code`)) {
+        code = localStorage.getItem(`ide:code`)
+        localStorage.removeItem(`ide:code`)
+        localStorage.setItem(`ide:code:${language}`, code)
+      } else {
+        code = localStorage.getItem(`ide:code:${language}`) || ''
+      }
+    } else {
+      language = null
+      code = ''
+    }
     const input = ''
     const output = ''
-    const language = null
     const ideAvailableLanguages = {
         c89: {
           displayName: 'C 89',
@@ -121,11 +135,12 @@ export default {
       input: input,
       output: output,
       language: language,
-      loading: false
+      running: false
     }
   },
   methods: {
     runCode () {
+      this.running = true
       this.output = ''
       this.term.reset()
       const vm = this
@@ -141,9 +156,11 @@ export default {
         },
         hostWrite (s) {
           vm.term.write(s)
+          vm.running = false
         }
       }
       const x = new API(options)
+      localStorage.setItem(`ide:code:${vm.language}`, vm.code)
       x.setStdinStr(this.input)
       x.compileLinkRun(this.code)
     },
@@ -156,6 +173,10 @@ int main() {
     cout << a + b << endl;
     return 0;
 }`
+    },
+    languageChange () {
+      localStorage.setItem(`ide:code:${this.language}`, this.code)
+      localStorage.setItem(`ide:language`, this.language)
     }
   }
 }

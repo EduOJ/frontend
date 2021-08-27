@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <a-card :title="IDE">
     <a-row :gutter="[8,8]" type="flex" justify="space-between">
       <a-col :span="2">
         代码
@@ -60,7 +60,7 @@
         </a-col>
       </a-spin>
     </a-row>
-  </div>
+  </a-card>
 </template>
 
 <script>
@@ -184,9 +184,9 @@ int main() {
 
 <style>
 #ide-codemirror-code.vue-codemirror .CodeMirror {
-  height: 700px;
+  height: 300px;
 }
 #ide-codemirror-input.vue-codemirror .CodeMirror {
-  height: 300px;
+  height: 200px;
 }
 </style>

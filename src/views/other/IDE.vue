@@ -1,20 +1,22 @@
 <template>
-  <a-card :title="IDE">
+  <a-card :title="IDE" style="height: auto; margin-bottom: 0px">
     <a-row :gutter="[8,8]" type="flex" justify="space-between">
       <a-col :span="2">
         代码
       </a-col>
-      <a-col :span="2" :offset="20">
-        语言选择：
-        <a-select v-model="language" default-value="cpp" style="width: 120px" @change="languageChange">
-          <a-select-option :key="l" v-for="l in ['c89','c98', 'c11', 'cpp11', 'cpp14', 'cpp17']">
-            {{ ideAvailableLanguages[l].displayName }}
-          </a-select-option>
-        </a-select>
+      <a-col :span="4" :offset="18">
+        <div style="float: right;">
+          语言选择：
+          <a-select v-model="language" default-value="cpp" style="width: 120px" @change="languageChange">
+            <a-select-option :key="l" v-for="l in ['c89','c98', 'c11', 'cpp11', 'cpp14', 'cpp17']">
+              {{ ideAvailableLanguages[l].displayName }}
+            </a-select-option>
+          </a-select>
+        </div>
       </a-col>
     </a-row>
     <a-row :gutter="[8,8]" type="flex" justify="center">
-      <a-col :span="24">
+      <a-col :span="24" flex="auto">
         <codemirror
           v-model="code"
           id="ide-codemirror-code"
@@ -26,22 +28,21 @@
           }" />
       </a-col>
     </a-row>
-    <a-row :gutter="[8,8]" type="flex" justify="end">
+    <a-row :gutter="[8,8]" type="flex" justify="space-between" align="bottom">
       <a-col :span="2">
-        <a-space>
-          <a-button @click="runCode()" type="primary">
-            Submit
-          </a-button>
-          <a-button @click="resetCode()">
-            Reset
-          </a-button>
-        </a-space>
+        输入
+      </a-col>
+      <a-col :span="2" :offset="8">
+        输出
+      </a-col>
+      <a-col :span="2" :offset="6">
+        <a-button @click="runCode()" type="primary" style="float: right;" block>
+          运行
+        </a-button>
       </a-col>
     </a-row>
     <a-row :gutter="[8,8]" type="flex" justify="center">
       <a-col :span="12">
-        输入
-        <br>
         <codemirror
           id="ide-codemirror-input"
           v-model="input"
@@ -52,13 +53,11 @@
             line: true,
           }" />
       </a-col>
-      <a-spin :spinning="running">
-        <a-col :span="12">
-          输出
-          <br>
-          <div id="terminal"></div>
-        </a-col>
-      </a-spin>
+      <a-col :span="12">
+        <a-spin :spinning="running">
+          <div id="terminal" style="max-height: 200px"></div>
+        </a-spin>
+      </a-col>
     </a-row>
   </a-card>
 </template>
@@ -68,6 +67,7 @@
 import { codemirror } from '@/components/codemirror'
 import { API } from '@eduoj/wasm-clang/src/shared.mjs'
 import { Terminal } from 'xterm'
+import { FitAddon } from 'xterm-addon-fit'
 import 'xterm/css/xterm.css'
 
 export default {
@@ -83,7 +83,10 @@ export default {
       convertEol: true,
       disableStdin: true
     })
+    const fitAddon = new FitAddon()
+    term.loadAddon(fitAddon)
     term.open(document.getElementById('terminal'))
+    fitAddon.fit()
     this.term = term
   },
   data () {
@@ -164,16 +167,6 @@ export default {
       x.setStdinStr(this.input)
       x.compileLinkRun(this.code)
     },
-    resetCode () {
-      this.code = `#include <iostream>
-using namespace std;
-int main() {
-    int a, b;
-    cin >> a >> b;
-    cout << a + b << endl;
-    return 0;
-}`
-    },
     languageChange () {
       localStorage.setItem(`ide:code:${this.language}`, this.code)
       localStorage.setItem(`ide:language`, this.language)
@@ -184,9 +177,15 @@ int main() {
 
 <style>
 #ide-codemirror-code.vue-codemirror .CodeMirror {
-  height: 300px;
+  height: 100%;
+  flex-grow: 1;
 }
 #ide-codemirror-input.vue-codemirror .CodeMirror {
   height: 200px;
+}
+a-card {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 </style>

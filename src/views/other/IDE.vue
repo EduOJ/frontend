@@ -1,5 +1,5 @@
 <template>
-  <a-card :title="IDE" style="height: auto; margin-bottom: 0px">
+  <a-card title="IDE" style="height: auto;">
     <a-row :gutter="[8,8]" type="flex" justify="space-between">
       <a-col :span="2">
         代码
@@ -29,20 +29,10 @@
       </a-col>
     </a-row>
     <a-row :gutter="[8,8]" type="flex" justify="space-between" align="bottom">
-      <a-col :span="2">
-        输入
-      </a-col>
-      <a-col :span="2" :offset="8">
-        输出
-      </a-col>
-      <a-col :span="2" :offset="6">
-        <a-button @click="runCode()" type="primary" style="float: right;" block>
-          运行
-        </a-button>
-      </a-col>
-    </a-row>
-    <a-row :gutter="[8,8]" type="flex" justify="center">
-      <a-col :span="12">
+      <a-col :lg="12" :md="24">
+        <div class="toolbar-row">
+          <span>输入</span>
+        </div>
         <codemirror
           id="ide-codemirror-input"
           v-model="input"
@@ -53,7 +43,14 @@
             line: true,
           }" />
       </a-col>
-      <a-col :span="12">
+      <a-col :lg="12" :md="24">
+        <div class="toolbar-row">
+          <span>输出</span>
+          <div class="space"></div>
+          <a-button @click="runCode()" type="primary" :loading="running">
+            运行
+          </a-button>
+        </div>
         <a-spin :spinning="running">
           <div id="terminal" style="max-height: 200px"></div>
         </a-spin>
@@ -87,6 +84,9 @@ export default {
     term.loadAddon(fitAddon)
     term.open(document.getElementById('terminal'))
     fitAddon.fit()
+    window.addEventListener('resize', (e) => {
+      fitAddon.fit()
+    })
     this.term = term
   },
   data () {
@@ -157,6 +157,7 @@ export default {
             const response = await fetch(filename)
             return WebAssembly.compile(await response.arrayBuffer())
         },
+        cdnUrl: '/assets/bin/',
         hostWrite (s) {
           vm.term.write(s)
           vm.running = false
@@ -178,14 +179,19 @@ export default {
 <style>
 #ide-codemirror-code.vue-codemirror .CodeMirror {
   height: 100%;
-  flex-grow: 1;
 }
 #ide-codemirror-input.vue-codemirror .CodeMirror {
   height: 200px;
 }
-a-card {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
+</style>
+<style lang="sass" scoped>
+.toolbar-row
+  display: flex
+  width: 100%
+  height: 40px
+  align-items: center
+  :not(:last-child)
+    margin-right: 5px
+  .space
+    flex: 1
 </style>

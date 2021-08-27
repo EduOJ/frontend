@@ -28,4 +28,12 @@ export default function Initializer () {
 
   store.dispatch('setLang', storage.get(APP_LANGUAGE, 'zh-CN'))
   // last step
+  if (navigator.serviceWorker) {
+    navigator.serviceWorker.register('/service_worker.js', { scope: '/' })
+      .then(reg => {
+        console.log('Registration succeeded. Scope is ' + reg.scope)
+      }).catch(error => {
+      console.log('Registration failed with ' + error)
+    })
+  }
 }

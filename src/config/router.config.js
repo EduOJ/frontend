@@ -434,7 +434,7 @@ export const constantRouterMap = [
         path: '/ide',
         component: () => import('@/views/other/IDE'),
         name: 'ide',
-        meta: { title: 'IDE' }
+        meta: { title: 'IDE', icon: 'bug' }
       }
     ]
   },

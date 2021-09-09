@@ -1,18 +1,8 @@
 <template>
   <a-card title="IDE" style="height: auto;">
-    <a-row :gutter="[8,8]" type="flex" justify="space-between">
+    <a-row :gutter="[8,8]" type="flex" style="align-items: center;">
       <a-col :span="2">
         代码
-      </a-col>
-      <a-col :span="4" :offset="18">
-        <div style="float: right;">
-          语言选择：
-          <a-select v-model="language" default-value="cpp" style="width: 120px" @change="languageChange">
-            <a-select-option :key="l" v-for="l in ['c89','c98', 'c11', 'cpp11', 'cpp14', 'cpp17']">
-              {{ ideAvailableLanguages[l].displayName }}
-            </a-select-option>
-          </a-select>
-        </div>
       </a-col>
     </a-row>
     <a-row :gutter="[8,8]" type="flex" justify="center">
@@ -22,7 +12,7 @@
           id="ide-codemirror-code"
           :options="{
             lineNumbers: true,
-            mode: ideAvailableLanguages[language] && ideAvailableLanguages[language].mimeType || 'text/html',
+            mode: 'text/x-c++src',
             theme: 'darcula',
             line: true
           }" />
@@ -66,6 +56,54 @@ import { API } from '@eduoj/wasm-clang/src/shared.mjs'
 import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import 'xterm/css/xterm.css'
+// const dbName = 'wasm-cache'
+// const storeName = 'wasm-cache'
+// const dbVersion = '1'
+// function openDatabase () {
+//   return new Promise((resolve, reject) => {
+//     var request = indexedDB.open(dbName, dbVersion)
+//     request.onerror = reject.bind(null, 'Error opening wasm cache database')
+//     request.onsuccess = () => {
+//       resolve(request.result)
+//     }
+//     request.onupgradeneeded = event => {
+//       var db = request.result
+//       if (db.objectStoreNames.contains(storeName)) {
+//         console.log(`Clearing out version ${event.oldVersion} wasm cache`)
+//         db.deleteObjectStore(storeName)
+//       }
+//       console.log(`Creating version ${event.newVersion} wasm cache`)
+//       db.createObjectStore(storeName)
+//     }
+//   })
+// }
+//
+// function lookupInDatabase (db, url) {
+//   return new Promise((resolve, reject) => {
+//     var store = db.transaction([storeName]).objectStore(storeName)
+//     var request = store.get(url)
+//     request.onerror = reject.bind(null, `Error getting wasm module ${url}`)
+//     request.onsuccess = event => {
+//       if (request.result) {
+//         resolve(request.result)
+//       } else {
+//         // eslint-disable-next-line prefer-promise-reject-errors
+//         reject(`Module ${url} was not found in wasm cache`)
+//       }
+//     }
+//   })
+// }
+//
+// function storeInDatabase (db, module, url) {
+//   var store = db.transaction([storeName], 'readwrite').objectStore(storeName)
+//   var request = store.put(module, url)
+//   request.onerror = err => {
+//     console.log(`Failed to store in wasm cache: ${err}`)
+//   }
+//   request.onsuccess = resp => {
+//     console.log(`Successfully stored ${url} in wasm cache`)
+//   }
+// }
 
 export default {
   name: 'IDE',
@@ -106,34 +144,7 @@ export default {
     }
     const input = ''
     const output = ''
-    const ideAvailableLanguages = {
-        c89: {
-          displayName: 'C 89',
-          mimeType: 'text/x-csrc'
-        },
-        c98: {
-          displayName: 'C 98',
-          mimeType: 'text/x-csrc'
-        },
-        c11: {
-          displayName: 'C 11',
-          mimeType: 'text/x-csrc'
-        },
-        cpp11: {
-          displayName: 'C++ 11',
-          mimeType: 'text/x-c++src'
-        },
-        cpp14: {
-          displayName: 'C++ 14',
-          mimeType: 'text/x-c++src'
-        },
-        cpp17: {
-          displayName: 'C++ 17',
-          mimeType: 'text/x-c++src'
-        }
-    }
     return {
-      ideAvailableLanguages,
       code: code,
       input: input,
       output: output,
@@ -152,21 +163,21 @@ export default {
           const response = await fetch(filename)
           return response.arrayBuffer()
         },
-
         async compileStreaming (filename) {
-            const response = await fetch(filename)
-            return WebAssembly.compile(await response.arrayBuffer())
+          const response = await fetch(filename)
+          return WebAssembly.compile(await response.arrayBuffer())
         },
         cdnUrl: '/assets/bin/',
         hostWrite (s) {
           vm.term.write(s)
-          vm.running = false
         }
       }
       const x = new API(options)
       localStorage.setItem(`ide:code:${vm.language}`, vm.code)
       x.setStdinStr(this.input)
-      x.compileLinkRun(this.code)
+      x.compileLinkRun(this.code, {}).then(_ => {
+        this.running = false
+      })
     },
     languageChange () {
       localStorage.setItem(`ide:code:${this.language}`, this.code)
@@ -180,18 +191,21 @@ export default {
 #ide-codemirror-code.vue-codemirror .CodeMirror {
   height: 100%;
 }
+
 #ide-codemirror-input.vue-codemirror .CodeMirror {
   height: 200px;
 }
 </style>
-<style lang="sass" scoped>
+<style lang='sass' scoped>
 .toolbar-row
   display: flex
   width: 100%
   height: 40px
   align-items: center
+
   :not(:last-child)
     margin-right: 5px
+
   .space
     flex: 1
 </style>

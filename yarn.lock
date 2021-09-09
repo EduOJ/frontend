@@ -1075,10 +1075,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@eduoj/wasm-clang@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@eduoj/wasm-clang/-/wasm-clang-1.0.0.tgz#4bf7eb6ebe120ae29d85478965478fb5eefdddf9"
-  integrity sha512-CtW5sHlRcCKyHTNOjlUrvNNYz+l6XhDQWUx4e6T2vFIUdgEB8xBvBeVmRRVwgzTS19ZlPb2So2VB+uRyvXJ4fA==
+"@eduoj/wasm-clang@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@eduoj/wasm-clang/-/wasm-clang-1.0.1.tgz#aab15b7ce2b7a224f12fe2a6c44d65987736b0ad"
+  integrity sha512-lZWp2WcmKm8y5l93/jpafPM9DlrIgQneXS8B9B1tHumhr6lc8cL/o7F6fryviUmMNToIVGtxgUQr2SP4nFZHrA==
 
 "@hapi/address@2.x.x":
   version "2.1.4"

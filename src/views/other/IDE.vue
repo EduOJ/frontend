@@ -18,7 +18,7 @@
           }" />
       </a-col>
     </a-row>
-    <a-row :gutter="[8,8]" type="flex" justify="space-between" align="bottom">
+    <a-row :gutter="[8,8]">
       <a-col :lg="12" :md="24">
         <div class="toolbar-row">
           <span>输入</span>
@@ -128,32 +128,20 @@ export default {
     this.term = term
   },
   data () {
-    let language = localStorage.getItem(`ide:language`)
-    let code = ''
-    if (language) {
-      if (localStorage.getItem(`ide:code`)) {
-        code = localStorage.getItem(`ide:code`)
-        localStorage.removeItem(`ide:code`)
-        localStorage.setItem(`ide:code:${language}`, code)
-      } else {
-        code = localStorage.getItem(`ide:code:${language}`) || ''
-      }
-    } else {
-      language = null
-      code = ''
-    }
+    const code = localStorage.getItem(`ide:code`) || ''
     const input = ''
     const output = ''
     return {
       code: code,
       input: input,
       output: output,
-      language: language,
-      running: false
+      running: false,
+      compiled: {}
     }
   },
   methods: {
     runCode () {
+      const compiled = this.compiled
       this.running = true
       this.output = ''
       this.term.reset()
@@ -164,8 +152,11 @@ export default {
           return response.arrayBuffer()
         },
         async compileStreaming (filename) {
-          const response = await fetch(filename)
-          return WebAssembly.compile(await response.arrayBuffer())
+          if (!compiled.hasOwnProperty(filename)) {
+            const response = await fetch(filename)
+            compiled[filename] = WebAssembly.compile(await response.arrayBuffer())
+          }
+          return compiled[filename]
         },
         cdnUrl: '/assets/bin/',
         hostWrite (s) {
@@ -173,15 +164,19 @@ export default {
         }
       }
       const x = new API(options)
-      localStorage.setItem(`ide:code:${vm.language}`, vm.code)
+      localStorage.setItem(`ide:code`, vm.code)
       x.setStdinStr(this.input)
       x.compileLinkRun(this.code, {}).then(_ => {
         this.running = false
+      }).catch(err => {
+        if (err.code !== 1) {
+          this.$error({
+            title: '运行程序时发生了错误',
+            content: err.message
+          })
+        }
+        this.running = false
       })
-    },
-    languageChange () {
-      localStorage.setItem(`ide:code:${this.language}`, this.code)
-      localStorage.setItem(`ide:language`, this.language)
     }
   }
 }
@@ -202,10 +197,8 @@ export default {
   width: 100%
   height: 40px
   align-items: center
-
   :not(:last-child)
     margin-right: 5px
-
   .space
     flex: 1
 </style>

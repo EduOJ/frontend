@@ -28,6 +28,7 @@
       :data-source="data"
       :pagination="pagination"
       :loading="loading"
+      :customRow="customRow"
       ref="table"
       @change="handleTableChange"
     >
@@ -182,6 +183,12 @@ export default {
     }
   },
   methods: {
+    customRow (record) {
+      console.log(record)
+      return {
+        className: record.passed ? 'passed-problem-row' : null
+      }
+    },
     checkboxChange (name) {
       return e => {
         if (this.tried && this.passed) {
@@ -291,5 +298,8 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss">
+.passed-problem-row{
+  background-color: #f8feef
+}
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <a-avatar :src="avatar || undefined" >
+  <a-avatar :size="size" :setSrc="avatar" :style="{verticalAlign: 'middle'}" >
     {{ user.nickname }}
   </a-avatar>
 </template>
@@ -13,11 +13,17 @@ export default {
     user: {
       type: Object,
       required: true
+    },
+    size: {
+      validator: function validator (val) {
+        return typeof val === 'number' || ['small', 'large', 'default'].includes(val)
+      },
+      default: 'default'
     }
   },
   data () {
     return {
-      avatar: 'https://cdn.v2ex.com/gravatar/' + md5(this.user.email.trim().toLowerCase()) + '?d=404'
+      avatar: 'https://gravatar.loli.net/avatar/' + md5(this.user.email.trim().toLowerCase()) + '?d=404'
     }
   },
   mounted () {}

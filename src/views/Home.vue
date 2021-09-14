@@ -3,7 +3,7 @@
     <template v-slot:content>
       <div class="page-header-content">
         <div class="avatar">
-          <avatar size="large" :user="user"/>
+          <avatar :size="72" :user="user"/>
         </div>
         <div class="content">
           <div class="content-title">
@@ -14,7 +14,7 @@
       </div>
     </template>
     <template v-slot:extraContent>
-      <div class="extra-content">
+      <div class="extra-content" v-if="!user.isGuest">
         <div class="stat-item">
           <a-statistic title="通过的题目" :value="passed_count" />
         </div>
@@ -26,12 +26,13 @@
 
     <div>
       <a-row :gutter="24">
-        <a-col :xl="16" :lg="24" :md="24" :sm="24" :xs="24">
+        <a-col :xl="user.class_taking.length + user.class_managing.length === 0 ? 24 : 16" :lg="24" :md="24" :sm="24" :xs="24">
           <a-card
             class="problem_set-list"
             style="margin-bottom: 24px;"
             :bordered="false"
             title="我的作业"
+            v-if="!user.isGuest"
             :body-style="{ padding: 0 }">
             <div>
               <a-card-grid class="problem_set-card-grid">
@@ -82,6 +83,7 @@
             title="我在的班级"
             class="class-card"
             :bordered="false"
+            v-if="class_taking.length !== 0"
             style="margin-bottom: 24px;">
             <a-list item-layout="horizontal" :data-source="class_taking">
               <a-list-item slot="renderItem" slot-scope="klass">
@@ -154,26 +156,28 @@ export default {
     })
   },
   mounted () {
-    const p = [getClassManaging(), getClassTaking()]
-    Promise.all(p).then(data => {
-      console.log(data)
-      this.class_managing = data[0].classes
-      this.class_taking = data[1].classes
-    }).catch(err => {
-      console.log(err)
-      this.$error({
-        content: '获取班级信息时发生了错误'
+    if (!this.user.isGuest) {
+      const p = [getClassManaging(), getClassTaking()]
+      Promise.all(p).then(data => {
+        console.log(data)
+        this.class_managing = data[0].classes
+        this.class_taking = data[1].classes
+      }).catch(err => {
+        console.log(err)
+        this.$error({
+          content: '获取班级信息时发生了错误'
+        })
       })
-    })
-    getUserProblemInfo(this.user.id).then(resp => {
-      this.passed_count = resp.passed_count
-      this.tried_count = resp.tried_count
-    }).catch(err => {
-      console.log(err)
-      this.$error({
-        content: '获取做题信息时发生了错误'
+      getUserProblemInfo(this.user.id).then(resp => {
+        this.passed_count = resp.passed_count
+        this.tried_count = resp.tried_count
+      }).catch(err => {
+        console.log(err)
+        this.$error({
+          content: '获取做题信息时发生了错误'
+        })
       })
-    })
+    }
     getProblem('random').then(resp => {
       this.problem = resp.problem
       this.problem_loading = false

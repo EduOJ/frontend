@@ -6,8 +6,10 @@ import { ACCESS_TOKEN } from '@/store/mutation-types'
 const guest = {
   email: 'guest@example.com',
   username: 'guest',
-  nickname: 'Guest',
-  isGuest: 'true',
+  nickname: '游客',
+  isGuest: true,
+  class_taking: [],
+  class_managing: [],
   roles: []
 }
 

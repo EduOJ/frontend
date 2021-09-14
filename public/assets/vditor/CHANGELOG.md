@@ -96,10 +96,43 @@
 * [open issues](https://github.com/Vanessa219/vditor/issues)
 * [346](https://github.com/Vanessa219/vditor/issues/346) 内容主题推荐（长期有效） `改进功能`
 
-### v3.8.2 / 2021-02-xx
+### v3.8.5 / 2021-07-06
 
-### v3.8.1 / 2021-02-04
+* [974](https://github.com/Vanessa219/vditor/issues/974) 所见即所得模式下行级元素间的空格会被删除 `修复缺陷`
+* [1029](https://github.com/Vanessa219/vditor/issues/1029) 公式内小于号大于号等没有转义 `修复缺陷`
+* [1036](https://github.com/Vanessa219/vditor/issues/1036) 标题设置没有配置多语言 `改进功能`
+* [957](https://github.com/Vanessa219/vditor/issues/957) 支持表格横向滚动 `引入特性`
+* [1038](https://github.com/Vanessa219/vditor/issues/1038) 图片使用 pointer 样式 `改进功能`
+* [1034](https://github.com/Vanessa219/vditor/pull/1034) Support Vue and Angular `改进功能`
+* [1016](https://github.com/Vanessa219/vditor/pull/1016) Support Svelte `文档相关`
+* [1009](https://github.com/Vanessa219/vditor/pull/1009/) 对于 markdown 目录下的渲染方法新增 适配模块 `引入特性`
+* [1011](https://github.com/Vanessa219/vditor/issues/1011) 支持导出 JSON `引入特性`
+* [1010](https://github.com/Vanessa219/vditor/issues/1010) 多语言分离 `改进功能`
+* [1008](https://github.com/Vanessa219/vditor/pull/1008) 自定义多语言 `引入特性`
+* 文档修改
+  * codeRender 方法中移除 lang 参数
+  * 为 options 添加 i18n 语言自定义参数
+  * 添加 exportJSON 方法
+  
+### v3.8.4 / 2021-05-13
 
+* [1000](https://github.com/Vanessa219/vditor/issues/1000) 升级 hljs 并添加更多的语言支持 `改进功能`
+* [993](https://github.com/Vanessa219/vditor/pull/993) 加入繁體中文 `引入特性`
+* [980](https://github.com/Vanessa219/vditor/pull/980) 流程图不应渲染代码高亮  `修复缺陷`
+* [987](https://github.com/Vanessa219/vditor/pull/987) 完善 upload 必填项说明 `文档相关`
+* [970](https://github.com/Vanessa219/vditor/pull/970) added ru_RU lang `引入特性`
+* [955](https://github.com/Vanessa219/vditor/issues/955) 为 hint 内容添加是否进行 md 转换的设置 `改进功能`
+* [956](https://github.com/Vanessa219/vditor/issues/956) 改进 plantuml 解析问题 `修复缺陷`
+* [953](https://github.com/Vanessa219/vditor/issues/953) 标题删除需保留空行 `改进功能`
+* [946](https://github.com/Vanessa219/vditor/issues/946) Improve delete behavior in the list item after the code block `修复缺陷`
+* [949](https://github.com/Vanessa219/vditor/issues/949) lute.Md2HTML 3.7.5 后解析无 id 属性 `修复缺陷`
+* [936](https://github.com/Vanessa219/vditor/issues/936) Auto link `.app` domain suffix `改进功能`
+* [926](https://github.com/Vanessa219/vditor/issues/926) 即时渲染和所见即所得模式支持点击链接 `引入特性`
+* [938](https://github.com/Vanessa219/vditor/issues/938) 大纲缺少样式 `修复缺陷`
+* [928](https://github.com/Vanessa219/vditor/issues/928) Mathjax 资源缺失及添加 license `修复缺陷`
+* [720](https://github.com/Vanessa219/vditor/issues/720) 在光标位置插入内容的问题 `改进功能`
+* [751](https://github.com/Vanessa219/vditor/issues/751) firefox 代码块中 enter 键换行问题 `修复缺陷`
+* [923](https://github.com/Vanessa219/vditor/issues/923) 隐藏预览操作栏 `改进功能`
 * [921](https://github.com/Vanessa219/vditor/issues/921) MS Word 表格粘贴问题 `修复缺陷`
 * [922](https://github.com/Vanessa219/vditor/issues/922) MS Excel 粘贴带图表格问题 `修复缺陷`
 * [904](https://github.com/Vanessa219/vditor/issues/904) wysiwyg 和 ir 模式表格增加向上插入行和向左插入列 `改进功能`
@@ -118,6 +151,8 @@
   * 3.8.1
     * 添加表格增加向上插入行 ⇧⌘F 和向左插入列 ⇧⌘G 的快捷键
     * 快捷键配置格式修改为 ⇧⌘[] / ⌘[] / ⌥⌘[]
+  * 3.8.4
+    * 添加 hint.parse 配置
   
 ### v3.7.7 / 2021-01-19
 

@@ -37,7 +37,7 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
         vditor.undo.recordFirstPosition(vditor, event);
     }
 
-    const range = getEditorRange(vditor.ir.element);
+    const range = getEditorRange(vditor);
     const startContainer = range.startContainer;
 
     if (!fixGSKeyBackspace(event, vditor, startContainer)) {
@@ -186,6 +186,7 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
         }
 
         if (blockElement && blockElement.previousElementSibling
+            && blockElement.tagName !== "UL" && blockElement.tagName !== "OL"
             && (blockElement.previousElementSibling.getAttribute("data-type") === "code-block" ||
                 blockElement.previousElementSibling.getAttribute("data-type") === "math-block")) {
             const rangeStart = getSelectPosition(blockElement, vditor.ir.element, range).start;

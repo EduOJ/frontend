@@ -11608,7 +11608,7 @@ vary@~1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
 
-vditor@^3.8.1:
+vditor@^3.8.6:
   version "3.8.6"
   resolved "https://registry.yarnpkg.com/vditor/-/vditor-3.8.6.tgz#95a89c4865efa740bf55f2a7e3f968b395987a60"
   integrity sha512-KZSmg593dTx/BmX9HdXcZCLi5stkJvW3AHVq4gOVvA00JnZngT7sjlX8WlfWbLe0A80UzelNSVXff3yoyljRAA==

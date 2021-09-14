@@ -40,7 +40,7 @@
     "store": "^2.0.12",
     "timeago.js": "^4.0.2",
     "uuid": "^8.3.2",
-    "vditor": "^3.8.1",
+    "vditor": "^3.8.6",
     "viser-vue": "^2.4.6",
     "vue": "^2.6.10",
     "vue-clipboard2": "^0.3.1",

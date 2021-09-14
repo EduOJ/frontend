@@ -2,6 +2,10 @@ declare module "*.svg";
 
 declare module "*.png";
 
+interface Window {
+    VditorI18n: ITips;
+}
+
 interface IObject {
     [key: string]: string;
 }
@@ -130,6 +134,8 @@ declare class Lute {
 
     public SetChineseParagraphBeginningSpace(enable: boolean): void;
 
+    public SetHeadingID(enable: boolean): void;
+
     public SetRenderListStyle(enable: boolean): void;
 
     public SetLinkBase(url: string): void;
@@ -214,6 +220,9 @@ declare class Lute {
 
     // 粘贴是 md 转换为 sv
     public Md2VditorSVDOM(text: string): string;
+
+    // 将markdown转化为JSON结构输出 https://github.com/88250/lute/issues/120
+    public RenderJSON(markdown: string): string;
 }
 
 declare const webkitAudioContext: {
@@ -221,11 +230,94 @@ declare const webkitAudioContext: {
     new(contextOptions?: AudioContextOptions): AudioContext,
 };
 
+interface ITips {
+    [index: string]: string;
+    alignCenter: string;
+    alignLeft: string;
+    alignRight: string;
+    alternateText: string;
+    bold: string;
+    both: string;
+    check: string;
+    close: string;
+    code: string;
+    "code-theme": string;
+    column: string;
+    comment: string;
+    confirm: string;
+    "content-theme": string;
+    copied: string;
+    copy: string;
+    "delete-column": string;
+    "delete-row": string;
+    devtools: string;
+    down: string;
+    downloadTip: string;
+    edit: string;
+    "edit-mode": string;
+    emoji: string;
+    export: string;
+    fileTypeError: string;
+    footnoteRef: string;
+    fullscreen: string;
+    generate: string;
+    headings: string;
+    help: string;
+    imageURL: string;
+    indent: string;
+    info: string;
+    "inline-code": string;
+    "insert-after": string;
+    "insert-before": string;
+    insertColumnLeft: string;
+    insertColumnRight: string;
+    insertRowAbove: string;
+    insertRowBelow: string;
+    instantRendering: string;
+    italic: string;
+    language: string;
+    line: string;
+    link: string;
+    linkRef: string;
+    list: string;
+    more: string;
+    nameEmpty: string;
+    "ordered-list": string;
+    outdent: string;
+    outline: string;
+    over: string;
+    performanceTip: string;
+    preview: string;
+    quote: string;
+    record: string;
+    "record-tip": string;
+    recording: string;
+    redo: string;
+    remove: string;
+    row: string;
+    spin: string;
+    splitView: string;
+    strike: string;
+    table: string;
+    textIsNotEmpty: string;
+    title: string;
+    tooltipText: string;
+    undo: string;
+    up: string;
+    update: string;
+    upload: string;
+    uploadError: string;
+    uploading: string;
+    wysiwyg: string;
+}
+
 interface II18n {
-    en_US: IObject;
-    ja_JP: IObject;
-    ko_KR: IObject;
-    zh_CN: IObject;
+    en_US: ITips;
+    ja_JP: ITips;
+    ko_KR: ITips;
+    ru_RU: ITips;
+    zh_CN: ITips;
+    zh_TW: ITips;
 }
 
 interface IClasses {
@@ -414,6 +506,7 @@ interface IPreviewOptions {
     mode: "dark" | "light";
     customEmoji?: IObject;
     lang?: (keyof II18n);
+    i18n?: ITips;
     lazyLoadImage?: string;
     emojiPath?: string;
     hljs?: IHljs;
@@ -446,6 +539,8 @@ interface IHintExtend {
 
 /** @link https://ld246.com/article/1549638745630#options-hint */
 interface IHint {
+    /** 提示内容是否进行 md 解析 */
+    parse?: boolean;
     /** 常用表情提示 HTML */
     emojiTail?: string;
     /** 提示 debounce 毫秒间隔。默认值: 200 */
@@ -486,6 +581,8 @@ interface IOptions {
     placeholder?: string;
     /** 多语言。默认值: 'zh_CN' */
     lang?: (keyof II18n);
+    /** 国际化, 自定义语言。优先级低于lang */
+    i18n?: ITips;
     /** @link https://ld246.com/article/1549638745630#options-fullscreen */
     fullscreen?: {
         index: number;
@@ -552,7 +649,7 @@ interface IOptions {
     after?(): void;
 
     /** 输入后触发 */
-    input?(value: string, previewElement?: HTMLElement): void;
+    input?(value: string): void;
 
     /** 聚焦后触发  */
     focus?(value: string): void;
@@ -634,6 +731,7 @@ interface IVditor {
         resetIcon(vditor: IVditor): void,
     };
     wysiwyg?: {
+        range: Range,
         element: HTMLPreElement,
         selectPopover: HTMLDivElement,
         popover: HTMLDivElement,
@@ -648,6 +746,7 @@ interface IVditor {
         hideComment(): void,
     };
     ir?: {
+        range: Range,
         element: HTMLPreElement,
         composingLock: boolean,
         preventInput: boolean,
@@ -655,6 +754,7 @@ interface IVditor {
         hlToolbarTimeoutId: number,
     };
     sv?: {
+        range: Range,
         element: HTMLPreElement,
         processTimeoutId: number,
         hlToolbarTimeoutId: number,

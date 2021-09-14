@@ -1,12 +1,13 @@
 import {Constants} from "../constants";
 import {addScript} from "../util/addScript";
+import {plantumlRenderAdapter} from "./adapterRender";
 
 declare const plantumlEncoder: {
     encode(options: string): string,
 };
 
 export const plantumlRender = (element: (HTMLElement | Document) = document, cdn = Constants.CDN) => {
-    const plantumlElements = element.querySelectorAll(".language-plantuml");
+    const plantumlElements = plantumlRenderAdapter.getElements(element);
     if (plantumlElements.length === 0) {
         return;
     }
@@ -16,17 +17,12 @@ export const plantumlRender = (element: (HTMLElement | Document) = document, cdn
                 e.parentElement.classList.contains("vditor-ir__marker--pre")) {
                 return;
             }
-            const text = e.innerText.trim();
+            const text = plantumlRenderAdapter.getCode(e).trim();
             if (!text) {
                 return;
             }
             try {
-                const encoded = plantumlEncoder.encode(text);
-                const imageElement = document.createElement("img");
-                imageElement.setAttribute("loading", "lazy");
-                imageElement.setAttribute("src", "http://www.plantuml.com/plantuml/svg/~1" + encoded);
-                e.parentNode.insertBefore(imageElement, e);
-                e.remove();
+                e.innerHTML = `<img src="http://www.plantuml.com/plantuml/svg/~1${plantumlEncoder.encode(text)}">`;
             } catch (error) {
                 e.className = "vditor-reset--error";
                 e.innerHTML = `plantuml render error: <br>${error}`;

@@ -2,6 +2,7 @@ import {Constants} from "../constants";
 import {addScript, addScriptSync} from "../util/addScript";
 import {addStyle} from "../util/addStyle";
 import {code160to32} from "../util/code160to32";
+import {mathRenderAdapter} from "./adapterRender";
 
 declare const katex: {
     renderToString(math: string, option: {
@@ -17,7 +18,7 @@ declare global {
 }
 
 export const mathRender = (element: HTMLElement, options?: { cdn?: string, math?: IMath }) => {
-    const mathElements = element.querySelectorAll(".language-math");
+    const mathElements = mathRenderAdapter.getElements(element);
 
     if (mathElements.length === 0) {
         return;
@@ -49,7 +50,7 @@ export const mathRender = (element: HTMLElement, options?: { cdn?: string, math?
                 if (mathElement.getAttribute("data-math")) {
                     return;
                 }
-                const math = code160to32(mathElement.textContent);
+                const math = code160to32(mathRenderAdapter.getCode(mathElement));
                 mathElement.setAttribute("data-math", math);
                 try {
                     mathElement.innerHTML = katex.renderToString(math, {
@@ -87,7 +88,7 @@ export const mathRender = (element: HTMLElement, options?: { cdn?: string, math?
         if (!window.MathJax) {
             window.MathJax = {
                 loader: {
-                    paths: {mathjax: `${options.cdn}/dist/js/mathjax`},
+                    paths: { mathjax: `${options.cdn}/dist/js/mathjax` },
                 },
                 startup: {
                     typeset: false,
@@ -98,7 +99,7 @@ export const mathRender = (element: HTMLElement, options?: { cdn?: string, math?
             };
         }
         // 循环加载会抛异常
-        addScriptSync(`${options.cdn}/dist/js/mathjax/tex-svg.js`, "vditorMathJaxScript");
+        addScriptSync(`${options.cdn}/dist/js/mathjax/tex-svg-full.js`, "protyleMathJaxScript");
         const renderMath = (mathElement: Element, next?: () => void) => {
             const math = code160to32(mathElement.textContent).trim();
             const mathOptions = window.MathJax.getMetricsFor(mathElement);
@@ -120,7 +121,7 @@ export const mathRender = (element: HTMLElement, options?: { cdn?: string, math?
             });
         };
         window.MathJax.startup.promise.then(() => {
-            const chains: any [] = [];
+            const chains: any[] = [];
             for (let i = 0; i < mathElements.length; i++) {
                 const mathElement = mathElements[i];
                 if (!mathElement.parentElement.classList.contains("vditor-wysiwyg__pre") &&

@@ -560,7 +560,6 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #a22;}
 .CodeMirror-rtl pre { direction: rtl; }
 
 .CodeMirror-code {
-  outline: none;
 }
 
 /* Force content-box sizing for the elements where we expect it */

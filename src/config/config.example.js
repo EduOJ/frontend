@@ -28,5 +28,11 @@ export default {
   },
   title: 'EduOJ',
   multiTab: false,
-  production: process.env.NODE_ENV === 'production' && process.env.VUE_APP_PREVIEW !== 'true'
+  production: process.env.NODE_ENV === 'production' && process.env.VUE_APP_PREVIEW !== 'true',
+  message_on_first_accepted: (h) => (
+    <div>
+      给个star吧！
+      <a href="https://github.com/Eduoj/backend">EduOJ</a>
+    </div>
+  )
 }

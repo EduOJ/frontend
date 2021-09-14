@@ -135,7 +135,7 @@ export default {
         this.submitLoading = false
         const modal = this.$success({
           content: '提交成功！',
-          okText: '立即查看',
+          okText: '立即查看（2s）',
           onOk: () => {
             oked = 1
             this.$router.push({
@@ -146,17 +146,29 @@ export default {
             })
           }
         })
-        setTimeout(_ => {
-          if (!oked) {
-            modal.destroy()
-            this.$router.push({
-              name: 'submission',
-              params: {
-                id: data.submission.id
-              }
-            })
+
+        const f = (time) => {
+          return () => {
+            if (oked) {
+              return
+            }
+            if (time === 0) {
+              modal.destroy()
+              this.$router.push({
+                name: 'submission',
+                params: {
+                  id: data.submission.id
+                }
+              })
+            } else {
+              modal.update({
+                okText: `立即查看（${time}s）`
+              })
+              setTimeout(f(time - 1), 1000)
+            }
           }
-        }, 2000)
+        }
+        setTimeout(f(1), 1000)
       }).catch(err => {
         this.$error({
           content: '遇到错误：' + err.message

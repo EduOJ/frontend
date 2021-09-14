@@ -8,5 +8,8 @@ export default {
   },
   compare_exact_match: {
     name: '字符级严格匹配'
+  },
+  '': {
+    name: ''
   }
 }

@@ -100,8 +100,6 @@ export default {
             return null
           }
           if (copy.children.length === 1) {
-            console.log(JSON.parse(JSON.stringify(copy)))
-            console.log(JSON.parse(JSON.stringify(copy.children[0])))
             copy.path = copy.children[0].path
             copy.meta.title = copy.children[0].meta.title
             copy = Object.assign(copy, copy.children[0])

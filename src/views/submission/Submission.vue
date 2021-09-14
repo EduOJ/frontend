@@ -196,6 +196,26 @@ export default {
         this.can_read_secret = this.$store.getters.can('read_problem_secrets', 'problem', data.submission.problem_id) || this.$store.getters.can('read_problem_secrets')
         if (!data.submission.judged) {
           this.fetch(true)
+        } else {
+          if (poll && data.submission.status === 'ACCEPTED' && !localStorage.getItem('letter:read:1')) {
+            this.$confirm({
+              icon: h => (
+                <a-icon type="info-circle"/>
+              ),
+              title: '来自EduOJ开发组的一封信',
+              width: 800,
+              cancelText: '暂时关闭，下次再看',
+              okText: '看完了',
+              class: 'ant-modal-confirm-info',
+              onOk: () => {
+                localStorage.setItem('letter:read:1', 'true')
+              },
+              keyboard: false,
+              content: (h) => {
+                return config.message_on_first_accepted(h)
+              }
+            })
+          }
         }
       }).catch(err => {
         this.$error({

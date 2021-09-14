@@ -1,6 +1,10 @@
 <template>
-  <div class="heti" style="max-width: 100%!important;">
-    <div ref="render">
+  <div>
+    <a-skeleton :loading="loading">
+    </a-skeleton>
+    <div class="heti" style="max-width: 100%!important;" v-show="!loading">
+      <div ref="render">
+      </div>
     </div>
   </div>
 </template>
@@ -21,9 +25,15 @@ export default {
   mounted () {
     this.render()
   },
+  data () {
+    return {
+      loading: true
+    }
+  },
   methods: {
     render () {
       if (this.value) {
+        const that = this
         Vditor.preview(this.$refs.render, this.value, {
           hljs: {
             enable: true,
@@ -36,6 +46,7 @@ export default {
           },
           cdn: '/assets/vditor',
           after: () => {
+            that.loading = false
             h.spacingElement(this.$refs.render)
           }
         })

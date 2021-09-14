@@ -3886,15 +3886,20 @@ core-js-compat@^3.14.0, core-js-compat@^3.16.0, core-js-compat@^3.6.5:
     browserslist "^4.16.8"
     semver "7.0.0"
 
-core-js@3, core-js@^3.6.5:
-  version "3.16.3"
-  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.16.3.tgz#1f2d43c51a9ed014cc6c83440af14697ae4b75f2"
-  integrity sha512-lM3GftxzHNtPNUJg0v4pC2RC6puwMd6VZA7vXUczi+SKmCWSf4JwO89VJGMqbzmB7jlK7B5hr3S64PqwFL49cA==
+core-js@3:
+  version "3.17.3"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.17.3.tgz#8e8bd20e91df9951e903cabe91f9af4a0895bc1e"
+  integrity sha512-lyvajs+wd8N1hXfzob1LdOCCHFU4bGMbqqmLn1Q4QlCpDqWPpGf+p0nj+LNrvDDG33j0hZXw2nsvvVpHysxyNw==
 
 core-js@^2.4.0:
   version "2.6.12"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.12.tgz#d9333dfa7b065e347cc5682219d6f690859cc2ec"
   integrity sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==
+
+core-js@^3.6.5:
+  version "3.16.3"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.16.3.tgz#1f2d43c51a9ed014cc6c83440af14697ae4b75f2"
+  integrity sha512-lM3GftxzHNtPNUJg0v4pC2RC6puwMd6VZA7vXUczi+SKmCWSf4JwO89VJGMqbzmB7jlK7B5hr3S64PqwFL49cA==
 
 core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
@@ -4565,9 +4570,9 @@ diff-sequences@^24.9.0:
   integrity sha512-Dj6Wk3tWyTE+Fo1rW8v0Xhwk80um6yFYKbuAxc9c3EZxIHFDYwbi34Uk42u1CdnIiVorvt4RmlSDjIPyzGC2ew==
 
 diff2html@^3.2.0:
-  version "3.4.9"
-  resolved "https://registry.yarnpkg.com/diff2html/-/diff2html-3.4.9.tgz#b58151aee1d1c78dc461aad97991879fb15670b8"
-  integrity sha512-33x45h6Xgfasjt49e0ldfLnUdCjLjHIdablpAlrKnQyyG1RA7w+4cbp9+bUfNLxfFj584BookXqh5KJEt4+MLA==
+  version "3.4.11"
+  resolved "https://registry.yarnpkg.com/diff2html/-/diff2html-3.4.11.tgz#14660ddd11eaa885f31b4cedf50aab11990bd1b3"
+  integrity sha512-FBW74QVkbVqbqM36NbSsmStU3mAovluM3Zg6QuuPtn26nzdfoVgnG2axKnbEbiHffM+CCQwrcpCBcDZhkN9VSw==
   dependencies:
     diff "5.0.0"
     hogan.js "3.0.2"
@@ -6063,9 +6068,10 @@ heti-findandreplacedomtext@^0.5.0:
   resolved "https://registry.yarnpkg.com/heti-findandreplacedomtext/-/heti-findandreplacedomtext-0.5.0.tgz#a69dd028ac3d37c73a33173e376f2c3366cdd46f"
   integrity sha512-GFZjqU8LAdu1uR72GqrReI+lzNLMlcWtvdz1TKNJiofyo1mfTecFYSZEoEbcLcRMl+KwEldnNQoS4BwO8wtg0A==
 
-heti@leoleoasd/heti:
-  version "0.8.1"
-  resolved "https://codeload.github.com/leoleoasd/heti/tar.gz/e59e04f654cd80e5250e68a5c84f563b1c76716a"
+heti@^0.8.2:
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/heti/-/heti-0.8.2.tgz#04583b2abf16f06da49d66954b8642f80d7aed9f"
+  integrity sha512-GSoY6MpFn9fk44+wLRMhPpT2esqZY+x6ZI3TKsr/Fy2zM7fGwZbCZmduzIw9x1cuOnhmQWoXrJENKl+DHDftkQ==
   dependencies:
     heti-findandreplacedomtext "^0.5.0"
 
@@ -8342,9 +8348,9 @@ node-fetch@^1.0.1:
     is-stream "^1.0.1"
 
 node-fetch@^2.6.1:
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"
-  integrity sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==
+  version "2.6.2"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.2.tgz#986996818b73785e47b1965cc34eb093a1d464d0"
+  integrity sha512-aLoxToI6RfZ+0NOjmWAgn9+LEd30YCkJKFSyWacNZdEKTit/ZMcKjGkTRo8uWEsnIb/hfKecNPEbln02PdWbcA==
 
 node-forge@^0.10.0:
   version "0.10.0"
@@ -10188,9 +10194,9 @@ sass-loader@^10.1.1:
     semver "^7.3.2"
 
 sass@^1.32.6:
-  version "1.38.1"
-  resolved "https://registry.yarnpkg.com/sass/-/sass-1.38.1.tgz#54dfb17fb168846b5850324b82fc62dc68f51bad"
-  integrity sha512-Lj8nPaSYOuRhgqdyShV50fY5jKnvaRmikUNalMPmbH+tKMGgEKVkltI/lP30PEfO2T1t6R9yc2QIBLgOc3uaFw==
+  version "1.40.0"
+  resolved "https://registry.yarnpkg.com/sass/-/sass-1.40.0.tgz#ffa7106d9c0185169f5b08eaab13d634def948f2"
+  integrity sha512-2nLdBmvcxhsYlH6VDsHMhEoc9iYvH7uIkgGJXXNPfTqwKpvXsZyYPMwNLntqoY4zxDKU8wSSqA7XLKHy1o8nVA==
   dependencies:
     chokidar ">=3.0.0 <4.0.0"
 
@@ -11667,9 +11673,9 @@ vm-browserify@^1.0.1:
   integrity sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==
 
 vue-clipboard2@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/vue-clipboard2/-/vue-clipboard2-0.3.1.tgz#6e551fb7bd384889b28b0da3b12289ed6bca4894"
-  integrity sha512-H5S/agEDj0kXjUb5GP2c0hCzIXWRBygaWLN3NEFsaI9I3uWin778SFEMt8QRXiPG+7anyjqWiw2lqcxWUSfkYg==
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/vue-clipboard2/-/vue-clipboard2-0.3.2.tgz#e7bf79e199720c7e1926a115660e5d1525358948"
+  integrity sha512-JUllOtw16qO0RF224eqN2kr9n21Xb7nCrbAehiJDTpX8eP00DKcdoYPbaT1dcs0vKou1D6hA42sJIte0Mm71IQ==
   dependencies:
     clipboard "^2.0.0"
 
@@ -11725,9 +11731,9 @@ vue-hot-reload-api@^2.3.0:
   integrity sha512-BXq3jwIagosjgNVae6tkHzzIk6a8MHFtzAdwhnV5VlvPTFxDCvIttgSiHWjdGoTJvXtmRu5HacExfdarRcFhog==
 
 vue-i18n@^8.17.4:
-  version "8.25.0"
-  resolved "https://registry.yarnpkg.com/vue-i18n/-/vue-i18n-8.25.0.tgz#1037d9295fa2845a230b771de473481edb2cfc4c"
-  integrity sha512-ynhcL+PmTxuuSE1T10htiSXzjBozxYIE3ffbM1RfgAkVbr/v1SP+9Mi/7/uv8ZVV1yGuKjFAYp9BXq+X7op6MQ==
+  version "8.25.1"
+  resolved "https://registry.yarnpkg.com/vue-i18n/-/vue-i18n-8.25.1.tgz#63e4111ff50269c8ae91e7f0f73373198a81a0fc"
+  integrity sha512-UgvN6LxcANSG2O/i8draincxY3E/2bppMNN0szVinN7tuzSJdNFQdB9VDVaQcR1i8BprK9ISUAgZVZacsl+Zbw==
 
 vue-jest@^3.0.5:
   version "3.0.7"
@@ -12291,9 +12297,9 @@ xterm-addon-fit@^0.5.0:
   integrity sha512-DsS9fqhXHacEmsPxBJZvfj2la30Iz9xk+UKjhQgnYNkrUIN5CYLbw7WEfz117c7+S86S/tpHPfvNxJsF5/G8wQ==
 
 xterm@^4.13.0:
-  version "4.13.0"
-  resolved "https://registry.yarnpkg.com/xterm/-/xterm-4.13.0.tgz#7998de1e2ad92c4796fe45807be4f31061f3d9d1"
-  integrity sha512-HVW1gdoLOTnkMaqQCr2r3mQy4fX9iSa5gWxKZ2UTYdLa4iqavv7QxJ8n1Ypse32shPVkhTYPLS6vHEFZp5ghzw==
+  version "4.14.1"
+  resolved "https://registry.yarnpkg.com/xterm/-/xterm-4.14.1.tgz#6884cb8fb3b83353b1a98139ea23daedf8e35796"
+  integrity sha512-jgzNg5BuGPwq5/M4dGnmbghZvHx2jaj+9crSEt15bV34Za49VziBmCu7zIy88zUKKiGTxeo7aVzirFSJArIMFw==
 
 y18n@^4.0.0:
   version "4.0.3"

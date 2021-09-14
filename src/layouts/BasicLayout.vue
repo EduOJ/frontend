@@ -86,7 +86,8 @@ export default {
             return null
           }
         }
-        const copy = Object.assign({}, menu)
+        if (menu.hidden) return null
+        let copy = Object.assign({}, menu)
         if (menu.children) {
           copy.children = []
           menu.children.forEach((menu) => {
@@ -97,6 +98,15 @@ export default {
           })
           if (copy.children.length === 0 && (copy.component.name || copy.component.name === 'RouteView')) {
             return null
+          }
+          if (copy.children.length === 1) {
+            console.log(JSON.parse(JSON.stringify(copy)))
+            console.log(JSON.parse(JSON.stringify(copy.children[0])))
+            copy.path = copy.children[0].path
+            copy.meta.title = copy.children[0].meta.title
+            copy = Object.assign(copy, copy.children[0])
+            copy.meta.icon = menu.meta.icon
+            copy.children = null
           }
         }
         return copy
@@ -185,5 +195,8 @@ export default {
 .ant-pro-grid-content.wide{
   margin: 0;
   max-width: 100%;
+}
+.ant-menu-item{
+  height: @layout-header-height;
 }
 </style>

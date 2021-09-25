@@ -2,7 +2,7 @@
   <a-row :gutter="24">
     <a-col :xl="8" :lg="24" :md="24" :sm="24" :xs="24">
       <vue-custom-scrollbar>
-        <a-space>
+        <a-space v-if="isEditor">
           <a-button type="primary" @click="createFile" size="small">
             <a-icon type="file-add" />
           </a-button>
@@ -95,7 +95,9 @@ export default {
   },
   props: {
     language: String(),
-    zipURL: String()
+    zipURL: String(),
+    isEditor: Boolean(),
+    zipBlob: Blob
   },
   data () {
     return {
@@ -113,7 +115,7 @@ export default {
         title: 'name',
         key: 'path'
       },
-      title: '输入代码',
+      title: '请选择文件',
       selectedNode: Object(),
       createFileDialog: false,
       createFolderDialog: false,
@@ -123,22 +125,52 @@ export default {
       selectedKeys: [],
       currentFile: Object(), // path,
       zip: new JSZip(),
-      fileList: []
+      fileList: [],
+      reBuildTree: false
     }
   },
   mounted () {
-    if (this.zipURL) {
-      const decodedURL = Base64.decode(this.zipURL)
-      console.log(decodedURL)
-      fetch(decodedURL).then(async r => {
-        JSZip.loadAsync(await r.blob()).then((zipContent) => {
-          this.zip = zipContent
-          this.buildTreeFromZip()
+    if (this.isEditor) {
+      if (this.zipURL) {
+        this.reBuildTree = true
+        const decodedURL = Base64.decode(this.zipURL)
+        // console.log(decodedURL)
+        fetch(decodedURL).then(async r => {
+          JSZip.loadAsync(await r.blob()).then((zipContent) => {
+            this.zip = zipContent
+            this.buildTreeFromZip()
+          })
         })
+      }
+    } else if (!this.isEditor) {
+      this.reBuildTree = true
+      JSZip.loadAsync(this.zipBlob).then((zipContent) => {
+        this.zip = zipContent
+        this.buildTreeFromZip()
       })
     }
   },
   methods: {
+    handleZipChanged () {
+      if (this.isEditor && this.reBuildTree) {
+        console.log('editor!!!')
+        const decodedURL = Base64.decode(this.zipURL)
+        // console.log(decodedURL)
+        fetch(decodedURL).then(async r => {
+          JSZip.loadAsync(await r.blob()).then((zipContent) => {
+            this.zip = zipContent
+            this.buildTreeFromZip()
+          })
+        })
+      } else if (this.reBuildTree) {
+        console.log(this.zipBlob)
+        console.log('not editor')
+        JSZip.loadAsync(this.zipBlob).then((zipContent) => {
+          this.zip = zipContent
+          this.buildTreeFromZip()
+        })
+      }
+    },
     handleUploadChange (info) {
       JSZip.loadAsync(info.file.originFileObj).then((zipContent) => {
         this.zip = zipContent
@@ -147,17 +179,15 @@ export default {
     },
     buildTreeFromZip () {
       this.treeData = []
+      const reg = new RegExp('[\\/]')
       let dirKeys = Object.keys(this.zip.files)
-      dirKeys = dirKeys.sort((a, b) => (a.charAt(a.length - 1) === '/' ? a.split('/').length - 1 : a.split('/').length) -
-        (b.charAt(b.length - 1) === '/' ? b.split('/').length - 1 : b.split('/').length))
-      console.log(dirKeys)
+      dirKeys = dirKeys.sort((a, b) => (a.charAt(a.length - 1) === '/' || a.charAt(a.length - 1) === '\\' ? a.split(reg).length - 1 : a.split(reg).length) -
+        (b.charAt(b.length - 1) === '/' || a.charAt(a.length - 1) === '\\' ? b.split(reg).length - 1 : b.split(reg).length))
       for (const idx in dirKeys) {
-        console.log(dirKeys[idx])
-        const pathArray = dirKeys[idx].split('/')
-        if (dirKeys[idx].charAt(dirKeys[idx].length - 1) === '/') {
+        const pathArray = dirKeys[idx].split(reg)
+        if (dirKeys[idx].charAt(dirKeys[idx].length - 1) === '/' || dirKeys[idx].charAt(dirKeys[idx].length - 1) === '\\') {
           pathArray.pop()
         }
-        console.log(pathArray)
         let preNode = this.treeData
         const len = pathArray.length - 1
         for (let i = 0; i < len; i++) {
@@ -181,9 +211,7 @@ export default {
         let fa
         if (Object.prototype.toString.call(preNode) !== '[object Array]') {
           fa = preNode
-          console.log(fa)
           preNode = preNode.children
-          console.log(fa)
         } else {
           fa = Object()
         }
@@ -208,12 +236,12 @@ export default {
       // 如果文件树为空，自动创建空文件
       if (this.treeData.length === 0) {
         this.treeData.push({
-          name: 'main.cpp',
-          path: 'main.cpp',
+          name: languageConf[this.language].defaultFileName,
+          path: languageConf[this.language].defaultFileName,
           isLeaf: true,
           fa: Object()
         })
-        this.zip.file('main.cpp', '')
+        this.zip.file(languageConf[this.language].defaultFileName, '')
         this.currentFile = this.treeData[0]
         this.title = this.currentFile.path
         this.selectedNode = this.treeData[0]
@@ -357,20 +385,20 @@ export default {
         if (this.selectedNode.isLeaf) {
           this.code = ''
           this.currentFile = Object()
-          this.title = '输入代码'
+          this.title = '请选择文件'
         } else if (this.currentFile.name) {
           let tempNode = this.currentFile.fa
           while (tempNode.name) {
             if (tempNode === this.selectedNode) {
               this.code = ''
               this.currentFile = Object()
-              this.title = '输入代码'
+              this.title = '请选择文件'
               break
             }
             tempNode = tempNode.fa
           }
         }
-        if (!this.selectedNode.fa.name) {
+        if (!this.selectedNode.fa || !this.selectedNode.fa.children) {
           for (let i = 0; i < this.treeData.length; i++) {
             if (this.treeData[i] === this.selectedNode) {
               this.zip.remove(this.treeData[i].path)

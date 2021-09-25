@@ -1,7 +1,7 @@
 <template>
   <a-spin :spinning="loading" class="problem_spin">
     <a-row :gutter="[16,16]" style="height: 100%">
-      <a-col :xl="{span:14, offset:5}" :lg="{span:16}">
+      <a-col :xl="{span:16, offset:4}" :lg="{span:16}">
         <a-card :title="problem.name" style="height: 100%">
           <a-space direction="vertical">
             <p>
@@ -26,6 +26,7 @@
             <MultiFileEditor
               :zip-u-r-l="zipURL"
               :language="language"
+              :is-editor="true"
               v-if="multiFile"
               ref="mEditor">
             </MultiFileEditor>

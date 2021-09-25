@@ -1,7 +1,7 @@
 <template>
   <a-spin :spinning="loading" class="problem_spin">
     <a-row :gutter="[16,16]" style="height: 100%">
-      <a-col :xl="{span:14, offset:5}" :lg="{span:16}">
+      <a-col :xl="{span:16, offset:4}" :lg="{span:16}">
         <a-card :title="problem.name" style="height: 100%">
           <a-space direction="vertical">
             <p>
@@ -26,6 +26,7 @@
             <MultiFileEditor
               :zip-u-r-l="zipURL"
               :language="language"
+              :is-editor="true"
               v-if="multiFile"
               ref="mEditor">
             </MultiFileEditor>
@@ -147,7 +148,9 @@ export default {
         if (!this.multiFile) {
           this.code = localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || ''
         } else {
+          console.log(this.language)
           this.zipURL = localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || ''
+          this.$refs.mEditor.handleZipChanged()
         }
       } else {
         const fileReader = new FileReader()
@@ -166,7 +169,9 @@ export default {
             if (!this.multiFile) {
               this.code = localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || ''
             } else {
+              console.log(this.language)
               this.zipURL = localStorage.getItem(`problem:${this.$route.params.id}:code:${this.language}`) || ''
+              this.$refs.mEditor.handleZipChanged()
             }
           }
           fileReader.readAsDataURL(content)
@@ -198,6 +203,7 @@ export default {
           fileReader.readAsDataURL(content)
         })
       }
+      console.log(c)
       createSubmission({
         problem_id: this.problem.id,
         language: this.language,

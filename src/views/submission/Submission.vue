@@ -197,7 +197,7 @@ export default {
         if (!data.submission.judged) {
           this.fetch(true)
         } else {
-          if (poll && data.submission.status === 'ACCEPTED' && !localStorage.getItem('letter:read:1')) {
+          if (data.submission.status === 'ACCEPTED' && !localStorage.getItem('letter:read:1')) {
             this.$confirm({
               icon: h => (
                 <a-icon type="info-circle"/>

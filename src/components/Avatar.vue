@@ -1,5 +1,5 @@
 <template>
-  <a-avatar :size="size" :setSrc="avatar" :style="{verticalAlign: 'middle'}" >
+  <a-avatar :size="size" :src="avatar" :style="{verticalAlign: 'middle'}" :load-error="loadError" >
     {{ user.nickname }}
   </a-avatar>
 </template>
@@ -26,7 +26,11 @@ export default {
       avatar: 'https://gravatar.loli.net/avatar/' + md5(this.user.email.trim().toLowerCase()) + '?d=404'
     }
   },
-  mounted () {}
+  methods: {
+    loadError () {
+      this.avatar = ''
+    }
+  }
 }
 </script>
 

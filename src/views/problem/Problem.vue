@@ -6,7 +6,7 @@
           <a-skeleton active :loading="problem_loading">
             <markdown v-model="problem.description">
             </markdown>
-            <test-case v-for="t in problem.test_cases" :t="t" :key="t.id" :can-read-secret="can_read_secret"/>
+            <test-case v-for="t in problem.test_cases" :t="t" :key="t.id" :can-read-secret="can_read_secret" v-if="!isGuest"/>
           </a-skeleton>
           <router-link :to="{name: 'problem.edit', params: {id :problem.id}}" slot="extra" v-if="can_edit_problem">
             <a-button>
@@ -57,7 +57,7 @@
               </a-button>
             </router-link>
           </a-card>
-          <a-card class="submission_card">
+          <a-card class="submission_card" v-if="!isGuest">
             <template slot="title">最近提交</template>
             <a-list size="small" bordered :data-source="submissions">
               <a-list-item slot="renderItem" slot-scope="s">
@@ -115,6 +115,7 @@ export default {
       submission_loading: true,
       downloading: false,
       download_message: '',
+      isGuest: this.$store.state.user.info.isGuest,
       can_edit_problem: this.$store.getters.can('update_problem', 'problem', this.$route.params.id) || this.$store.getters.can('update_problem'),
       can_read_problem: this.$store.getters.can('read_problem', 'problem', this.$route.params.id) || this.$store.getters.can('read_problem'),
       can_read_secret: this.$store.getters.can('read_problem_secrets', 'problem', this.$route.params.id) || this.$store.getters.can('read_problem_secrets'),
@@ -158,19 +159,21 @@ export default {
         })
         console.error(err)
       })
-      getSubmissions({
-        problem_id: this.id,
-        user_id: this.$store.state.user.info.id,
-        limit: 5
-      }).then(data => {
-        this.submission_loading = false
-        this.submissions = data.submissions
-      }).catch(err => {
-        this.$error({
-          content: '遇到错误：' + err.message
+      if (!this.isGuest) {
+        getSubmissions({
+          problem_id: this.id,
+          user_id: this.$store.state.user.info.id,
+          limit: 5
+        }).then(data => {
+          this.submission_loading = false
+          this.submissions = data.submissions
+        }).catch(err => {
+          this.$error({
+            content: '遇到错误：' + err.message
+          })
+          console.error(err)
         })
-        console.error(err)
-      })
+      }
     },
     downloadAttachment () {
       const url = config.apiUrl + '/api/problem/' + this.problem.id + '/attachment_file'

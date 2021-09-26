@@ -26,7 +26,7 @@
 
     <div>
       <a-row :gutter="24">
-        <a-col :xl="user.class_taking.length + user.class_managing.length === 0 ? 24 : 16" :lg="24" :md="24" :sm="24" :xs="24">
+        <a-col :xl="class_taking.length + class_managing.length === 0 ? 24 : 16" :lg="24" :md="24" :sm="24" :xs="24">
           <a-card
             class="problem_set-list"
             style="margin-bottom: 24px;"

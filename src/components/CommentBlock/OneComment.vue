@@ -1,107 +1,105 @@
 <template>
-  <a-comment>
-    <div>
-      <a-spin :spinning="loading">
-        <a-skeleton active :loading="loading">
-          <div :style="{'--coll': this.coll}" class="basic">
+  <div>
+    <a-spin :spinning="loading">
+      <a-skeleton active :loading="loading">
+        <div :style="{'--coll': this.coll}" class="basic">
 
-            <div style="margin-up:5pt; margin-left:2pt;margin-right:2pt;">
-              <div>
-                <a-row justify="space-between">
-                  <span><avatar size="large" :user="this.comment.User"></avatar></span>
-                  <span>{{ this.comment.User.nickname }}</span> <span
-                    v-if="this.comment.User.nickname===this.$store.state.user.info.nickname">(你)</span>
-                  <span> #{{ this.comment.ID }}</span>
-                </a-row>
+          <div style="margin-top:5pt; margin-left:2pt;margin-right:2pt;">
+            <div>
+              <a-row justify="space-between">
+                <span><avatar size="large" :user="this.comment.User"></avatar></span>
+                <span>{{ this.comment.User.nickname }}</span> <span
+                  v-if="this.comment.User.nickname===this.$store.state.user.info.nickname">(你)</span>
+                <span> #{{ this.comment.ID }}</span>
+              </a-row>
+              <br>
+              <a-row>
+                <markdown v-model="this.comment.Content"></markdown>
                 <br>
-                <a-row>
-                  <markdown v-model="this.comment.Content"></markdown>
-                  <br>
-                  <div style="margin-right:20pt">
-                    <span key="comment-basic-like">
-                      <a-tooltip title="Like">
-                        <a-icon type="like" :theme="this.actions['👍'] === 1 ? 'filled' : 'outlined'" @click="active('👍')" />
-                      </a-tooltip>
-                      <span style="padding-left: '8px'; cursor: 'auto'">
-                        :{{ actionCount['👍'] }}
-                      </span>
+                <div style="margin-right:20pt">
+                  <span>
+                    <a-tooltip title="Like">
+                      <a-icon type="like" :theme="this.actions['👍'] === 1 ? 'filled' : 'outlined'" @click="active('👍')" />
+                    </a-tooltip>
+                    <span style="padding-left: '8px'; cursor: 'auto'">
+                      :{{ actionCount['👍'] }}
                     </span>
-                    <span key="comment-basic-dislike">
-                      <a-tooltip title="Dislike">
-                        <a-icon
-                          type="dislike"
-                          :theme="this.actions['👎'] === 1 ? 'filled' : 'outlined'"
-                          @click="active('👎')" />
-                      </a-tooltip>
-                      <span style="padding-left: '8px'; cursor: 'auto'">
-                        :{{ actionCount['👎'] }}
-                      </span>
+                  </span>
+                  <span>
+                    <a-tooltip title="Dislike">
+                      <a-icon
+                        type="dislike"
+                        :theme="this.actions['👎'] === 1 ? 'filled' : 'outlined'"
+                        @click="active('👎')" />
+                    </a-tooltip>
+                    <span style="padding-left: '8px'; cursor: 'auto'">
+                      :{{ actionCount['👎'] }}
                     </span>
-                    <span v-if="!this.canEdit"><a-button @click="reply()"> 回复</a-button></span>
-                    <span
-                      v-if="this.canDeleteComment || (this.comment.User.nickname===this.$store.state.user.info.nickname)">
-                      <a-popconfirm
-                        title="确定删除此评论吗"
-                        ok-text="删除"
-                        cancel-text="再想想"
-                        @confirm="deleteTargetComment()"
-                      >
-                        <a-icon slot="icon" type="question-circle-o" style="color: red" />
-                        <a-button> 删除评论</a-button>
-                      </a-popconfirm>
-                    </span>
-                    <span style="float:right">
-                      <a-tooltip slot="datetime" :title="moment(this.comment.created_at).format('YYYY-MM-DD HH:mm:ss')">
-                        <span>{{ moment(this.comment.created_at).fromNow() }}</span>
-                      </a-tooltip>
-                    </span>
+                  </span>
+                  <span v-if="!this.canEdit"><a-button @click="reply()"> 回复</a-button></span>
+                  <span
+                    v-if="this.canDeleteComment || (this.comment.User.nickname===this.$store.state.user.info.nickname)">
+                    <a-popconfirm
+                      title="确定删除此评论吗"
+                      ok-text="删除"
+                      cancel-text="再想想"
+                      @confirm="deleteTargetComment()"
+                    >
+                      <a-icon slot="icon" type="question-circle-o" style="color: red" />
+                      <a-button> 删除评论</a-button>
+                    </a-popconfirm>
+                  </span>
+                  <span style="float:right">
+                    <a-tooltip slot="datetime" :title="moment(this.comment.created_at).format('YYYY-MM-DD HH:mm:ss')">
+                      <span>{{ moment(this.comment.created_at).fromNow() }}</span>
+                    </a-tooltip>
+                  </span>
+                </div>
+                <div v-if="this.canEdit">
+                  <span><avatar size="large" :user="this.$store.state.user.info"></avatar></span>
+                  <span> 你的发言</span>
+                  <div slot="content">
+                    <a-form-item>
+                      <mark-down-editor v-model="description" :handleAt="handleAt" :handleHashTag="handleHashTag" />
+                    </a-form-item>
+                    <a-form-item>
+                      <div style="margin-left:20pt; margin-right:20pt">
+                        <span><a-button html-type="submit" :loading="submitting" type="primary" @click="handleCancel()">
+                          取消
+                        </a-button></span>
+                        <span style="float:right"><a-button
+                          html-type="submit"
+                          :loading="submitting"
+                          type="primary"
+                          @click="handleSubmit()">
+                          提交
+                        </a-button></span>
+                      </div>
+                    </a-form-item>
                   </div>
-                  <div v-if="this.canEdit">
-                    <span><avatar size="large" :user="this.$store.state.user.info"></avatar></span>
-                    <span> 你的发言</span>
-                    <div slot="content">
-                      <a-form-item>
-                        <mark-down-editor v-model="description" :handleAt="handleAt" :handleHashTag="handleHashTag" />
-                      </a-form-item>
-                      <a-form-item>
-                        <div style="margin-left:20pt; margin-right:20pt">
-                          <span><a-button html-type="submit" :loading="submitting" type="primary" @click="handleCancel()">
-                            取消
-                          </a-button></span>
-                          <span style="float:right"><a-button
-                            html-type="submit"
-                            :loading="submitting"
-                            type="primary"
-                            @click="handleSubmit()">
-                            提交
-                          </a-button></span>
-                        </div>
-                      </a-form-item>
-                    </div>
-                  </div>
-                  <a-list
-                    v-if="children.length!==0"
-                    :data-source="children"
-                    :split="false"
-                    :size="large">
-                    <a-list-item slot="renderItem" slot-scope="keyID">
-                      <one-comment
-                        style="width:95%; margin-left:5pt"
-                        :depth="depth + 1"
-                        :comment="jsonStr[keyID]['data']"
-                        :canDeleteComment="canDeleteComment"
-                        :jsonStr="jsonStr[keyID]">
-                      </one-comment>
-                    </a-list-item>
-                  </a-list>
-                </a-row>
-              </div>
+                </div>
+                <a-list
+                  v-if="children.length!==0"
+                  :data-source="children"
+                  :split="false"
+                  size="large">
+                  <a-list-item slot="renderItem" slot-scope="keyID">
+                    <one-comment
+                      style="width:95%; margin-left:5pt"
+                      :depth="depth + 1"
+                      :comment="jsonStr[keyID]['data']"
+                      :canDeleteComment="canDeleteComment"
+                      :jsonStr="jsonStr[keyID]">
+                    </one-comment>
+                  </a-list-item>
+                </a-list>
+              </a-row>
             </div>
           </div>
-        </a-skeleton>
-      </a-spin>
-    </div>
-  </a-comment>
+        </div>
+      </a-skeleton>
+    </a-spin>
+  </div>
 </template>
 
 <script>
@@ -130,6 +128,7 @@ export default {
       comparerConf,
       languageConf,
       config,
+      submitting: false,
       moment,
       loading: true,
       canEdit: false,

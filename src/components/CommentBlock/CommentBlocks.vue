@@ -4,7 +4,7 @@
       <a-list
         :data-source="comments"
         :load="true"
-        :size="large"
+        size="large"
         :split="false"
         :pagination="{ ...pagination, onChange: onChange, onShowSizeChange: showSizeChange}"
         ref="comments"
@@ -58,6 +58,7 @@ export default {
   props: ['targetType', 'targetID'],
   data () {
     return {
+      submitting: false,
       blockLoading: true,
       canEdit: false,
       canDeleteComment: false,

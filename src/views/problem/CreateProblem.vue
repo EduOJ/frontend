@@ -195,6 +195,9 @@ export default {
             compare_script_name: this.form.compare_script_name,
             attachment_file: this.form.attachment_file[0]
           }).then(resp => {
+            this.$store.dispatch('GetInfo').then(data => {
+              this.$store.commit('SET_INFO', data)
+            })
             this.$confirm({
               title: '成功',
               content: '创建成功',

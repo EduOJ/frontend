@@ -90,7 +90,6 @@
                   }"/>
               </a-card>
               <MultiFileEditor
-                :zip-u-r-l="zipURL"
                 :language="submission.language"
                 :is-editor="false"
                 :zip-blob="code"

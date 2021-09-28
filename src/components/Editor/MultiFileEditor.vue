@@ -72,7 +72,8 @@
             mode: languageConf[language] && languageConf[language].mimeType || 'text/html',
             line: true,
             viewportMargin: Infinity,
-            extraKeys: extraKeys
+            extraKeys: extraKeys,
+            readOnly: !currentFile.path
           }" />
       </a-card>
     </a-col>

@@ -32,6 +32,17 @@
             :validate-status="validations.Privacy.validateStatus">
             <a-switch size="large" v-model="form.privacy" disabled />
           </a-form-model-item>
+          <a-form-model-item ref="tags" prop="tags" label="标签" :help="validations.Tags.help" :validate-status="validations.Tags.validateStatus">
+            <a-select
+              size="large"
+              mode="tags"
+              placeholder="标签"
+              v-model="form.tags"
+              style="width: 300px"
+            >
+            </a-select>
+          </a-form-model-item>
+
           <a-form-model-item ref="language_allowed" prop="language_allowed" label="允许使用的语言" :help="validations.LanguageAllowed.help" :validate-status="validations.LanguageAllowed.validateStatus">
             <a-select
               size="large"
@@ -281,6 +292,10 @@ export default {
           validateStatus: ''
         },
         MemoryLimit: {
+          help: '',
+          validateStatus: ''
+        },
+        Tags: {
           help: '',
           validateStatus: ''
         },
@@ -536,7 +551,8 @@ export default {
             language_allowed: this.form.language_allowed.join(','),
             build_arg: this.form.build_arg,
             compare_script_name: this.form.compare_script_name,
-            attachment_file: attachmentFile
+            attachment_file: attachmentFile,
+            tags: this.form.tags
           })]
           if (this.form.deleteAllTestCase) {
             promises.push(deleteAllTestCase(this.form.id))

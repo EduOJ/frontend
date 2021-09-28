@@ -10,7 +10,7 @@
         </a-checkbox>
         <a-input v-model="search" placeholder="搜索" @change="handleSearchChange">
           <a-icon slot="prefix" type="search" />
-          <a-icon slot="suffix" type="close" @click="() => this.search=''" />
+          <a-icon slot="suffix" type="close" @click="() => {this.search=''; handleSearchChange()}" />
         </a-input>
       </a-space>
     </div>
@@ -32,10 +32,44 @@
       ref="table"
       @change="handleTableChange"
     >
+      <div
+        slot="tagFilterDropdown"
+        style="padding: 8px"
+      >
+        <a-row>
+          <a-select
+            size="small"
+            mode="tags"
+            placeholder="标签"
+            v-model="searchingTags"
+            style="width: 200px;margin-bottom: 5px"
+          >
+          </a-select>
+        </a-row>
+        <a-row type="flex" justify="space-around">
+          <a-button
+            type="primary"
+            icon="search"
+            size="small"
+            @click="() => {
+              updateRoute(); fetch()}"
+          >
+            搜索
+          </a-button>
+          <a-button icon="close" size="small" @click="() => {this.searchingTags = [];updateRoute(); fetch()}">
+            清空
+          </a-button>
+        </a-row>
+      </div>
       <template slot="name" slot-scope="text, record">
         <router-link :to="{name: 'problem', params: {id: record.id}}">
           {{ text }}
         </router-link>
+      </template>
+      <template slot="tags" slot-scope="text">
+        <a-tag style="cursor: pointer" :key="tag" v-for="tag in text" @click="addTag(tag)" :color="searchingTags.indexOf(tag) !== -1 ? 'green' : 'orange'">
+          {{ tag }}
+        </a-tag>
       </template>
       <template slot="language_allowed" slot-scope="text">
         <Language
@@ -92,6 +126,11 @@ export default {
         scopedSlots: { customRender: 'name' }
       },
       {
+        title: '标签',
+        dataIndex: 'tags',
+        scopedSlots: { customRender: 'tags', filterDropdown: 'tagFilterDropdown' }
+      },
+      {
         title: '语言',
         dataIndex: 'language_allowed',
         scopedSlots: { customRender: 'language_allowed' },
@@ -125,14 +164,15 @@ export default {
           cell: ResizableTableHeaderWithColumns
         }
       },
+      searchingTags: this.$route.query && this.$route.query.tags && this.$route.query.tags.split(',') || [],
       tried: this.$route.query && this.$route.query.tried === 'true' || false,
       passed: this.$route.query && this.$route.query.passed === 'true' || false,
-      deleting: {},
+      deleting: this.$route.query && this.$route.query.tags && this.$route.query.tags.split(',') || [],
       deleteModelText: '',
       visible: false,
       confirmLoading: false,
       data: [],
-      search: '',
+      search: this.$route.query && this.$route.query.search || '',
       pagination: {
         showSizeChanger: true,
         showQuickJumper: true,
@@ -141,7 +181,8 @@ export default {
           '50',
           '100'
         ],
-        pageSize: 50,
+        current: this.$route.query && +this.$route.query.page || 1,
+        pageSize: this.$route.query && +this.$route.query.pageSize || 50,
         showTotal: (total, range) => `共 ${total} 条数据, 正在显示 ${range[0]} - ${range[1]} 条`
       },
       loading: false,
@@ -173,21 +214,55 @@ export default {
     })
   },
   watch: {
-    '$route' (r) {
+    $route (r) {
       this.tried = this.$route.query && this.$route.query.tried === 'true' || false
       this.passed = this.$route.query && this.$route.query.passed === 'true' || false
-      this.fetch({
-        pageSize: this.$refs.table.pagination.pageSize,
-        page: this.$refs.table.pagination.current
-      })
+      this.searchingTags = this.$route.query && this.$route.query.tags && this.$route.query.tags.split(',') || []
+      this.pagination.pageSize = this.$route.query && +this.$route.query.pageSize || 50
+      this.pagination.current = this.$route.query && +this.$route.query.page || 1
+      this.search = this.$route.query && this.$route.query.search || ''
+      this.fetch()
     }
   },
   methods: {
+    addTag (tag) {
+      if (this.searchingTags.indexOf(tag) === -1) {
+        this.searchingTags.push(tag)
+        this.updateRoute()
+        this.fetch()
+      } else {
+        this.searchingTags.splice(this.searchingTags.indexOf(tag), 1)
+        this.updateRoute()
+        this.fetch()
+      }
+    },
     customRow (record) {
-      console.log(record)
       return {
         className: record.passed ? 'passed-problem-row' : null
       }
+    },
+    updateRoute () {
+      const params = {
+        tried: this.tried,
+        passed: this.passed,
+        pageSize: this.pagination.pageSize,
+        page: this.pagination.current,
+        tags: this.searchingTags.join(','),
+        search: this.search
+      }
+      history.pushState(
+        {},
+        null,
+        this.$route.path +
+        '?' +
+        Object.keys(params)
+          .map(key => {
+            return (
+              encodeURIComponent(key) + '=' + encodeURIComponent(params[key])
+            )
+          })
+          .join('&')
+      )
     },
     checkboxChange (name) {
       return e => {
@@ -201,27 +276,8 @@ export default {
               break
           }
         }
-        const params = {
-          tried: this.tried,
-          passed: this.passed
-        }
-        history.pushState(
-          {},
-          null,
-          this.$route.path +
-          '?' +
-          Object.keys(params)
-            .map(key => {
-              return (
-                encodeURIComponent(key) + '=' + encodeURIComponent(params[key])
-              )
-            })
-            .join('&')
-        )
-        this.fetch({
-          pageSize: this.$refs.table.pagination.pageSize,
-          page: this.$refs.table.pagination.current
-        })
+        this.updateRoute()
+        this.fetch()
       }
     },
     handleDeleteBtnClick (record) {
@@ -238,38 +294,33 @@ export default {
         this.confirmLoading = false
         this.deleteModelText = '删除成功!'
         this.deleting = {}
-        this.fetch({
-          pageSize: this.$refs.table.pagination.pageSize,
-          page: this.$refs.table.pagination.current
-        })
+        this.fetch()
         setTimeout(_ => {
           this.visible = false
         }, 500)
       })
     },
     handleSearchChange () {
-      this.fetch({
-        pageSize: this.$refs.table.pagination.pageSize,
-        page: this.$refs.table.pagination.current
-      })
+      this.updateRoute()
+      this.fetch()
     },
     handleTableChange (pagination, filters, sorter) {
+      console.log(pagination)
       this.pagination = pagination
       this.sorter = sorter
-      this.fetch({
-        pageSize: pagination.pageSize,
-        page: pagination.current
-      })
+      this.updateRoute()
+      this.fetch()
     },
     fetch (params = {}) {
       this.loading = true
       getProblems({
         search: this.search,
-        limit: params.pageSize,
-        offset: (params.page - 1) * params.pageSize || 0,
+        limit: this.pagination.pageSize,
+        offset: (this.pagination.current - 1) * this.pagination.pageSize || 0,
         user_id: this.$store.state.user.info.id || null,
         tried: this.$store.state.user.info.id && this.tried,
-        passed: this.$store.state.user.info.id && this.passed
+        passed: this.$store.state.user.info.id && this.passed,
+        tags: this.searchingTags.join(',')
       }).then(data => {
         const pagination = { ...this.pagination }
         pagination.total = data.total

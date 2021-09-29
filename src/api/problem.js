@@ -27,7 +27,11 @@ export function deleteProblem (id) {
 export function updateProblem (id, param) {
   const formData = new FormData()
   for (const prop in param) {
-    formData.append(prop, param[prop])
+    if (Array.isArray(param[prop])) {
+      formData.append(prop, param[prop].join(','))
+    } else {
+      formData.append(prop, param[prop])
+    }
   }
   return api({
     url: problemApi.AdminProblem + id,
@@ -39,7 +43,11 @@ export function updateProblem (id, param) {
 export function createProblem (param) {
   const formData = new FormData()
   for (const prop in param) {
-    formData.append(prop, param[prop])
+    if (Array.isArray(param[prop])) {
+      formData.append(prop, param[prop].join(','))
+    } else {
+      formData.append(prop, param[prop])
+    }
   }
   return api({
     url: problemApi.CreateProblem,

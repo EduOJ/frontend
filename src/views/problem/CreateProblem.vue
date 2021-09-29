@@ -25,6 +25,16 @@
           <a-form-model-item ref="privacy" prop="privacy" label="隐私模式（暂不支持）" hidden>
             <a-switch size="large" v-model="form.privacy" disabled />
           </a-form-model-item>
+          <a-form-model-item ref="tags" prop="tags" label="标签">
+            <a-select
+              size="large"
+              mode="tags"
+              placeholder="标签"
+              v-model="form.tags"
+              style="width: 300px"
+            >
+            </a-select>
+          </a-form-model-item>
           <a-form-model-item ref="language_allowed" prop="language_allowed" label="允许使用的语言">
             <a-select
               size="large"
@@ -193,7 +203,8 @@ export default {
             language_allowed: this.form.language_allowed.join(','),
             build_arg: this.form.build_arg,
             compare_script_name: this.form.compare_script_name,
-            attachment_file: this.form.attachment_file[0]
+            attachment_file: this.form.attachment_file[0],
+            tags: this.form.tags
           }).then(resp => {
             this.$store.dispatch('GetInfo').then(data => {
               this.$store.commit('SET_INFO', data)

@@ -22,7 +22,7 @@
       <template slot="id" slot-scope="text, record">
         <router-link
           :to="{name: 'submission', params: {id: record.id}}"
-          v-if="canReadAnswers || record.user.id === now_user_id || can('read_submission', 'problem', record.id)"
+          v-if="canReadAnswers || record.user.id === now_user_id || can('read_submission', 'problem', record.problem_id)"
         >
           {{ text }}
         </router-link>

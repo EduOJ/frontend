@@ -73,7 +73,21 @@ export default {
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
           { max: 30, message: '密码最长为30个字符', trigger: 'blur' },
-          { min: 5, message: '密码最短为5个字符', trigger: 'blur' }
+          { min: 5, message: '密码最短为5个字符', trigger: 'blur' },
+          {
+            validator (rule, value, callback) {
+              if (!/\d/.test(value)) {
+                callback(new Error('密码必须包含数字'))
+              }
+              if (!/[a-zA-Z]/.test(value)) {
+                callback(new Error('密码必须包含字母'))
+              }
+              if (!/[^a-zA-Z0-9]/.test(value)) {
+                callback(new Error('密码必须包含特殊字符'))
+              }
+              callback()
+            }
+          }
         ],
         password_verify: [
           { required: true, message: '请重复密码', trigger: 'blur' },

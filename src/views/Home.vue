@@ -66,13 +66,15 @@
                 </a-button>
               </router-link>
             </template>
-            <Empty v-if="!problem_exist"/>
-            <template v-if="problem_exist">
-              <h2>#{{ problem.id }} {{ problem.name }}</h2>
-              <a-skeleton active :loading="problem_loading">
-                <markdown v-model="problem.description">
-                </markdown>
-              </a-skeleton>
+            <template>
+              <Empty v-if="!problem_exist"/>
+              <div v-else>
+                <h2>#{{ problem.id }} {{ problem.name }}</h2>
+                <a-skeleton active :loading="problem_loading">
+                  <markdown v-model="problem.description">
+                  </markdown>
+                </a-skeleton>
+              </div>
             </template>
           </a-card>
         </a-col>

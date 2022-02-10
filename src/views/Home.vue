@@ -61,16 +61,19 @@
             </template>
             <template slot="extra">
               <router-link :to="{name: 'problem', params: {id: problem.id}}">
-                <a-button>
+                <a-button :disabled="!problem_exist">
                   前往做题
                 </a-button>
               </router-link>
             </template>
-            <h2>#{{ problem.id }} {{ problem.name }}</h2>
-            <a-skeleton active :loading="problem_loading">
-              <markdown v-model="problem.description">
-              </markdown>
-            </a-skeleton>
+            <Empty v-if="!problem_exist"/>
+            <template v-if="problem_exist">
+              <h2>#{{ problem.id }} {{ problem.name }}</h2>
+              <a-skeleton active :loading="problem_loading">
+                <markdown v-model="problem.description">
+                </markdown>
+              </a-skeleton>
+            </template>
           </a-card>
         </a-col>
         <a-col
@@ -131,13 +134,15 @@ import { getUserProblemInfo } from '@/api/user'
 import { getProblem } from '@/api/problem'
 import Markdown from '@/components/Editor/Markdown'
 import Avatar from '@/components/Avatar'
+import { Empty } from 'ant-design-vue'
 
 export default {
   name: 'Home',
   components: {
     PageHeaderWrapper,
     Markdown,
-    Avatar
+    Avatar,
+    Empty
   },
   data () {
     return {
@@ -147,7 +152,8 @@ export default {
       passed_count: '加载中',
       tried_count: '加载中',
       problem: {},
-      problem_loading: true
+      problem_loading: true,
+      problem_exist: true
     }
   },
   computed: {
@@ -183,9 +189,14 @@ export default {
       this.problem_loading = false
     }).catch(err => {
       console.log(err)
-      this.$error({
-        content: '获取随机题目时发生了错误'
-      })
+      if (err.response.message === 'NOT_FOUND') {
+        this.problem_loading = false
+        this.problem_exist = false
+      } else {
+        this.$error({
+          content: '获取随机题目时发生了错误'
+        })
+      }
     })
   },
   methods: {

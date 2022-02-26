@@ -40,7 +40,8 @@
               :loading="loginBtnLoading"
               :disabled="loginBtnLoading"
               htmlType="submit"
-              size="large">
+              size="large"
+              block>
               登录
             </a-button>
           </a-form-model-item>
@@ -50,6 +51,13 @@
               :to="{ name: 'register' }"
               class="text-link"
             >注册</router-link>
+          </span>
+          <span style="float: right;">
+            忘记密码? 点击前往
+            <router-link
+              :to="{ name: 'reset_password' }"
+              class="text-link"
+            >重置密码</router-link>
           </span>
         </a-form-model>
       </a-tab-pane>

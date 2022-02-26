@@ -10,7 +10,8 @@ const userApi = {
   ChangePassword: '/api/user/change_password',
   UpdateEmail: '/api/user/update_email',
   VerifyEmail: '/api/user/email_verification',
-  ResendEmail: '/api/user/resend_email_verification'
+  ResendEmail: '/api/user/resend_email_verification',
+  ResetPassword: '/api/auth/password_reset'
 }
 
 export function getUser (id) {
@@ -89,6 +90,22 @@ export function resendEmail (parameter) {
   return api({
     url: userApi.ResendEmail,
     method: 'post',
+    data: parameter
+  })
+}
+
+export function requestResetPassword (parameter) {
+  return api({
+    url: userApi.ResetPassword,
+    method: 'post',
+    data: parameter
+  })
+}
+
+export function doResetPassword (parameter) {
+  return api({
+    url: userApi.ResetPassword,
+    method: 'put',
     data: parameter
   })
 }

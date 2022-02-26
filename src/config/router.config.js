@@ -449,6 +449,13 @@ export const constantRouterMap = [
         component: () => import('@/views/user/UpdateEmail'),
         mata: { title: '修改邮箱' },
         hidden: true
+      },
+      {
+        path: 'reset_password',
+        name: 'reset_password',
+        component: () => import('@/views/user/ResetPassword'),
+        meta: { title: '重置密码' },
+        hidden: true
       }
     ]
   },

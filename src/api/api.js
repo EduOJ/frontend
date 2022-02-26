@@ -27,6 +27,12 @@ const api = req => {
             message: '错误',
             description: `你没有这么做的权限`
           })
+        } else if (resp.message === 'AUTH_NEED_EMAIL_VERIFICATION') {
+          router.push({ name: 'verify_email' })
+          notification.warning({
+            message: '警告',
+            description: '请验证邮箱'
+          })
         } else {
           const err = new Error(resp.message)
           err.response = resp

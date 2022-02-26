@@ -336,7 +336,7 @@ export const constantRouterMap = [
             path: '/account/settings',
             name: 'settings',
             component: () => import('@/views/account/settings/Index'),
-            meta: { title: '个人设置', hideHeader: true },
+            meta: { title: '个人设置' },
             redirect: '/account/settings/base',
             hideChildrenInMenu: true,
             children: [
@@ -435,6 +435,20 @@ export const constantRouterMap = [
         name: 'register',
         component: () => import(/* webpackChunkName: "user" */ '@/views/user/Register'),
         meta: { title: '注册' }
+      },
+      {
+        path: 'verify_email',
+        name: 'verify_email',
+        component: () => import('@/views/user/EmailVerify'),
+        mata: { title: '邮箱验证' },
+        hidden: true
+      },
+      {
+        path: 'update_email',
+        name: 'update_email',
+        component: () => import('@/views/user/UpdateEmail'),
+        mata: { title: '修改邮箱' },
+        hidden: true
       }
     ]
   },

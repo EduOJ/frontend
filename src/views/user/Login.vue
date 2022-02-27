@@ -86,6 +86,7 @@ import { beginLogin, finishLogin } from '@/api/webauthn'
 import base64url from 'base64-url'
 import storage from 'store'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
+import router from '@/router'
 
 export default {
   data () {
@@ -219,9 +220,15 @@ export default {
           content: '服务器内部错误，请稍后再试'
         })
       } else if (err.message === 'WRONG_USERNAME' || err.message === 'WRONG_PASSWORD') {
-        this.$error({
+        this.$confirm({
           title: '用户名或密码错误',
-          content: '用户名或密码错误!'
+          content: '用户名或密码错误!',
+          iconType: 'exclamation-circle',
+          okText: '知道了',
+          cancelText: '前往重置密码',
+          onCancel: () => {
+            router.push({ name: 'reset_password' })
+          }
         })
       } else {
         this.$error({

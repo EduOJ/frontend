@@ -14,8 +14,7 @@
           <a-button
             slot="enterButton"
             type="primary"
-            :loading="requestResetPasswordBtn"
-            :disabled="requestResetPasswordBtn"
+            :loading="requestResetPasswordBtnLoading"
           >
             {{ requestResetPasswordWord }}
           </a-button>
@@ -57,8 +56,7 @@
         <a-button
           type="primary"
           @click="doResetPassword"
-          :loading="doResetPasswordBtn"
-          :disabled="doResetPasswordBtn"
+          :loading="doResetPasswordBtnLoading"
           size="large"
           block
         >
@@ -79,8 +77,8 @@ export default {
     const that = this
     return {
       loading: true,
-      doResetPasswordBtn: false,
-      requestResetPasswordBtn: false,
+      doResetPasswordBtnLoading: false,
+      requestResetPasswordBtnLoading: false,
       requestResetPasswordWord: '发送验证码',
       waitTime: 61,
       form: { token: '' },
@@ -132,20 +130,18 @@ export default {
     requestResetPassword () {
       this.$refs.form.validateField(['email'], invalid => {
         if (!invalid) {
-          this.requestResetPasswordBtn = true
-          const that = this
-          that.waitTime--
-          that.requestResetPasswordBtn = true
+          this.requestResetPasswordBtnLoading = true
+          this.waitTime--
           this.requestResetPasswordWord = `${this.waitTime}s 后重新获取`
-          const timer = setInterval(function () {
-            if (that.waitTime > 1) {
-              that.waitTime--
-              that.requestResetPasswordWord = `${that.waitTime}s 后重新获取`
+          const timer = setInterval(() => {
+            if (this.waitTime > 1) {
+              this.waitTime--
+              this.requestResetPasswordWord = `${this.waitTime}s 后重新获取`
             } else {
               clearInterval(timer)
-              that.requestResetPasswordWord = '重新发送验证码'
-              that.requestResetPasswordBtn = false
-              that.waitTime = 61
+              this.requestResetPasswordWord = '重新发送验证码'
+              this.requestResetPasswordBtnLoading = false
+              this.waitTime = 61
             }
           }, 1000)
           requestResetPassword({
@@ -156,9 +152,9 @@ export default {
               content: '已发送验证码'
             })
           }).catch(err => {
-            that.requestResetPasswordBtn = false
-            that.waitTime = 61
-            that.requestResetPasswordWord = '发送验证码'
+            this.requestResetPasswordBtnLoading = false
+            this.waitTime = 61
+            this.requestResetPasswordWord = '发送验证码'
             clearInterval(timer)
             if (err.message === 'NOT_FOUND') {
               this.$notification['error']({
@@ -186,20 +182,22 @@ export default {
     doResetPassword () {
       this.$refs.form.validate(valid => {
         if (valid) {
-          this.doResetPasswordBtn = true
+          this.doResetPasswordBtnLoading = true
           doResetPassword({
             username: this.form.email,
             token: this.form.token,
             password: this.form.password
           }).then(resp => {
+            this.doResetPasswordBtnLoading = false
             this.$success({
               title: '成功',
               content: '密码重置成功',
-              onOk: function () {
+              onOk: () => {
                 router.push({ name: 'login' })
               }
             })
           }).catch(err => {
+            this.doResetPasswordBtnLoading = false
             if (err.message === 'NOT_FOUND') {
               this.$notification['error']({
                 message: '错误',
@@ -232,7 +230,8 @@ export default {
               })
             }
           })
-          this.doResetPasswordBtn = false
+        } else {
+          this.doResetPasswordBtnLoading = false
         }
       })
     }

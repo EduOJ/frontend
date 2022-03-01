@@ -23,8 +23,7 @@
         <a-button
           type="primary"
           @click="verifyEmail"
-          :loading="verifyEmailBtn"
-          :disabled="verifyEmailBtn"
+          :loading="verifyEmailBtnLoading"
           size="large"
         >
           验证邮箱
@@ -35,7 +34,6 @@
         <a-button
           type="link"
           @click="resendEmail"
-          :disabled="resendEmailBtn"
           :loading="resendEmailBtn"
           class="link-btn">
           {{ resendEmailBtnWord }}
@@ -51,7 +49,6 @@
 </template>
 
 <script>
-import store from '@/store'
 import { mapActions } from 'vuex'
 import { verifyEmail, resendEmail } from '@/api/user'
 import router from '@/router'
@@ -62,7 +59,7 @@ export default {
     const info = this.$store.state.user.info
     return {
       loading: true,
-      verifyEmailBtn: false,
+      verifyEmailBtnLoading: false,
       resendEmailBtn: false,
       resendEmailBtnWord: '重新发送验证码',
       waitTime: 61,
@@ -77,29 +74,21 @@ export default {
       }
     }
   },
-  mounted () {
-    this.GetInfo().then(data => {
-      store.commit('SET_INFO', data)
-      this.form = data
-      this.loading = false
-    })
-  },
   methods: {
     ...mapActions(['GetInfo']),
     resendEmail () {
-      const that = this
-      that.waitTime--
-      that.resendEmailBtn = true
+      this.waitTime--
+      this.resendEmailBtn = true
       this.resendEmailBtnWord = `${this.waitTime}s 后重新获取`
-      const timer = setInterval(function () {
-        if (that.waitTime > 1) {
-          that.waitTime--
-          that.resendEmailBtnWord = `${that.waitTime}s 后重新获取`
+      const timer = setInterval(() => {
+        if (this.waitTime > 1) {
+          this.waitTime--
+          this.resendEmailBtnWord = `${this.waitTime}s 后重新获取`
         } else {
           clearInterval(timer)
-          that.resendEmailBtnWord = '重新发送验证码'
-          that.resendEmailBtn = false
-          that.waitTime = 61
+          this.resendEmailBtnWord = '重新发送验证码'
+          this.resendEmailBtn = false
+          this.waitTime = 61
         }
       }, 1000)
       resendEmail({}).then(resp => {
@@ -118,20 +107,22 @@ export default {
       })
     },
     verifyEmail () {
-      this.verifyEmailBtn = true
+      this.verifyEmailBtnLoading = true
       this.$refs.form.validate(valid => {
         if (valid) {
           verifyEmail({
             token: this.form.token
           }).then(resp => {
+            this.verifyEmailBtnLoading = false
             this.$success({
               title: '成功',
               content: '邮箱已验证',
-              onOk: function () {
+              onOk: () => {
                 router.push({ name: 'settings' })
               }
             })
           }).catch(err => {
+            this.verifyEmailBtnLoading = false
             if (err.message === 'WRONG_CODE') {
               this.$notification['error']({
                 message: '错误',
@@ -164,9 +155,10 @@ export default {
               })
             }
           })
+        } else {
+          this.verifyEmailBtnLoading = false
         }
       })
-      this.verifyEmailBtn = false
     }
   }
 }

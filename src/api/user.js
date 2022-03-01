@@ -9,8 +9,8 @@ const userApi = {
   GetUsers: '/api/users',
   ChangePassword: '/api/user/change_password',
   UpdateEmail: '/api/user/update_email',
-  VerifyEmail: '/api/user/email_verification',
-  ResendEmail: '/api/user/resend_email_verification',
+  VerifyEmail: '/api/auth/email_verification',
+  ResendEmail: '/api/auth/resend_email_verification',
   ResetPassword: '/api/auth/password_reset'
 }
 

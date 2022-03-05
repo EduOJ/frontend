@@ -1,11 +1,17 @@
 import request from '@/utils/request'
 import api from '@/api/api'
+import router from '@/router'
+import { notification } from 'ant-design-vue'
 const userApi = {
   GetUser: '/api/user/:id',
   GetUserProblemInfo: '/api/user/:id/problem_info',
   UserMe: '/api/user/me',
   GetUsers: '/api/users',
-  ChangePassword: '/api/user/change_password'
+  ChangePassword: '/api/user/change_password',
+  UpdateEmail: '/api/user/update_email',
+  VerifyEmail: '/api/auth/email_verification',
+  ResendEmail: '/api/auth/resend_email_verification',
+  ResetPassword: '/api/auth/password_reset'
 }
 
 export function getUser (id) {
@@ -31,6 +37,12 @@ export function getMe () {
     }).then(resp => {
       if (resp.message === 'SUCCESS') {
         resolve(resp.data)
+      } else if (resp.message === 'AUTH_NEED_EMAIL_VERIFICATION') {
+        router.push({ name: 'verify_email' })
+        notification.warning({
+          message: '警告',
+          description: '请验证邮箱'
+        })
       } else {
         const err = new Error(resp.message)
         err.response = resp
@@ -53,6 +65,46 @@ export function changePassword (parameter) {
 export function updateMe (parameter) {
   return api({
     url: userApi.UserMe,
+    method: 'put',
+    data: parameter
+  })
+}
+
+export function updateEmail (parameter) {
+  return api({
+    url: userApi.UpdateEmail,
+    method: 'put',
+    data: parameter
+  })
+}
+
+export function verifyEmail (patameter) {
+  return api({
+    url: userApi.VerifyEmail,
+    method: 'post',
+    data: patameter
+  })
+}
+
+export function resendEmail (parameter) {
+  return api({
+    url: userApi.ResendEmail,
+    method: 'post',
+    data: parameter
+  })
+}
+
+export function requestResetPassword (parameter) {
+  return api({
+    url: userApi.ResetPassword,
+    method: 'post',
+    data: parameter
+  })
+}
+
+export function doResetPassword (parameter) {
+  return api({
+    url: userApi.ResetPassword,
     method: 'put',
     data: parameter
   })

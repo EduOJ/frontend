@@ -51,11 +51,18 @@
                   {{ download_message }}</a-button>
               </a-descriptions-item>
             </a-descriptions>
-            <router-link :to="{name: 'problem.submit', params: {id: problem.id}}">
-              <a-button type="primary">
-                提交
-              </a-button>
-            </router-link>
+            <a-space>
+              <router-link :to="{name: 'problem.submit', params: {id: problem.id}}">
+                <a-button type="primary">
+                  提交
+                </a-button>
+              </router-link>
+              <router-link :to="{name: 'solution.creat'}">
+                <a-button type="danger" >
+                  题解
+                </a-button>
+              </router-link>
+            </a-space>
           </a-card>
           <a-card class="submission_card" v-if="!isGuest">
             <template slot="title">最近提交</template>

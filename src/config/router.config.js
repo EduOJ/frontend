@@ -73,6 +73,25 @@ export const constantRouterMap = [
         ]
       },
       {
+        path: '/solution/',
+        component: RouteView,
+        meta: { title: '题解管理' },
+        children: [
+            {
+              path: '/solution/add',
+              name: 'solution.creat',
+              component: () => import('@/views/solution/CreatSolution'),
+              meta: { title: '创建题解' }
+            },
+            {
+              path: '/solution/solutions',
+              name: 'solutions',
+              component: () => import('@/views/solution/Solutions'),
+              meta: { title: '题解' }
+            }
+        ]
+      },
+      {
         path: '/submissions',
         component: RouteView,
         meta: { title: '提交管理', icon: 'database' },

@@ -40,7 +40,18 @@ export default {
         method: 'get'
       }).then(resp => {
         this.loading = false
-        this.content = resp
+        if (resp === '') {
+          this.content = ''
+          return
+        }
+        const content = resp.split('\n')
+        const header = content.slice(0, 3).join('\n')
+        let inner = content.slice(3).join('\n')
+        for (let i = 0; i < 0x20; i += 1) {
+          inner = inner.replaceAll(String.fromCharCode(i), String.fromCharCode(i + 0x2400) + String.fromCharCode(i))
+        }
+        console.log(header + '\n' + inner)
+        this.content = header + '\n' + inner
       }).catch(err => {
         console.log(err)
         this.content = '发生了错误'
@@ -55,7 +66,6 @@ export default {
   },
   computed: {
     prettyHtml () {
-      console.log(this.content)
       if (this.content === '') {
         return '程序输出与标准答案完全一致或程序执行失败'
       }

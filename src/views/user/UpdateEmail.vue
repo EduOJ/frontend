@@ -51,7 +51,7 @@ export default {
         email: [
           { required: true, message: '请输入邮箱', trigger: 'blur' },
           { type: 'email', message: '请输入合法的邮箱', trigger: 'blur' },
-          { max: 30, message: '邮箱最长为30个字符', trigger: 'blur' },
+          { max: 320, message: '邮箱最长为320个字符', trigger: 'blur' },
           { min: 5, message: '邮箱最短为5个字符', trigger: 'blur' }
         ]
       }

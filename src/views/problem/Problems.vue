@@ -14,12 +14,17 @@
         </a-input>
       </a-space>
     </div>
-    <a-space v-if="can('create_problem')">
+    <a-space v-if="can('create_problem')" style="margin-bottom: 21px; width: 100%;">
       <router-link :to="{name: 'problem.add'}">
         <a-button>创建题目</a-button>
       </router-link>
     </a-space>
-    <p></p>
+    <a-space style="margin-bottom: 21px">
+      热门标签：
+      <a-tag style="cursor: pointer" :key="tag" v-for="tag in config.featured_tags" @click="addTag(tag)" :color="searchingTags.indexOf(tag) !== -1 ? 'green' : 'orange'">
+        {{ tag }}
+      </a-tag>
+    </a-space>
     <a-table
       :columns="columns"
       bordered
@@ -111,6 +116,7 @@ import { getProblems, deleteProblem } from '@/api/problem'
 import Language from '@/components/Language'
 import ResizableTableHeader from '@/components/Table/ResizableTableHeader.js'
 import languageConf from '@/config/languageConf'
+import config from '@/config/config'
 
 export default {
   data () {
@@ -189,7 +195,8 @@ export default {
       sorter: {
         sortField: 'id',
         sortOrder: 'ascend'
-      }
+      },
+      config
     }
   },
   computed: {
@@ -226,6 +233,8 @@ export default {
   },
   methods: {
     addTag (tag) {
+      this.pagination.pageSize = 50
+      this.pagination.current = 1
       if (this.searchingTags.indexOf(tag) === -1) {
         this.searchingTags.push(tag)
         this.updateRoute()

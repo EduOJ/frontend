@@ -57,10 +57,15 @@
                   提交
                 </a-button>
               </router-link>
-              <router-link :to="{name: 'solution.creat'}">
+              <router-link :to="{name: 'solutions'}">
                 <a-button type="danger" >
-                  题解
+                  查看题解
                 </a-button>
+              </router-link>
+              <router-link :to="{name: 'solution.creat'}">
+                <a-butten type="primary">
+                  创建题解
+                </a-butten>
               </router-link>
             </a-space>
           </a-card>
@@ -150,6 +155,8 @@ export default {
     format (time) {
       return moment(time).fromNow()
     },
+
+    // 获取题目
     fetch () {
       this.problem_loading = true
       getProblem(this.id).then(data => {

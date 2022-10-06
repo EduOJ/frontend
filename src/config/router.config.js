@@ -84,7 +84,7 @@ export const constantRouterMap = [
               meta: { title: '创建题解' }
             },
             {
-              path: '/solution/solutions',
+              path: '/solution/:id',
               name: 'solutions',
               component: () => import('@/views/solution/Solutions'),
               meta: { title: '题解' }

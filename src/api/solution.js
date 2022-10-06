@@ -3,7 +3,8 @@ import api from '@/api/api'
 const solutionApi = {
     GetSolutions: '/api/solutions',
     CreateSolution: '/api/solution/create',
-    Solution: '/api/solution'
+    Solution: '/api/solution',
+    GetSolutionComments: 'api/solution/comments'
 }
 
 export function getSolution (id) {
@@ -37,4 +38,12 @@ export function getSolutions (param) {
         ...param
       }
     })
+}
+
+// TODO
+export function getSolutionComments (id) {
+  return api({
+    url: solutionApi.GetSolutionComments,
+    method: 'get'
+  })
 }

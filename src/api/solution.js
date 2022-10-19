@@ -2,7 +2,7 @@ import api from '@/api/api'
 
 const solutionApi = {
     GetSolutions: '/api/solutions',
-    CreateSolution: '/api/solution/create',
+    CreateSolution: '/api/solution',
     Solution: '/api/solution',
     GetSolutionComments: 'api/solution/comments'
 }
@@ -32,7 +32,7 @@ export function createSolution (param) {
 
 export function getSolutions (param) {
     return api({
-      url: solutionApi.GetProblems,
+      url: solutionApi.GetSolutions,
       method: 'get',
       params: {
         ...param

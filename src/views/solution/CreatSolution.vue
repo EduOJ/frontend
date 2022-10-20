@@ -7,8 +7,8 @@
           :model="form"
           :rules="rules"
         >
-          <a-form-model-item ref="problemId" prop="problemId" label="题目编号">
-            <a-input size="large" v-model="form.problemId" disabled />
+          <a-form-model-item ref="problemID" prop="problemID" label="题目编号">
+            <a-input size="large" v-model="form.problemID" disabled />
           </a-form-model-item>
 
           <a-form-model-item ref="author" prop="author" label="作者">
@@ -28,15 +28,6 @@
           <a-form-model-item ref="description" prop="description" label="题解内容">
             <mark-down-editor unique-id="description_markdown" v-model="form.description"/>
           </a-form-model-item>
-          <!-- <a-form-model-item ref="public" prop="public" label="是否公开">
-            <a-switch size="large" v-model="form.public" />
-          </a-form-model-item> -->
-
-          <!-- <a-form-model-item ref="attachment_file" prop="attachment_file" label="题解附件">
-            <a-upload :file-list="form.attachment_file" :before-upload="beforeUpload" :remove="_ => {this.form.attachment_file = []}">
-              <a-button> <a-icon type="upload" /> 选择附件 </a-button>
-            </a-upload>
-          </a-form-model-item> -->
 
           <a-form-model-item :wrapper-col="{ span: 18, offset: 6 }">
             <a-space>
@@ -76,7 +67,7 @@ export default {
       submitBtn: false,
       form: {
         // TODO
-        problemId: '111',
+        problemID: 1,
         name: '',
         author: 'horizon',
         description: ''
@@ -89,32 +80,21 @@ export default {
         description: [
           { required: true, message: '请输入题解描述', trigger: 'blur' }
         ]
-        // public: [
-        //   { required: true, message: '请选择是否公开', trigger: 'blur' }
-        // ]
       }
     }
   },
   mounted () {
   },
   methods: {
-    // beforeUpload (file) {
-    //   this.form.attachment_file = [ file ]
-    //   console.log(this.form.attachment_file)
-    //   return false
-    // },
     onSubmit () {
       this.submitBtn = true
       this.$refs.form.validate(valid => {
         if (valid) {
           createSolution({
-            problemId: this.form.problemId,
+            problemID: this.form.problemID,
             name: this.form.name,
-            author: this.form.user,
-            description: this.form.description,
-            likes: 0
-            // public: this.form.public,
-            // attachment_file: this.form.attachment_file[0]
+            author: this.form.author,
+            description: this.form.description
           }).then(resp => {
             this.$store.dispatch('GetInfo').then(data => {
               this.$store.commit('SET_INFO', data)

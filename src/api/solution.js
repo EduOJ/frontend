@@ -3,8 +3,8 @@ import api from '@/api/api'
 const solutionApi = {
     GetSolutions: '/api/solutions',
     CreateSolution: '/api/solution',
-    Solution: '/api/solution',
-    GetSolutionComments: 'api/solution/comments'
+    // Solution: '/api/solution',
+    GetSolutionComments: '/api/solution/comments'
 }
 
 export function getSolution (id) {
@@ -24,7 +24,7 @@ export function createSolution (param) {
       }
     }
     return api({
-      url: solutionApi.CreateProblem,
+      url: solutionApi.CreateSolution,
       method: 'post',
       data: formData
     })

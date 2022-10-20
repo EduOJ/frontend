@@ -12,7 +12,7 @@
           </a-form-model-item>
 
           <a-form-model-item ref="author" prop="author" label="作者">
-            <a-input size="large" v-model="form.author" disabled />
+            <a-input size="large" v-model="user.nickname" disabled />
           </a-form-model-item>
 
           <a-form-model-item ref="name" prop="name" label="题解标题">
@@ -56,6 +56,7 @@
 
 <script>
 import { createSolution } from '@/api/solution'
+import { mapState } from 'vuex'
 import MarkDownEditor from '@/components/Editor/MarkdownEditor'
 
 export default {
@@ -66,10 +67,9 @@ export default {
     return {
       submitBtn: false,
       form: {
-        // TODO
-        problemID: 1,
+        problemID: this.$route.params.id,
         name: '',
-        author: 'horizon',
+        author: '',
         description: ''
       },
       rules: {
@@ -83,6 +83,11 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapState({
+      user: (state) => state.user.info
+    })
+  },
   mounted () {
   },
   methods: {
@@ -93,7 +98,7 @@ export default {
           createSolution({
             problemID: this.form.problemID,
             name: this.form.name,
-            author: this.form.author,
+            author: this.user.nickname,
             description: this.form.description
           }).then(resp => {
             this.$store.dispatch('GetInfo').then(data => {
@@ -107,11 +112,10 @@ export default {
               icon: () => <a-icon type="check-circle" style="color: #52c41a !important;"/>,
               onOk: () => {
                 console.log(resp)
-                /** TODO */
                 this.$router.push({
-                  'name': 'problem',
+                  'name': 'solution',
                   params: {
-                    id: resp.problem.id
+                    id: this.form.problemID
                   }
                 })
               },
@@ -121,6 +125,7 @@ export default {
             })
             this.submitBtn = false
             }).catch(err => {
+                // TODO
                 console.log(err)
             })
         } else {

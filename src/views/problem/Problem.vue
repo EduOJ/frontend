@@ -62,7 +62,7 @@
                   查看题解
                 </a-button>
               </router-link>
-              <router-link :to="{name: 'solution.creat'}">
+              <router-link :to="{name: 'solution.add', params: {id: problem.id}}">
                 <a-butten type="primary">
                   创建题解
                 </a-butten>

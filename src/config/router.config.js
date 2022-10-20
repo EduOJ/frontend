@@ -78,7 +78,7 @@ export const constantRouterMap = [
         meta: { title: '题解管理' },
         children: [
             {
-              path: '/solution/add',
+              path: '/solution/add/:id',
               name: 'solution.add',
               component: () => import('@/views/solution/CreatSolution'),
               meta: { title: '创建题解', permission: 'create_solution' }

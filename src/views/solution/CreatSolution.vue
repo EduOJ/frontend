@@ -124,10 +124,43 @@ export default {
               }
             })
             this.submitBtn = false
-            }).catch(err => {
-                // TODO
-                console.log(err)
-            })
+          }).catch(err => {
+            this.submitBtn = false
+            if (err.message === 'VALIDATION_ERROR') {
+              err.response.error.forEach(v => {
+                switch (v.field) {
+                  case 'Name':
+                    this.$refs.name.help = v.translation
+                    this.$refs.name.validateState = 'error'
+                    break
+                  case 'Description':
+                    this.$refs.description.help = v.translation
+                    this.$refs.description.validateState = 'error'
+                    break
+                  case 'ProblemID':
+                    this.$refs.ProblemID.help = v.translation
+                    this.$refs.ProblemID.validateState = 'error'
+                    break
+                  case 'Author':
+                    this.$refs.Author.help = v.translation
+                    this.$refs.Author.validateState = 'error'
+                    break
+                }
+              })
+            } else if (err.message === 'INTERNAL_ERROR') {
+              this.$notification['error']({
+                message: '错误',
+                description: '服务器内部错误，请稍后再试',
+                duration: 4
+              })
+            } else {
+              this.$notification['error']({
+                message: '错误',
+                description: err.message || '请求出现错误，请稍后再试',
+                duration: 4
+              })
+            }
+          })
         } else {
           this.submitBtn = false
           return false

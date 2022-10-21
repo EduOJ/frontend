@@ -57,7 +57,7 @@
                   提交
                 </a-button>
               </router-link>
-              <router-link :to="{name: 'solutions'}">
+              <router-link :to="{name: 'solutions', params: {id: problem.id}}">
                 <a-button type="danger" >
                   查看题解
                 </a-button>

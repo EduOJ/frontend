@@ -20,12 +20,12 @@
         </a-col>
       </a-row>
     </a-list-item>
-  <!-- </a-spin> -->
+    <!-- </a-spin> -->
   </a-list>
 </template>
 
 <script>
-// import { getSolutions } from '@/api/solution'
+import { getSolutions } from '@/api/solution'
 import Markdown from '@/components/Editor/Markdown'
 import CommentArea from '@/components/CommentArea/CommentArea'
 
@@ -37,24 +37,21 @@ export default {
   },
   data () {
     return {
-      // id: this.$route.params.id,
+      problemID: this.$route.params.id,
       problem_loading: false,
-      solutions: [{
-        // id: this.$route.params.id,
-        name: 'aaa',
-        description: 'aaa',
-        privacy: true,
-        public: true,
-        attachment_file_name: ''
-      },
-      {
-        // id: this.$route.params.id,
-        name: 'bbb',
-        description: 'bbb',
-        privacy: true,
-        public: true,
-        attachment_file_name: ''
-      }],
+      solutions: [],
+      // solutions: [{
+      //   name: '',
+      //   description: '',
+      //   author: '',
+      //   likes: 1
+      // },
+      // {
+      //   name: '',
+      //   description: '',
+      //   author: '',
+      //   likes: 1
+      // }],
       commentList: [
         {
           // actions: ['回复'],
@@ -77,18 +74,21 @@ export default {
     this.fetch()
   },
   methods: {
-    // fetch () {
-    //   this.solution_loading = true
-    //   getSolutions(this.id).then(data => {
-    //     this.solution_loading = false
-    //     this.solutions = data.solution
-    //   }).catch(err => {
-    //     this.$error({
-    //       content: '遇到错误：' + err.message
-    //     })
-    //     console.error(err)
-    //   })
-    // }
+    fetch () {
+      // this.solution_loading = true
+      getSolutions(this.problemID).then(data => {
+        this.solution_loading = false
+        this.solutions = data.solutions
+      }).catch(err => {
+        this.$error({
+          content: '遇到错误：' + err.message
+        })
+        console.error(err)
+      })
+      // for (let i = 1; i <= this.solutions.length; i++) {
+
+      // }
+    }
   }
 }
 

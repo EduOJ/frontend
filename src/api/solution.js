@@ -3,25 +3,14 @@ import api from '@/api/api'
 const solutionApi = {
     GetSolutions: '/api/solutions',
     CreateSolution: '/api/solution',
-    // Solution: '/api/solution',
-    GetSolutionComments: '/api/solution/comments'
-}
-
-export function getSolution (id) {
-    return api({
-      url: solutionApi.Solution + id,
-      method: 'get'
-    })
+    GetSolutionComments: '/api/solution/comments',
+    CreateSolutionComments: '/api/solution/comment'
 }
 
 export function createSolution (param) {
     const formData = new FormData()
     for (const prop in param) {
-      if (Array.isArray(param[prop])) {
-        formData.append(prop, param[prop].join(','))
-      } else {
-        formData.append(prop, param[prop])
-      }
+      formData.append(prop, param[prop])
     }
     return api({
       url: solutionApi.CreateSolution,
@@ -30,15 +19,18 @@ export function createSolution (param) {
     })
 }
 
-export function getSolutions (param) {
+export function getSolutions (problemID) {
     return api({
       url: solutionApi.GetSolutions,
       method: 'get',
       params: {
-        ...param
+        problemID: problemID
       }
     })
 }
+
+// TODO
+export function CreateSolutionComments () {}
 
 // TODO
 export function getSolutionComments (id) {

@@ -15,7 +15,7 @@
           <a-card
             title="高人指点"
             :column="3">
-            <CommentArea :commentList="commentList"/>
+            <CommentList :comments="comments"></CommentList>
           </a-card>
         </a-col>
       </a-row>
@@ -28,49 +28,51 @@
 // import { getSolutions } from '@/api/solution'
 import Markdown from '@/components/Editor/Markdown'
 import CommentArea from '@/components/CommentArea/CommentArea'
+import CommentList from '@/components/CommentList/CommentList.vue'
 
 export default {
   name: 'Solution',
   components: {
     Markdown,
-    CommentArea
+    CommentArea,
+    CommentList
   },
   data () {
     return {
-      // id: this.$route.params.id,
-      problem_loading: false,
-      solutions: [{
-        // id: this.$route.params.id,
-        name: 'aaa',
-        description: 'aaa',
-        privacy: true,
-        public: true,
-        attachment_file_name: ''
-      },
-      {
-        // id: this.$route.params.id,
-        name: 'bbb',
-        description: 'bbb',
-        privacy: true,
-        public: true,
-        attachment_file_name: ''
-      }],
-      commentList: [
+      comments: [
         {
-          // actions: ['回复'],
-          author: 'Han Solo',
-          avatar: '',
-          content:
-            'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.'
-        },
-        {
-          // actions: ['回复'],
-          author: 'Han Solo',
-          avatar: '',
-          content:
-            'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.'
+          uid: 'uid000',
+          userName: '陌溪',
+          avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+          content: '我是一级评论',
+          reply: [
+            {
+              uid: 'uid001',
+              userName: '陌溪',
+              avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+              content: '我是二级评论',
+              reply: [
+                {
+                  uid: 'uid002',
+                  userName: '陌溪',
+                  avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+                  content: '我是三级评论',
+                  reply: []
+                }
+              ]
+            }, {
+              uid: 'uid003',
+              userName: '陌溪',
+              avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+              content: '我是二级评论',
+              reply: []
+            }
+          ]
         }
-      ]
+
+      ],
+      // id: this.$route.params.id,
+      problem_loading: false
     }
   },
   mounted () {

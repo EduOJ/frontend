@@ -6,15 +6,31 @@
       :data-source="commentList"
     >
       <a-list-item slot="renderItem" slot-scope="item">
-        <a-comment :author="item.author" :avatar="item.avatar">
-          <a>{{ item.author }}</a>
-          <p>{{ item.content }}</p>
+        <a-comment>
+          <span slot="actions" key="comment-nested-reply-to">Reply to</span>
+          <a slot="author">{{ item.author }}</a>
+          <a-avatar
+            slot="avatar"
+            src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+            alt="New"
+          />
+          <p slot="content">{{ item.content }}</p>
+          <a-comment>
+            <span slot="actions" key="comment-nested-reply-to">Reply to</span>
+            <a slot="author">author2</a>
+            <a-avatar
+              slot="avatar"
+              src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+              alt="New"
+            />
+            <p slot="content">author2's content</p>
+          </a-comment>
         </a-comment>
       </a-list-item>
     </a-list>
-    <a-button type="link" @click="handelReply" v-show="!replyVisible">
-      回复
-    </a-button>
+    <!-- <a-button type="link" @click="handelReply" v-show="!replyVisible">
+      回复1
+    </a-button> -->
     <a-form-item v-show="replyVisible">
       <a-textarea v-model="reply" :rows="1" />
     </a-form-item>
@@ -82,5 +98,7 @@ export default {
 </script>
 
 <style>
-
+  .comment {
+    display: none;
+  }
 </style>

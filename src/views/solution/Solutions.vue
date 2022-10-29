@@ -54,7 +54,6 @@ export default {
       //   author: '',
       //   likes: 1
       // }],
-      // commentList: [
       comments: [
         {
           uid: 'uid000',

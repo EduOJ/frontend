@@ -15,7 +15,8 @@
           <a-card
             title="高人指点"
             :column="3">
-            <CommentList :comments="comments"></CommentList>
+            <CommentList :comments="comments" />
+            <Reply solutionId="1" fatherNode="2" label="我就是高人" />
           </a-card>
         </a-col>
       </a-row>
@@ -27,50 +28,35 @@
 <script>
 import { getSolutions } from '@/api/solution'
 import Markdown from '@/components/Editor/Markdown'
-import CommentArea from '@/components/CommentArea/CommentArea'
-import CommentList from '@/components/CommentList/CommentList.vue'
+import CommentList from '@/components/CommentList/CommentList'
+import Reply from '@/components/CommentList/Reply.vue'
 
 export default {
   name: 'Solution',
   components: {
     Markdown,
-    CommentArea,
-    CommentList
+    CommentList,
+    Reply
   },
   data () {
     return {
       problemID: this.$route.params.id,
       problem_loading: false,
       solutions: [],
-      // solutions: [{
-      //   name: '',
-      //   description: '',
-      //   author: '',
-      //   likes: 1
-      // },
-      // {
-      //   name: '',
-      //   description: '',
-      //   author: '',
-      //   likes: 1
-      // }],
       comments: [
         {
           uid: 'uid000',
           userName: '陌溪',
-          avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
           content: '我是一级评论',
           reply: [
             {
               uid: 'uid001',
               userName: '陌溪',
-              avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
               content: '我是二级评论',
               reply: [
                 {
                   uid: 'uid002',
                   userName: '陌溪',
-                  avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
                   content: '我是三级评论',
                   reply: []
                 }
@@ -78,13 +64,11 @@ export default {
             }, {
               uid: 'uid003',
               userName: '陌溪',
-              avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
               content: '我是二级评论',
               reply: []
             }
           ]
         }
-
       ]
       // id: this.$route.params.id,
       // problem_loading: false

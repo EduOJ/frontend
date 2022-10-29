@@ -1,7 +1,7 @@
 <template>
   <div>
     <a-comment v-for="item in comments" :key="item.uid">
-      <span slot="actions">回复</span>
+      <Reply solutionId="1" fatherNode="2" label="回复" />
       <a slot="author">{{ item.userName }}</a>
       <a-avatar
         slot="avatar"
@@ -12,42 +12,31 @@
         {{ item.content }}
         {{ item.uid }}
       </p>
-      <!-- <CommentBox
-        class="comment"
-        :userInfo="userInfo"
-        :reply-info="replyInfo"
-        :id="item.uid"
-        @submit-box="submitBox"
-        @cancel-box="cancelBox"></CommentBox> -->
-      <CommentList :comments="item.reply"></CommentList>
+      <CommentList :comments="item.reply" />
     </a-comment>
   </div>
 </template>
 <script>
-import CommentBox from './CommentBox.vue'
-  export default {
-      name: 'CommentList',
-      props: ['comments'],
-      components: {
-            CommentBox
-        },
-      data () {
-          return {}
-      },
-      methods: {
-        // replyTo: function (item) {
-        //   var lists = document.getElementsByClassName('comment')
-        //   for (var i = 0; i < lists.length; i++) {
-        //     lists[i].style.display = 'none'
-        //   }
-        //   // document.getElementById(uid).style.display = 'block'
-        //   // this.replyInfo.replyUid = uid
-        //   console.log(lists)
-        //   console.log(item)
-        //   console.log(document.getElementById('uid003'))
-        // }
-      }
+import Reply from './Reply'
+
+export default {
+  components: {
+    Reply
+  },
+  name: 'CommentList',
+  props: {
+    comments: {
+      type: Array,
+      required: true
     }
+  },
+  data () {},
+  methods: {},
+  mounted () {
+    // this.fatch()
+    this.render()
+  }
+}
 </script>
 <style>
   .comment {

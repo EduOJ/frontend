@@ -16,7 +16,7 @@
             title="高人指点"
             :column="3">
             <CommentList :comments="comments" />
-            <Reply solutionId="1" fatherNode="2" label="我就是高人" />
+            <Reply :solutionId="item.id" :fatherNode="0" label="我就是高人" />
           </a-card>
         </a-col>
       </a-row>
@@ -45,27 +45,35 @@ export default {
       solutions: [],
       comments: [
         {
-          uid: 'uid000',
-          userName: '陌溪',
-          content: '我是一级评论',
-          reply: [
+          id: 1,
+          speaker: '陌溪',
+          description: '我是一级评论',
+          solutionId: 1,
+          fatherNode: 0,
+          kids: [
             {
-              uid: 'uid001',
-              userName: '陌溪',
-              content: '我是二级评论',
-              reply: [
+              id: 2,
+              speaker: '陌溪',
+              description: '我是二级评论',
+              solutionId: 1,
+              fatherNode: 1,
+              kids: [
                 {
-                  uid: 'uid002',
-                  userName: '陌溪',
-                  content: '我是三级评论',
-                  reply: []
+                  id: 3,
+                  speaker: '陌溪',
+                  description: '我是三级评论',
+                  solutionId: 1,
+                  fatherNode: 2,
+                  kids: []
                 }
               ]
             }, {
-              uid: 'uid003',
-              userName: '陌溪',
-              content: '我是二级评论',
-              reply: []
+              id: 4,
+              speaker: '陌溪',
+              description: '我是二级评论',
+              solutionId: 1,
+              fatherNode: 1,
+              kids: []
             }
           ]
         }
@@ -89,9 +97,6 @@ export default {
         })
         console.error(err)
       })
-      // for (let i = 1; i <= this.solutions.length; i++) {
-
-      // }
     }
   }
 }

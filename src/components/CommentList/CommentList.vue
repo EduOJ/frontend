@@ -1,21 +1,16 @@
 <template>
   <div>
-    <a-comment v-for="item in comments" :key="item.uid">
-      <Reply solutionId="1" fatherNode="2" label="回复" />
-      <a slot="author">{{ item.userName }}</a>
-      <a-avatar
-        slot="avatar"
-        :src="item.avatar"
-        :alt="item.userName"
-      />
+    <a-comment v-for="item in comments" :key="item.id">
+      <Reply :solutionId="item.solutionId" :fatherNode="item.id" label="回复" />
+      <a slot="author">{{ item.speaker }}</a>
       <p slot="content">
-        {{ item.content }}
-        {{ item.uid }}
+        {{ item.description }}
       </p>
-      <CommentList :comments="item.reply" />
+      <CommentList :comments="item.kids" />
     </a-comment>
   </div>
 </template>
+
 <script>
 import Reply from './Reply'
 
@@ -30,14 +25,17 @@ export default {
       required: true
     }
   },
-  data () {},
+  data () {
+    return {}
+  },
   methods: {},
   mounted () {
     // this.fatch()
-    this.render()
+    // this.render()
   }
 }
 </script>
+
 <style>
   .comment {
     display:none;

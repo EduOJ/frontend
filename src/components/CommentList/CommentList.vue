@@ -79,7 +79,8 @@ export default {
         // }
         // ]
         getSolutionComments(this.solutionID).then(data => {
-
+          console.log(data)
+          this.currentComments = data.root
         })
       } else {
         this.currentComments = this.comments

@@ -51,6 +51,7 @@ export default {
     return {
       submitBtn: false,
       isRoot: false,
+      father_Node: 0,
       form: {
         reply: ''
       },
@@ -76,16 +77,16 @@ export default {
       this.submitBtn = true
       this.$refs.form.validate(valid => {
         if (valid) {
-          // console.log(!this.fatherNode)
           if (!this.fatherNode) {
-            this.fatherNode = 1
+            this.father_Node = 1
             this.isRoot = true
           } else {
             this.isRoot = false
+            this.father_Node = this.fatherNode
           }
           createSolutionComments({
             solutionId: this.solutionId,
-            fatherNode: this.fatherNode,
+            fatherNode: this.father_Node,
             reply: this.form.reply,
             speaker: this.user.nickname,
             isRoot: this.isRoot

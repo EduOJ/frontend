@@ -1,7 +1,7 @@
 <template>
   <div>
     <a-comment v-for="item in currentComments" :key="item.id">
-      <Reply :solutionId="item.solutionId" :fatherNode="item.id" label="回复" />
+      <Reply :solutionId="item.solution_id" :fatherNode="item.id" label="回复" />
       <a slot="author">{{ item.speaker }}</a>
       <p slot="content">
         {{ item.description }}
@@ -79,8 +79,8 @@ export default {
         // }
         // ]
         getSolutionComments(this.solutionID).then(data => {
-          console.log(data)
-          this.currentComments = data.root
+          console.log(data.solution_comment_tree.roots)
+          this.currentComments = data.solution_comment_tree.roots
         })
       } else {
         this.currentComments = this.comments
@@ -89,7 +89,6 @@ export default {
   },
   mounted () {
     this.fatch()
-    // this.render()
   }
 }
 </script>

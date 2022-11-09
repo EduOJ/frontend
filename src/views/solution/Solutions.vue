@@ -41,7 +41,6 @@ export default {
       problemID: this.$route.params.id,
       solution_loading: false,
       solutions: []
-      // comments: []
       // comments: [
       //   {
       //     id: 1,

@@ -102,8 +102,13 @@ export default {
               icon: () => <a-icon type="check-circle" style="color: #52c41a !important;"/>,
               onOk: () => {
                 console.log(resp)
+                this.replyVisible = !this.replyVisible
+                this.$router.go(0)
               },
-              onCancel: () => {}
+              onCancel: () => {
+                this.replyVisible = !this.replyVisible
+                this.$router.go(0)
+              }
             })
             this.submitBtn = false
           }).catch(err => {
@@ -154,7 +159,6 @@ export default {
     }
   },
   mounted () {
-    // this.render()
   }
 }
 </script>

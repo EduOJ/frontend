@@ -79,7 +79,7 @@ export default {
         // }
         // ]
         getSolutionComments(this.solutionID).then(data => {
-          console.log(data.solution_comment_tree.roots)
+          // console.log(data.solution_comment_tree.roots)
           this.currentComments = data.solution_comment_tree.roots
         })
       } else {

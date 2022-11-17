@@ -4,10 +4,12 @@
       <a-row :gutter="[16,16]" style="height: 100%">
         <a-col :xl="{span:14, offset:2}" :lg="{span:16}" style="height: 100%">
           <a-card :title="item.name" style="height: 100%">
+            <template #extra><p>Author: {{ item.author }}</p></template>
             <a-skeleton active :loading="solution_loading">
               <markdown v-model="item.description">
               </markdown>
             </a-skeleton>
+            <LikeButton :solutionId="item.id" :style="{ marginTop: '20px' }" />
           </a-card>
         </a-col>
         <a-col :xl="{span:6}" :lg="{span:8}" >
@@ -28,13 +30,15 @@ import { getSolutions } from '@/api/solution'
 import Markdown from '@/components/Editor/Markdown'
 import CommentList from '@/components/CommentList/CommentList'
 import Reply from '@/components/CommentList/Reply.vue'
+import LikeButton from '@/components/LikeButton/LikeButton'
 
 export default {
   name: 'Solution',
   components: {
     Markdown,
     CommentList,
-    Reply
+    Reply,
+    LikeButton
   },
   data () {
     return {
@@ -89,6 +93,7 @@ export default {
       getSolutions(this.problemID).then(data => {
         // this.solution_loading = false
         this.solutions = data.solutions
+        // console.log(this.solutions)
       }).catch(err => {
         this.$error({
           content: '遇到错误：' + err.message

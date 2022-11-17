@@ -33,6 +33,12 @@ export default {
       user: (state) => state.user.info
     })
   },
+  created: function () {
+    this.fetch()
+  },
+  // mounted () {
+  //   this.fetch()
+  // },
   methods: {
     fetch () {
       likes({
@@ -40,10 +46,10 @@ export default {
         userId: this.user.id,
         isLike: 0
       }).then(resp => {
-        console.log(resp)
-        // this.count = resp.count
-        // this.isLike = resp.islike
-      }).catch(err => {
+          // console.log(resp)
+          this.count = resp.likes.count
+          this.isLike = resp.likes.isLike
+        }).catch(err => {
         console.log(err)
       })
     },
@@ -52,29 +58,31 @@ export default {
       // console.log(this.user.id)
       if (!this.isLike) {
         // console.log('before', this.isLike)
-        this.count += 1
-        this.isLike = true
+        // this.count += 1
+        // this.isLike = true
         likes({
           solutionId: this.solutionId,
           userId: this.user.id,
           isLike: 1
+        }).then(resp => {
+          this.count = resp.likes.count
+          this.isLike = resp.likes.isLike
         })
         // console.log('after', this.isLike)
       } else {
-        this.count -= 1
-        this.isLike = false
+        // this.count -= 1
+        // this.isLike = false
         likes({
           solutionId: this.solutionId,
           userId: this.user.id,
           isLike: -1
+        }).then(resp => {
+          this.count = resp.likes.count
+          this.isLike = resp.likes.isLike
         })
         // console.log('cancel', this.isLike)
       }
     }
-  },
-  mounted () {
-    // this.fatch()
-    // this.render()
   }
 }
 

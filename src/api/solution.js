@@ -29,14 +29,18 @@ export function getSolutions (problemID) {
 }
 
 export function likes (param) {
-  const formData = new FormData()
-  for (const prop in param) {
-    formData.append(prop, param[prop])
-  }
+  // const formData = new FormData()
+  // for (const prop in param) {
+  //   formData.append(prop, param[prop])
+  // }
   return api({
     url: solutionApi.Likes,
     method: 'get',
-    data: formData
+    params: {
+      solutionId: param.solutionId,
+      userId: param.userId,
+      isLike: param.isLike
+    }
   })
 }
 

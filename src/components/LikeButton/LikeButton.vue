@@ -11,7 +11,8 @@
 
 <script>
 import { mapState } from 'vuex'
-import { getLikes, like } from '@/api/solution'
+// import { getLikes } from '@/api/solution'
+import { likes } from '@/api/solution'
 
 export default {
   name: 'LikeButton',
@@ -34,9 +35,10 @@ export default {
   },
   methods: {
     fetch () {
-      getLikes({
+      likes({
         solutionId: this.solutionId,
-        userId: this.user.id
+        userId: this.user.id,
+        isLike: 0
       }).then(resp => {
         console.log(resp)
         // this.count = resp.count
@@ -52,19 +54,19 @@ export default {
         // console.log('before', this.isLike)
         this.count += 1
         this.isLike = true
-        like({
+        likes({
           solutionId: this.solutionId,
           userId: this.user.id,
-          isLike: this.isLike
+          isLike: 1
         })
         // console.log('after', this.isLike)
       } else {
         this.count -= 1
         this.isLike = false
-        like({
+        likes({
           solutionId: this.solutionId,
           userId: this.user.id,
-          isLike: this.isLike
+          isLike: -1
         })
         // console.log('cancel', this.isLike)
       }

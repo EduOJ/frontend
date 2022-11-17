@@ -3,8 +3,7 @@ import api from '@/api/api'
 const solutionApi = {
   GetSolutions: '/api/solutions',
   CreateSolution: '/api/solution',
-  GetLikes: '/api/likes',
-  Like: '/api/like'
+  Likes: '/api/likes'
 }
 
 export function createSolution (param) {
@@ -29,26 +28,26 @@ export function getSolutions (problemID) {
   })
 }
 
-export function getLikes (param) {
+export function likes (param) {
   const formData = new FormData()
   for (const prop in param) {
     formData.append(prop, param[prop])
   }
   return api({
-    url: solutionApi.GetLikes,
+    url: solutionApi.Likes,
     method: 'get',
     data: formData
   })
 }
 
-export function like (param) {
-  const formData = new FormData()
-  for (const prop in param) {
-    formData.append(prop, param[prop])
-  }
-  return api({
-    url: solutionApi.Like,
-    method: 'post',
-    data: formData
-  })
-}
+// export function getLikes (param) {
+//   const formData = new FormData()
+//   for (const prop in param) {
+//     formData.append(prop, param[prop])
+//   }
+//   return api({
+//     url: solutionApi.Likes,
+//     method: 'get',
+//     data: formData
+//   })
+// }

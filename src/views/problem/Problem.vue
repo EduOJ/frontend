@@ -146,13 +146,16 @@ export default {
     fetch () {
       this.problem_loading = true
       getProblem(this.id).then(data => {
-        this.problem_loading = false
         data.problem.test_cases.sort((a, b) => {
           if (a.sample === b.sample) { return a.id - b.id }
           return !a.sample ? 1 : -1 // make sample testcase top.
         })
+        if (data.problem.language_allowed.includes('any')) {
+          data.problem.language_allowed = Object.keys(this.languageConf)
+        }
         this.problem = data.problem
         this.download_message = data.problem.attachment_file_name
+        this.problem_loading = false
       }).catch(err => {
         this.$error({
           content: '遇到错误：' + err.message

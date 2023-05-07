@@ -335,6 +335,11 @@ export default {
         pagination.total = data.total
         this.loading = false
         this.data = data.problems
+        this.data.forEach((v) => {
+          if (v.language_allowed.includes('any')) {
+            v.language_allowed = Object.keys(this.languageConf)
+          }
+        })
         this.pagination = pagination
         if (params.callback) {
           params.callback()

@@ -43,6 +43,10 @@
             </a-select>
           </a-form-model-item>
 
+          <a-form-model-item ref="any_language_allowed" prop="any_language_allowed" label="允许使用任何语言？" :help="validations.LanguageAllowAny.help" :validate-status="validations.LanguageAllowAny.validateStatus">
+            <a-switch size="large" v-model="form.any_language_allowed"/>
+          </a-form-model-item>
+
           <a-form-model-item ref="language_allowed" prop="language_allowed" label="允许使用的语言" :help="validations.LanguageAllowed.help" :validate-status="validations.LanguageAllowed.validateStatus">
             <a-select
               size="large"
@@ -50,6 +54,7 @@
               placeholder="允许使用哪些语言？"
               v-model="form.language_allowed"
               style="width: 300px"
+              :disabled="form.any_language_allowed"
             >
               <a-select-option v-for="(language, key) of languageConf" :key="key">
                 {{ language.displayName }}
@@ -240,7 +245,8 @@ export default {
         build_arg: '',
         compare_script_name: '',
         attachment_file: [],
-        deleteAllTestCase: false
+        deleteAllTestCase: false,
+        any_language_allowed: false
       },
       bulkAddTestCase: [],
       bulkAddTestCaseDummy: [],
@@ -272,6 +278,9 @@ export default {
         ],
         compare_script_name: [
           { required: true, message: '请选择评测脚本', trigger: 'blur' }
+        ],
+        any_language_allowed: [
+          { required: true, message: '请选择是否允许所有语言', trigger: 'blur' }
         ]
       },
       validations: {
@@ -314,6 +323,10 @@ export default {
         CompareScriptName: {
           help: '',
           validateStatus: ''
+        },
+        LanguageAllowAny: {
+          help: '',
+          validateStatus: ''
         }
       }
     }
@@ -336,7 +349,6 @@ export default {
           this.form.memory_limit_unit = 'KiB'
         }
         if (data.problem.attachment_file_name) {
-          console.log('FILE!')
           this.$set(this.form.attachment_file, 0, {
               uid: '1',
               name: data.problem.attachment_file_name,
@@ -344,6 +356,8 @@ export default {
             }
           )
         }
+        this.form.any_language_allowed = data.problem.language_allowed.includes('any')
+        this.form.language_allowed = data.problem.language_allowed.filter(v => v !== 'any')
         this.form.test_cases.forEach((v) => {
           this.$set(v, 'newly_created', false)
           this.$set(v, 'deleted', false)
@@ -416,6 +430,9 @@ export default {
             break
           case 'language_allowed':
             this.validations.LanguageAllowed.help = ''
+            break
+          case 'any_language_allowed':
+            this.validations.LanguageAllowAny.help = ''
             break
           case 'build_arg':
             this.validations.BuildArg.help = ''
@@ -548,7 +565,7 @@ export default {
               GiB: 1024 * 1024 * 1024
             }[this.form.memory_limit_unit],
             time_limit: this.form.time_limit,
-            language_allowed: this.form.language_allowed.join(','),
+            language_allowed: this.form.any_language_allowed ? 'any' : this.form.language_allowed.join(','),
             build_arg: this.form.build_arg,
             compare_script_name: this.form.compare_script_name,
             attachment_file: attachmentFile,

@@ -159,6 +159,9 @@ export default {
           if (a.sample === b.sample) { return a.id - b.id }
           return !a.sample ? 1 : -1 // make sample testcase top.
         })
+        if (data.problem.language_allowed.includes('any')) {
+          data.problem.language_allowed = Object.keys(this.languageConf)
+        }
         this.problem = data.problem
         this.download_message = data.problem.attachment_file_name
       }).catch(err => {

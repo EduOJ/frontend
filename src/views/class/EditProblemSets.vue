@@ -37,9 +37,11 @@
                   查看提交
                 </a-button>
               </router-link>
-              <a-button type="link">
-                查看分数（功能开发中）
-              </a-button>
+              <router-link :to="{name: 'class.problemSet.GetGrades', params: {classID: klass.id,problemSetID: problem_set.id}}">
+                <a-button type="link">
+                  查看分数
+                </a-button>
+              </router-link>
               <a-button type="link" style="color: #E23c39;" @click="deleteProblemSet(problem_set)">
                 删除
               </a-button>

@@ -189,7 +189,7 @@ export const constantRouterMap = [
                 meta: { title: '查看提交' }
               },
               {
-                path: '/class/:classID/problem_set/:problemSetID/grades', // id真的是id吗
+                path: '/class/:classID/problem_set/:problemSetID/grades',
                 name: 'class.problemSet.GetGrades',
                 component: () => import('@/views/class/ProblemSetGrades'),
                 meta: { title: '查看成绩' }

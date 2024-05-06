@@ -9,7 +9,7 @@
         :data="DetailsForm"
         :fields="json_fields"
         :header="title"
-        name="sss.xls"
+        :name="title"
       >
         <a-button @click="populateJsonFields">
           一键下载excel
@@ -100,7 +100,7 @@ export default {
         time: [moment(), moment()],
         problems: []
       },
-      title: '成绩表格',
+      title: '',
       json_fields: {
         学号: 'user.username',
         姓名: 'user.nickname'
@@ -138,6 +138,7 @@ export default {
         this.columns.splice(_index, 0, dynamicColumn[i])
       }
       this.problemSet = resp.problem_set
+      this.title = `${resp.problem_set.name}成绩表格`
       this.data = resp.problem_set.grades.map(item => {
         const _detail = JSON.parse(item.detail)
         // 对于每个问题ID，如果没有对应的值，则将值置为0

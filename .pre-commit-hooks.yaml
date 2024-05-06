@@ -1,0 +1,5 @@
+repos:
+- repo: git@github.com:qianxi66/frontend.git # 仓库地址
+  rev: dev  # 版本号
+  hooks:
+  - id: check-yaml # 钩子ID

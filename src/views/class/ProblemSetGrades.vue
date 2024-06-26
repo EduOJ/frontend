@@ -87,7 +87,7 @@ export default {
       problemSetID: this.$route.params.problemSetID,
       classID: this.$route.params.classID,
       now_user_id: this.$store.state.user.info.id,
-      problemSet: {}, // 初始化
+      problemSet: {}, 
       columns: columns,
       components: {
         header: {
@@ -141,11 +141,10 @@ export default {
       this.title = `${resp.problem_set.name}成绩表格`
       this.data = resp.problem_set.grades.map(item => {
         const _detail = JSON.parse(item.detail)
-        // 对于每个问题ID，如果没有对应的值，则将值置为0
         for (const problem of resp.problem_set.problems) {
           const problemID = problem.id.toString()
           if (!(_detail.hasOwnProperty(problemID))) {
-            _detail[problemID] = 0 // 如果没有对应的值，则将值置为0
+            _detail[problemID] = 0 
           }
         }
         return {
@@ -156,7 +155,7 @@ export default {
       this.DetailsForm = this.data
       this.DetailsForm.sort((a, b) => a.user.username - b.user.username)
       this.problemSet.problems.forEach((problem) => {
-        // 将问题的名称作为键，问题的ID作为值，添加到 json_fields 中
+        // use problemname as key,problemID as value
         this.$set(this.json_fields, problem.name, problem.id.toString())
       })
       this.$set(this.json_fields, '总分', 'total')

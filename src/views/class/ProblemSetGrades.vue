@@ -11,7 +11,7 @@
         :header="title"
         :name="title"
       >
-        <a-button @click="populateJsonFields">
+        <a-button>
           一键下载excel
         </a-button>
       </download-excel>
@@ -155,6 +155,11 @@ export default {
       })
       this.DetailsForm = this.data
       this.DetailsForm.sort((a, b) => a.user.username - b.user.username)
+      this.problemSet.problems.forEach((problem) => {
+        // 将问题的名称作为键，问题的ID作为值，添加到 json_fields 中
+        this.$set(this.json_fields, problem.name, problem.id.toString())
+      })
+      this.$set(this.json_fields, '总分', 'total')
     }).catch(err => {
       this.$error({
         title: '发生错误',
@@ -170,13 +175,6 @@ export default {
   methods: {
     format (time) {
       return moment(time).format('lll')
-    },
-    populateJsonFields () {
-      this.problemSet.problems.forEach((problem) => {
-        // 将问题的名称作为键，问题的ID作为值，添加到 json_fields 中
-        this.$set(this.json_fields, problem.name, problem.id.toString())
-      })
-      this.$set(this.json_fields, '总分', 'total')
     },
     handleTableChange (pagination, filters, sorter) {
       console.log(pagination, filters, sorter)

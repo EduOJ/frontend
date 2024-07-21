@@ -9,7 +9,8 @@ const classApi = {
   CloneProblemSet: '/api/class/:id/problem_set/clone',
   CreateClass: '/api/class',
   ClassTaking: '/api/user/me/taking_classes',
-  ClassManaging: '/api/user/me/managing_classes'
+  ClassManaging: '/api/user/me/managing_classes',
+  ProblemSetGrades: '/api/class/:id/problem_set/:pid/grades'
 }
 
 export function addProblems (classID, problemSetId, problems) {
@@ -80,6 +81,12 @@ export function getClassManaging (param) {
   })
 }
 
+export function getProblemSetGrades (classID, problemSetId) {
+  return api({
+    url: classApi.ProblemSetGrades.replace(':id', classID).replace(':pid', problemSetId),
+    method: 'get'
+  })
+}
 export function getClass (id) {
   return api({
     url: classApi.Class.replace(':id', id),

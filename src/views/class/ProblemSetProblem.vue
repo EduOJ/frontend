@@ -9,6 +9,7 @@
             <test-case :base-url="`/api/class/${classID}/problem_set/${problemSetID}/problem/`" v-for="t in problem.test_cases" :t="t" :key="t.id" :can-read-secret="can_read_secret"/>
           </a-skeleton>
         </a-card>
+        <comment-blocks :targetID="this.$route.params.problemID" targetType="problem" ></comment-blocks>
       </a-col>
       <a-col :xl="{span:6}" :lg="{span:8}" >
         <a-space direction="vertical">
@@ -83,6 +84,7 @@
 import { getProblemSetProblem, getSubmissions } from '@/api/problem_set'
 import { getProblemSet } from '@/api/class'
 import Markdown from '@/components/Editor/Markdown'
+import MarkDownEditor from '@/components/Editor/MarkdownEditor'
 import RunStatus from '@/components/RunStatus'
 import TestCase from '@/components/TestCase'
 import config from '@/config/config'
@@ -91,13 +93,16 @@ import download from 'js-file-download'
 import moment from 'moment'
 import languageConf from '@/config/languageConf'
 import comparerConf from '@/config/comparerConf'
+import CommentBlocks from '@/components/CommentBlock/CommentBlocks'
 
 export default {
   name: 'Problem',
   components: {
     Markdown,
+    MarkDownEditor,
     TestCase,
-    RunStatus
+    RunStatus,
+    CommentBlocks
   },
   data () {
     return {
@@ -126,6 +131,18 @@ export default {
         compare_script_name: '',
         attachment_file_name: '',
         test_cases: []
+      },
+      pagination: {
+        current: 1,
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: [
+          '20',
+          '50',
+          '100'
+        ],
+        pageSize: 50,
+        showTotal: (total, range) => `共 ${total} 条数据, 正在显示 ${range[0]} - ${range[1]} 条`
       },
       problem_set: {},
       submissions: []
@@ -184,6 +201,7 @@ export default {
         console.error(err)
       })
     },
+
     downloadAttachment () {
       const url = config.apiUrl + '/api/problem/' + this.problem.id + '/attachment_file'
       this.downloading = true

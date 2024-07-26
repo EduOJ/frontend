@@ -46,7 +46,8 @@ import {
   message,
   notification,
   Collapse,
-  Timeline
+  Timeline,
+  Comment
 } from 'ant-design-vue'
 import Viser from 'viser-vue'
 
@@ -58,6 +59,7 @@ import PermissionHelper from '@/utils/helper/permission'
 import './directives/action'
 
 Vue.use(Collapse)
+Vue.use(Comment)
 Vue.use(ConfigProvider)
 Vue.use(Layout)
 Vue.use(Input)

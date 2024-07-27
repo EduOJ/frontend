@@ -129,6 +129,11 @@
                   <a-icon type="plus" /> 批量新建（会覆盖当前所有测试用例！）
                 </a-button>
               </a-button-group>
+              <span>自动修复换行符：</span>
+              <a-switch
+                checked-children="开启"
+                un-checked-children="关闭"
+                v-model="sanitize" />
             </a-space>
             <a-card v-for="t in form.test_cases" :key="t.id">
               <span slot="title">
@@ -231,6 +236,7 @@ export default {
     return {
       comparerConf,
       languageConf,
+      sanitize: false,
       submitBtnLoading: false,
       defaultFileList: [],
       form: {
@@ -580,6 +586,7 @@ export default {
                 problem_id: t.problem_id,
                 score: t.score,
                 sample: t.sample,
+                sanitize: this.sanitize,
                 input_file: t.input_file[0],
                 output_file: t.output_file[0]
               }))
@@ -600,6 +607,7 @@ export default {
                   id: t.id,
                   score: t.score,
                   sample: t.sample,
+                  sanitize: this.sanitize,
                   input_file: inputFile,
                   output_file: outputFile
                 }))

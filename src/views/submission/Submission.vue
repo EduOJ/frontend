@@ -76,7 +76,7 @@
                   </a-collapse-panel>
                 </a-collapse>
               </a-card>
-              <a-card title="源代码" :loading="code_loading">
+              <a-card title="源代码" :loading="code_loading" v-if="!languageConf[submission.language].multiFile">
                 文件名： {{ submission.file_name }}
                 <codemirror
                   v-model="code"
@@ -89,6 +89,13 @@
                     readOnly: true,
                   }"/>
               </a-card>
+              <MultiFileEditor
+                :language="submission.language"
+                :is-editor="false"
+                :zip-blob="code"
+                v-if="languageConf[submission.language].multiFile"
+                ref="codeEditor">
+              </MultiFileEditor>
             </a-space>
           </a-skeleton>
         </a-card>
@@ -114,6 +121,7 @@ import request from '@/utils/request'
 import storage from 'store'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import codemirror from '@/components/codemirror/codemirror'
+import MultiFileEditor from '@/components/Editor/MultiFileEditor'
 
 export default {
   name: 'Submission',
@@ -126,7 +134,8 @@ export default {
     Language,
     Code,
     Memory,
-    Diff
+    Diff,
+    MultiFileEditor
   },
   data () {
     return {
@@ -152,21 +161,37 @@ export default {
       code: ''
     }
   },
-  mounted () {
-    this.fetch()
+  async mounted () {
+    await this.fetch()
+    console.log(this.submission)
     request({
       url: this.config.apiUrl + `/api/submission/${this.$route.params.id}/code`,
       method: 'get',
-      responseType: 'text',
+      responseType: languageConf[this.submission.language].multiFile ? 'blob' : 'text',
       headers: {
         Authorization: storage.get(ACCESS_TOKEN) || ''
       },
       transformResponse: [
         data => data
       ]
-    }).then(resp => {
+    }).then(async resp => {
       this.code_loading = false
-      this.code = resp
+      console.log(resp)
+      if (!languageConf[this.submission.language].multiFile) {
+        // const reader = new FileReader()
+        // await reader.readAsText(resp, 'utf-8')
+        // reader.onload = (evt) => {
+        //   this.code = reader.result
+        // }
+        console.log('single')
+        this.code = resp
+      } else {
+        console.log('multi')
+        this.code = resp
+        this.$refs.codeEditor.zipBlob = resp
+        this.$refs.codeEditor.handleZipChanged()
+      }
+      // console.log(this.code)
       if (this.content === '') {
         this.content = '内容为空'
       }
@@ -183,12 +208,14 @@ export default {
     getContainer () {
       return this.$refs.container.$el
     },
-    fetch (poll) {
+    async fetch (poll) {
       this.loading = !poll
-      getSubmission(this.id, poll, poll ? this.submission.updated_at : null).then(data => {
+      await getSubmission(this.id, poll, poll ? this.submission.updated_at : null).then(data => {
         this.loading = false
         data.submission.runs.sort((a, b) => {
-          if (a.sample === b.sample) { return a.test_case_id - b.test_case_id }
+          if (a.sample === b.sample) {
+            return a.test_case_id - b.test_case_id
+          }
           return !a.sample ? 1 : -1 // make sample testcase top.
         })
         this.submission = data.submission

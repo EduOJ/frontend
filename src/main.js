@@ -21,6 +21,14 @@ import './permission' // permission control
 import './utils/filter' // global filter
 import './global.less'
 
+import JsonExcel from 'vue-json-excel'
+
+// import ElementUI from 'element-ui'
+// import 'element-ui/lib/theme-chalk/index.css'
+Vue.component('downloadExcel', JsonExcel)
+
+// Vue.use(ElementUI)
+
 Vue.config.productionTip = false
 
 // mount axios to `Vue.$http` and `this.$http`

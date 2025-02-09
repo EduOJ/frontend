@@ -193,6 +193,12 @@ export const constantRouterMap = [
                 name: 'class.problemSet.GetGrades',
                 component: () => import('@/views/class/ProblemSetGrades'),
                 meta: { title: '查看成绩' }
+              },
+              {
+                path: '/class/:classID/grades',
+                name: 'class.GetClassGrades',
+                component: () => import('@/views/class/ClassGrades'),
+                meta: { title: '查看全部作业成绩' }
               }
             ]
           }

@@ -24,9 +24,6 @@
               <a-button type="link">
                 查看分数（功能开发中）
               </a-button>
-              <a-button type="link">
-                查看分数（功能开发中）
-              </a-button>
               <a-button type="link" style="color: #E23c39;" @click="deleteProblem([problem])">
                 删除
               </a-button>

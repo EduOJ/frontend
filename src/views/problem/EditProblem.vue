@@ -236,7 +236,7 @@ export default {
     return {
       comparerConf,
       languageConf,
-      sanitize: false,
+      sanitize: true,
       submitBtnLoading: false,
       defaultFileList: [],
       form: {

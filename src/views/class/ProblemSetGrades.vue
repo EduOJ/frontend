@@ -87,7 +87,7 @@ export default {
       problemSetID: this.$route.params.problemSetID,
       classID: this.$route.params.classID,
       now_user_id: this.$store.state.user.info.id,
-      problemSet: {}, 
+      problemSet: {},
       columns: columns,
       components: {
         header: {
@@ -144,7 +144,7 @@ export default {
         for (const problem of resp.problem_set.problems) {
           const problemID = problem.id.toString()
           if (!(_detail.hasOwnProperty(problemID))) {
-            _detail[problemID] = 0 
+            _detail[problemID] = 0
           }
         }
         return {

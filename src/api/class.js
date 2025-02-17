@@ -10,7 +10,8 @@ const classApi = {
   CreateClass: '/api/class',
   ClassTaking: '/api/user/me/taking_classes',
   ClassManaging: '/api/user/me/managing_classes',
-  ProblemSetGrades: '/api/class/:id/problem_set/:pid/grades'
+  ProblemSetGrades: '/api/class/:id/problem_set/:pid/grades',
+  GetClassGrades: '/api/class/:id/grades'
 }
 
 export function addProblems (classID, problemSetId, problems) {
@@ -87,6 +88,14 @@ export function getProblemSetGrades (classID, problemSetId) {
     method: 'get'
   })
 }
+
+export function getClassGrades (classID) {
+  return api({
+    url: classApi.GetClassGrades.replace(':id', classID),
+    method: 'get'
+  })
+}
+
 export function getClass (id) {
   return api({
     url: classApi.Class.replace(':id', id),

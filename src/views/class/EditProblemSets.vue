@@ -9,8 +9,12 @@
               创建
             </a-button>
           </router-link>
+          <router-link :to="{name: 'class.GetClassGrades', param: {classID: this.klass.id}}">
+            <a-button type="link">
+              查看全部作业成绩
+            </a-button>
+          </router-link>
           <div class="space"></div>
-          <a-button>4</a-button>
         </div>
         <a-list :data-source="klass.problem_sets" bordered style="margin-top: 20px">
           <a-list-item slot="renderItem" slot-scope="problem_set">

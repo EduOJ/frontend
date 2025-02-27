@@ -21,7 +21,6 @@
               <a-icon type="delete" />
               移除学生
             </a-button>
-            <a-button>4</a-button>
           </div>
           <a-list :data-source="klass.students">
             <a-list-item slot="renderItem" slot-scope="student">

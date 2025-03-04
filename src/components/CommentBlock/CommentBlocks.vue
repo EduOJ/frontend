@@ -1,0 +1,243 @@
+<template>
+  <a-spin :spinning="blockLoading">
+    <a-skeleton active :loading="blockLoading">
+      <a-list
+        :data-source="comments"
+        :load="true"
+        size="large"
+        :split="false"
+        :pagination="{ ...pagination, onChange: onChange, onShowSizeChange: showSizeChange}"
+        ref="comments"
+        :border="true">
+        <a-list-item slot="renderItem" slot-scope="comment">
+          <one-comment
+            style="width:100%"
+            :depth="0"
+            :comment="comment"
+            :jsonStr="jsonTree[comment.ID.toString()]"
+            :canDeleteComment="canDeleteComment"></one-comment>
+        </a-list-item>
+      </a-list>
+      <div>
+        <span> 您的发言</span>
+        <div slot="content">
+          <a-form-item> </a-form-item>
+          <mark-down-editor unique-id="description_markdown" v-model="commentDescription" :dealAt="dealAt" :dealHashTag="dealHashTag"/>
+          <a-form-item>
+            <div class="toolbar-row">
+              <a-button html-type="submit" :loading="submitting" type="primary" @click="handleCancel()">
+                取消
+              </a-button>
+              <div class="space"></div>
+              <a-button html-type="submit" :loading="submitting" type="primary" @click="handleSubmit()">
+                提交
+              </a-button>
+            </div>
+          </a-form-item>
+        </div>
+      </div>
+    </a-skeleton>
+  </a-spin>
+</template>
+
+<script>
+import { createComment, getComment } from '@/api/comment'
+import { getUsers } from '@/api/user'
+import { getProblems } from '@/api/problem'
+import Markdown from '@/components/Editor/Markdown'
+import MarkDownEditor from '@/components/Editor/MarkdownEditor'
+import OneComment from '@/components/CommentBlock/OneComment'
+
+export default {
+  name: 'CommentBlocks',
+  components: {
+    Markdown,
+    MarkDownEditor,
+    OneComment
+  },
+  props: ['targetType', 'targetID'],
+  data () {
+    return {
+      submitting: false,
+      blockLoading: true,
+      canEdit: false,
+      canDeleteComment: false,
+      comments: [],
+      commentsNoneRoot: [],
+      jsonTree: {},
+      jsonChildren: {}, // children of all the nodes
+      commentsMap: {},
+      commentDescription: '',
+      pagination: {
+        current: 1,
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: ['5', '10', '20', '50'],
+        total: 0,
+        begin: 0,
+        pageSize: 5,
+        showTotal: (total, range) => `共 ${total} 条数据, 正在显示 ${this.pagination.begin + 1} - ${Math.min(this.pagination.begin + this.pagination.pageSize, total)} 条`
+      }
+    }
+  },
+  mounted () {
+    this.fetch()
+  },
+  methods: {
+    onChange (page, pageSize) {
+      this.pagination.current = page
+      this.pagination.begin = (page - 1) * pageSize
+      this.fetch()
+      this.$forceUpdate()
+    },
+    showSizeChange (current, size) {
+      this.pagination.current = 1
+      this.pagination.begin = 0
+      this.pagination.pageSize = size
+      this.fetch()
+      this.$forceUpdate()
+    },
+    fetch () {
+      console.log(this.$store.state.user.info)
+      for (var i = 0; i < this.$store.state.user.info.roles.length; i++) {
+        if (this.$store.state.user.info.roles[i]['name'] === 'admin') {
+          this.canDeleteComment = true
+          break
+        }
+      }
+      this.comments = []
+      this.commentsNoneRoot = []
+      this.jsonTree = {}
+      this.jsonChildren = {}
+      this.commentsMap = {}
+      getComment({
+        target_type: this.targetType,
+        target_id: Number(this.targetID),
+        limit: this.pagination.pageSize,
+        offset: this.pagination.begin
+      })
+        .then((data) => {
+          this.comments = data.RootComments
+          this.commentsNoneRoot = data.NotRootComments
+          this.parseJson()
+          this.pagination.total = data.total
+          this.pagination.begin = data.offset
+          this.blockLoading = false
+        })
+        .catch((err) => {
+          this.$error({
+            content: '遇到错误：' + err.message
+          })
+          console.error(err)
+        })
+    },
+    parseRecur (fatherID) {
+      var len = this.jsonChildren[fatherID.toString()].length
+      if (len === 0) return { 'data': this.commentsMap[fatherID.toString()] }
+      var temp = {}
+      for (var i = 0; i < len; i++) {
+        temp[this.jsonChildren[fatherID.toString()][i]] = this.parseRecur(this.jsonChildren[fatherID.toString()][i])
+      }
+      temp['data'] = this.commentsMap[fatherID.toString()]
+      return temp
+    },
+    parseJson () {
+      var len = this.comments.length
+      var len2 = this.commentsNoneRoot.length
+
+      for (var j = 0; j < len; j++) {
+        this.jsonChildren[(this.comments[j].ID).toString()] = []
+        this.commentsMap[(this.comments[j].ID).toString()] = this.comments[j]
+      }
+      for (var j2 = 0; j2 < len2; j2++) {
+        this.jsonChildren[(this.commentsNoneRoot[j2].ID).toString()] = []
+        this.commentsMap[(this.commentsNoneRoot[j2].ID).toString()] = this.commentsNoneRoot[j2]
+      }
+
+      for (var i = 0; i < len2; i++) {
+        this.jsonChildren[this.commentsNoneRoot[i].FatherID.toString()].push(this.commentsNoneRoot[i].ID)
+      }
+
+      for (var k = 0; k < len; k++) {
+        this.jsonTree[(this.comments[k].ID).toString()] = this.parseRecur(this.comments[k].ID)
+      }
+    },
+    handleSubmit () {
+      if (this.commentDescription.length < 2) {
+        this.$error({
+          content: '评论长度过短'
+        })
+      } else {
+        createComment({
+        father_id: 0,
+        target_id: Number(this.targetID),
+        target_type: this.targetType,
+        content: this.commentDescription
+        })
+        .then((data) => {
+            this.$confirm({
+              title: '成功',
+              content: '发送成功',
+              okText: '前往查看',
+              icon: () => <a-icon type="check-circle" style="color: #52c41a !important;"/>,
+              onOk: () => {
+                console.log(data)
+                this.commentDescription = ''
+                this.fetch()
+                this.$forceUpdate()
+              }
+            })
+        })
+        .catch(err => {
+        this.$error({
+          content: '遇到错误：' + err.message
+        })
+        console.error(err)
+      })
+      }
+    },
+    handleCancel () {
+      this.commentDescription = ''
+      this.$forceUpdate()
+    },
+    dealAt: function (val) {
+        getUsers({
+            offset: 0,
+            search: val
+        }).then(data => {
+            this.userSearchResult = data.users.map((v) => {
+                return {
+                    value: '  @' + v.username + '  ',
+                    html: `#${v.id} ${v.username} ${v.nickname}`
+                }
+            })
+        })
+        return this.userSearchResult
+    },
+    dealHashTag: function (val) {
+        getProblems({
+            offset: 0,
+            search: val
+        }).then(data => {
+            this.hashSearchResult = data.problems.map((v) => {
+                return {
+                    value: '  #' + v.name + '  ',
+                    html: `#${v.id} ${v.name} `
+                }
+            })
+        })
+        return this.hashSearchResult
+    }
+  }
+}
+</script>
+
+<style lang="sass" scoped>
+.toolbar-row
+  display: flex
+  width: 100%
+  :not(:last-child)
+    margin-right: 5px
+  .space
+    flex: 1
+</style>

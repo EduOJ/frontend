@@ -14,6 +14,7 @@
             </a-button>
           </router-link>
         </a-card>
+        <comment-blocks :targetID="problem.id" targetType="problem" ></comment-blocks>
       </a-col>
       <a-col :xl="{span:6}" :lg="{span:8}" >
         <a-space direction="vertical">
@@ -96,6 +97,7 @@ import languageConf from '@/config/languageConf'
 import Language from '@/components/Language'
 import moment from 'moment'
 import comparerConf from '@/config/comparerConf'
+import CommentBlocks from '@/components/CommentBlock/CommentBlocks'
 
 export default {
   name: 'Problem',
@@ -103,7 +105,8 @@ export default {
     Markdown,
     TestCase,
     RunStatus,
-    Language
+    Language,
+    CommentBlocks
   },
   data () {
     return {

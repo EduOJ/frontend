@@ -78,7 +78,7 @@ const vueConfig = {
         },
         // DO NOT REMOVE THIS LINE
         javascriptEnabled: true
-      }
+      },
     }
   },
 

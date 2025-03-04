@@ -52,7 +52,8 @@ export default {
         scopedSlots: {
           customRender: 'user_username',
           filterDropdown: 'filterDropdown',
-          filterIcon: 'filterIcon'
+          filterIcon: 'filterIcon',
+        width: 180
         },
         searching: '',
         sorter: (a, b) => a.user.username - b.user.username,
@@ -64,21 +65,23 @@ export default {
         scopedSlots: {
           customRender: 'user_nickname',
           filterDropdown: 'filterDropdown',
-          filterIcon: 'filterIcon'
+          filterIcon: 'filterIcon',
+        width: 180
         },
         searching: ''
       },
       {
         title: '总分',
         dataIndex: 'total',
-        scopedSlots: { customRender: 'total' }
+        scopedSlots: { customRender: 'total' },
+        width: 180
       }
     ]
 
     const ResizableTableHeaderWithColumns = (h, props, children) => {
       const draggingMap = {}
       columns.forEach(col => {
-        draggingMap[col.dataIndex] = null
+        draggingMap[col.dataIndex] = col.width
       })
       const draggingState = Vue.observable(draggingMap)
       return ResizableTableHeader(h, props, children, columns, draggingState)
@@ -130,7 +133,7 @@ export default {
         return {
           title: `${item.id} ${item.name}`,
           dataIndex: item.id,
-          width: 180
+          width: 200
         }
       })
       for (let i = 0; i < dynamicColumn.length; i++) {
@@ -159,6 +162,13 @@ export default {
         this.$set(this.json_fields, problem.name, problem.id.toString())
       })
       this.$set(this.json_fields, '总分', 'total')
+      this.$nextTick(() => {
+          for (const col of this.columns) {
+            if (col.thDom) {
+              col.width = col.thDom.getBoundingClientRect().width
+            }
+          }
+        })
     }).catch(err => {
       this.$error({
         title: '发生错误',

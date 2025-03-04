@@ -73,7 +73,7 @@ export default {
     const ResizableTableHeaderWithColumns = (h, props, children) => {
       const draggingMap = {}
       columns.forEach(col => {
-        draggingMap[col.dataIndex] = null
+        draggingMap[col.dataIndex] = col.width
       })
       const draggingState = Vue.observable(draggingMap)
       return ResizableTableHeader(h, props, children, columns, draggingState)
@@ -146,6 +146,13 @@ export default {
       }
       this.DetailsForm = this.data
       this.DetailsForm.sort((a, b) => a.user.username - b.user.username)
+      this.$nextTick(() => {
+          for (const col of this.columns) {
+            if (col.thDom) {
+              col.width = col.thDom.getBoundingClientRect().width
+            }
+          }
+        })
     }).catch(err => {
       this.$error({
         title: '发生错误',

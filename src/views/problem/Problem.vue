@@ -51,11 +51,23 @@
                   {{ download_message }}</a-button>
               </a-descriptions-item>
             </a-descriptions>
-            <router-link :to="{name: 'problem.submit', params: {id: problem.id}}">
-              <a-button type="primary">
-                提交
-              </a-button>
-            </router-link>
+            <a-space>
+              <router-link :to="{name: 'problem.submit', params: {id: problem.id}}">
+                <a-button type="primary">
+                  提交
+                </a-button>
+              </router-link>
+              <router-link :to="{name: 'solutions', params: {id: problem.id}}">
+                <a-button type="danger" >
+                  查看题解
+                </a-button>
+              </router-link>
+              <router-link :to="{name: 'solution.add', params: {id: problem.id}}">
+                <a-butten type="primary">
+                  创建题解
+                </a-butten>
+              </router-link>
+            </a-space>
           </a-card>
           <a-card class="submission_card" v-if="!isGuest">
             <template slot="title">最近提交</template>
@@ -143,6 +155,8 @@ export default {
     format (time) {
       return moment(time).fromNow()
     },
+
+    // 获取题目
     fetch () {
       this.problem_loading = true
       getProblem(this.id).then(data => {
